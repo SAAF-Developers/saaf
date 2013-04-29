@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="SAAF">
+	<property environment="env" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="comiplerlevel.target" value="1.6" />
+	<property name="comiplerlevel.source" value="1.6" />
+	<property name="build.dir" location="build" />
+	<property name="build.prod.dir" location="${build.dir}/prod" />
+	<property name="build.test.dir" location="${build.dir}/test" />
+	<property name="src.dir" location="src" />
+	<property name="test.dir" location="test" />
+	<property name="conf.dir" location="conf" />
+	<property name="script.dir" location="scripts" />
+	<property name="doc.dir" location="doc" />
+	<property name="lib.dir" location="lib" />
+	<property name="dist.dir" location="dist" />
+	<property name="test.conf.dir" location="test-home/conf" />
+
+	<property file="src/de/rub/syssec/saaf/version.properties" />
+	<property name="name" value="${software.name}" />
+	<property name="version" value="${software.version}" />
+	<property name="release" value="${name}-${version}" />
+
+	<property name="jar.name" value="${name}.jar" />
+	<property name="jar.path" location="${dist.dir}/${jar.name}" />
+
+	<property name="zip.name" value="${release}.zip" />
+	<property name="zip.path" location="${dist.dir}/${zip.name}" />
+
+	<!-- classpath for building normal (non-testing) code -->
+	<path id="SAAF.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+			<!-- that stuff is only needed for deployment -->
+			<exclude name="package/*jar" />
+		</fileset>
+	</path>
+
+	<!-- classpath for builing the unit-tests -->
+	<path id="SAAF.testing.classpath">
+		<pathelement location="${build.prod.dir}" />
+		<pathelement location="${build.test.dir}" />
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+			<!-- We need JUnit here -->
+			<include name="test/*.jar" />
+			<!-- that stuff is only needed for deployment -->
+			<exclude name="package/*jar" />
+		</fileset>
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+		<delete dir="${doc.dir}" />
+	</target>
+	<target depends="clean" name="cleanall" />
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.prod.dir}" />
+		<mkdir dir="${build.test.dir}" />
+	</target>
+
+	<target name="build" depends="init">
+		<echo message="${ant.project.name}: ${ant.file}" />
+
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${build.prod.dir}" source="${comiplerlevel.source}" target="${comiplerlevel.target}">
+			<src path="${src.dir}" />
+			<classpath refid="SAAF.classpath" />
+		</javac>
+	</target>
+
+	<target name="build-test" depends="build">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${build.test.dir}" source="${comiplerlevel.source}" target="${comiplerlevel.target}">
+			<src path="${test.dir}" />
+			<classpath refid="SAAF.testing.classpath" />
+		</javac>
+	</target>
+
+	<target name="prepare-test">
+		<copy verbose="true" todir="${build.test.dir}">
+			<fileset dir="${test.dir}">
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+		<copy verbose="true" todir="${build.test.dir}/conf">
+			<fileset dir="${test.conf.dir}">
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+				<include name="*.conf" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="test" depends="build-test, prepare-test">
+		<junit haltonfailure="true" dir="${build.test.dir}" showoutput="true" fork="true" printsummary="on" filtertrace="on">
+			<classpath refid="SAAF.testing.classpath" />
+			<formatter type="brief" usefile="true" />
+			<batchtest>
+				<fileset dir="${build.test.dir}">
+					<include name="**/*Test.class" />
+					<!-- This little gui keeps killing the build without any execption -->
+					<exclude name="**/MetadataCollectorTest.class" />
+					<exclude name="**/db/**/*Test.class" />
+				</fileset>
+			</batchtest>
+			<sysproperty key="doc.dir" value="${doc.dir}" />
+			<sysproperty key="index.dir" value="${index.dir}" />
+		</junit>
+	</target>
+
+	<target name="test-db" depends="build-test, prepare-test">
+		<junit haltonfailure="true" dir="${build.test.dir}" showoutput="false" fork="true" printsummary="on" filtertrace="on">
+			<classpath refid="SAAF.testing.classpath" />
+			<formatter type="brief" usefile="false" />
+			<batchtest>
+				<fileset dir="${build.test.dir}">
+					<include name="**/db/**/*Test.class" />
+				</fileset>
+			</batchtest>
+			<sysproperty key="doc.dir" value="${doc.dir}" />
+			<sysproperty key="index.dir" value="${index.dir}" />
+		</junit>
+	</target>
+
+<!--
+	<target name="jar" depends="test, test-db">
+		<mkdir dir="${dist.dir}" />
+		the relative path from the file given in the jarfile attribute 
+		to the elements of the nested classpath must be the same 
+		as you expect them to be when deploying the jar. 
+		<manifestclasspath jarfile="${jar.name}" property="jar.classpath">
+			<classpath refid="SAAF.classpath" />
+		</manifestclasspath>
+		make sure we include the properties files 
+		<copy verbose="true" todir="${build.prod.dir}">
+			<fileset dir="${src.dir}">
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+		<jar destfile="${jar.name}" basedir="${build.prod.dir}">
+			<manifest>
+				<attribute name="Class-Path" value="${jar.classpath}" />
+				<attribute name="Main-Class" value="de.rub.syssec.saaf.Main" />
+			</manifest>
+		</jar>
+		<move file="${jar.name}" tofile="${jar.path}" />
+	</target>
+-->
+
+	<property name="fjepPath" value="${lib.dir}/package/net.sf.fjep.fatjar_0.0.31/fatjar.jar" />
+	<taskdef name="fatjar.build" classname="net.sf.fjep.anttask.FJBuildTask" classpath="${fjepPath}" loaderref="${fjepPath}" />
+	<typedef name="fatjar.manifest" classname="net.sf.fjep.anttask.FJManifestType" classpath="${fjepPath}" loaderref="${fjepPath}" />
+	<typedef name="fatjar.exclude" classname="net.sf.fjep.anttask.FJExcludeType" classpath="${fjepPath}" loaderref="${fjepPath}" />
+	<typedef name="fatjar.jarsource" classname="net.sf.fjep.anttask.FJJarSourceType" classpath="${fjepPath}" loaderref="${fjepPath}" />
+	<typedef name="fatjar.filesource" classname="net.sf.fjep.anttask.FJFileSourceType" classpath="${fjepPath}" loaderref="${fjepPath}" />
+	<target name="fat-jar" depends="test, test-db">
+		<mkdir dir="${dist.dir}" />
+		<copy verbose="true" todir="${build.prod.dir}">
+			<fileset dir="${src.dir}">
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+		<fatjar.build output="${jar.name}">
+			<fatjar.manifest mainclass="de.rub.syssec.saaf.Main" />
+			<fatjar.filesource path="${build.prod.dir}" relpath="" />
+			<fatjar.jarsource file="lib/antlr-runtime-3.4.jar" relpath="" />
+			<fatjar.jarsource file="lib/asm-debug-all-3.2.jar" relpath="" />
+			<fatjar.jarsource file="lib/commons-cli-1.2.jar" relpath="" />
+			<fatjar.jarsource file="lib/commons-io-2.4.jar" relpath="" />
+			<fatjar.jarsource file="lib/commons-lang-2.6.jar" relpath="" />
+			<fatjar.jarsource file="lib/dex-ir-1.11.jar" relpath="" />
+			<fatjar.jarsource file="lib/dex-reader-1.14.jar" relpath="" />
+			<fatjar.jarsource file="lib/dex-translator-0.0.9.13.jar" relpath="" />
+			<fatjar.jarsource file="lib/httpcore-4.1.4.jar" relpath="" />
+			<fatjar.jarsource file="lib/log4j-1.2.17.jar" relpath="" />
+			<fatjar.jarsource file="lib/mysql-connector-java-5.1.21-bin.jar" relpath="" />
+			<fatjar.jarsource file="lib/slf4j-api-1.5.6.jar" relpath="" />
+			<fatjar.jarsource file="lib/slf4j-simple-1.5.6.jar" relpath="" />
+			<fatjar.jarsource file="lib/apktool-1.5.2.jar" relpath="" />
+			<fatjar.jarsource file="lib/smali-1.4.2.jar" relpath="" />
+			<fatjar.jarsource file="lib/ST-4.0.7.jar" relpath="" />
+		</fatjar.build>
+		<move file="${jar.name}" tofile="${jar.path}" />
+	</target>
+
+	<target description="bundle sources in a jar" name="src-jar">
+		<jar basedir="src" destfile="${dist.dir}/${release}-src.jar" />
+	</target>
+
+	<target name="javadoc" description="generates the javadoc documentation">
+		<javadoc doclet="org.jboss.apiviz.APIviz" docletpath="${lib.dir}/doc/apiviz-1.3.1.GA.jar" additionalparam="-author -version -sourceclasspath ${build.dir}" sourcepath="${src.dir}" destdir="${doc.dir}">
+		</javadoc>
+	</target>
+
+
+	<target name="doc-jar" depends="javadoc" description="packages the javadoc documentation">
+		<jar basedir="doc" destfile="${dist.dir}/${release}-doc.jar">
+		</jar>
+	</target>
+
+	<!--
+	<target name="zip" depends="fat-jar" description="packages the release">
+		<zip destfile="${zip.path}">
+			<zipfileset dir="${basedir}" prefix="${release}">
+				<include name="jad*static" />
+				<include name="README.txt" />
+			</zipfileset>
+			<zipfileset dir="${script.dir}" prefix="${release}/scripts">
+				<include name="*.sh" />
+			</zipfileset>
+			<zipfileset dir="${conf.dir}" prefix="${release}/conf">
+				<include name="*.properties" />
+				<include name="*.xml" />
+			</zipfileset>
+			<zipfileset dir="doc-manually" prefix="${release}/doc" />
+			<zipfileset dir="lib" prefix="${release}/lib">
+				<exclude name="*-javadoc*" />
+				<exclude name="*-source*" />
+				<exclude name="*package/" />
+				<exclude name="*test/" />
+			</zipfileset>
+			<zipfileset dir="templates" prefix="${release}/templates" />
+			<zipfileset dir="dist" includes="${jar.name}" prefix="${release}/" />
+			<zipfileset dir="svgs" prefix="${release}/svgs" />
+		</zip>
+	</target>
+-->
+	<target name="create-timestamp" description="just a pseudo task to create a snapshot name">
+		<tstamp />
+		<property name="snapshot.name" value="${release}-${DSTAMP}-${TSTAMP}" />
+		<property name="snapshot.archive.name" value="${snapshot.name}.tar.gz" />
+		<property name="snapshot.archive.path" value="${dist.dir}/${snapshot.archive.name}"/>
+	</target>
+	<!-- Create a zip file and include date and time in the name 
+	<target name="snapshot-zip" depends="fat-jar,create-timestamp" description="tags the release zip with a timestamp">
+		<zip destfile="${dist.dir}/${snapshot.name}.zip">
+			<zipfileset dir="${basedir}" prefix="${snapshot.name}">
+				<include name="jad*static" />
+				<include name="README.txt" />
+			</zipfileset>
+			<zipfileset dir="${script.dir}" prefix="${snapshot.name}/scripts">
+				<include name="run*.sh" />
+			</zipfileset>
+			<zipfileset dir="${conf.dir}" prefix="${snapshot.name}/conf">
+				<include name="log4j.properties" />
+				<include name="*.xml" />
+				<include name="**/*.xsd"/>
+			</zipfileset>
+			<zipfileset dir="doc-manually" prefix="${snapshot.name}/doc" />
+			<zipfileset dir="lib" prefix="${snapshot.name}/lib">
+				<exclude name="*-javadoc*" />
+				<exclude name="*-source*" />
+				<exclude name="*package/" />
+				<exclude name="*test/" />
+			</zipfileset>
+			<zipfileset dir="templates" prefix="${snapshot.name}/templates" />
+			<zipfileset dir="dist" includes="${jar.name}" prefix="${snapshot.name}/" />
+			<zipfileset dir="svgs" prefix="${snapshot.name}/cfgs" />
+		</zip>
+	</target>
+-->	
+	<target name="prepare-conf" description="prepares the configuration for the release">
+		<copy todir="${dist.dir}/conf">
+			<fileset dir="${conf.dir}">
+				<include name="release.log4j.properties"/>
+				<include name="*.xml" />
+				<include name="**/*.xsd"/>
+			</fileset>
+		</copy>
+		<move tofile="${dist.dir}/conf/log4j.properties" file="${dist.dir}/conf/release.log4j.properties" />
+	</target>
+	<target name="snapshot-tar" description="creates a tar archive for distribution" depends="fat-jar, create-timestamp, prepare-conf">
+		<tar destfile="${dist.dir}/${snapshot.name}.tar">
+			<tarfileset dir="${basedir}" prefix="${snapshot.name}">
+				<include name="README.txt" />
+				<include name="README.BMBF" />
+				<include name="INSTALL.txt" />
+				<include name="LICENSE.txt" />
+				<include name="GPL-v3.txt" />
+			</tarfileset>
+			<tarfileset dir="${script.dir}" prefix="${snapshot.name}/bin" filemode="750">
+				<include name="run*.sh" />
+			</tarfileset>
+			<tarfileset dir="${dist.dir}/conf" prefix="${snapshot.name}/conf">
+				<include name="log4j.properties" />
+				<include name="*.xml" />
+				<include name="**/*.xsd"/>
+			</tarfileset>
+			<!--somewhat ugly hack to get the sample config into the conf directory of a release pacakge -->
+			<tarfileset dir="doc-manually/user" prefix="${snapshot.name}/conf">
+				<include name="saaf.conf" />
+			</tarfileset>
+			<!-- now this is the actual documentation -->
+			<tarfileset dir="doc-manually/user" prefix="${snapshot.name}/doc">
+				<exclude name="saaf.conf" />
+			</tarfileset>
+			<!--No longer needed since we have fat-jar now
+			<tarfileset dir="lib" prefix="${snapshot.name}/lib">
+				<exclude name="*-javadoc*" />
+				<exclude name="*-source*" />
+				<exclude name="*package/" />
+				<exclude name="*test/" />
+			</tarfileset>
+			-->
+			<tarfileset dir="templates" prefix="${snapshot.name}/templates" >
+				<include name="xml.stg" />
+			</tarfileset>
+			<tarfileset dir="dist" includes="${jar.name}" prefix="${snapshot.name}/" />
+			<tarfileset dir="svgs" prefix="${snapshot.name}/cfgs" />
+		</tar>
+		<gzip src="${dist.dir}/${snapshot.name}.tar" destfile="${snapshot.archive.path}"/>
+	</target>
+
+	<target name="release-deploy" depends="snapshot-tar" description="build a snapshot and deploy it to the production" unless="${eclipse.running}">
+		<property file="${user.home}/saaf.ssh.properties" />
+		<input message="Please enter the passphrase for your ssh-key:" addproperty="ssh.passphrase">
+			<handler classname="org.apache.tools.ant.input.SecureInputHandler" />
+		</input>
+		<tstamp />
+		<property name="ssh.snapshot.path" value="${ssh.user}@${ssh.host}:${ssh.snapshot.dir}/${snapshot.archive.name}" />
+		<scp file="${snapshot.archive.path}" remoteTofile="${ssh.snapshot.path}" keyfile="${ssh.identity}" passphrase="${ssh.passphrase}" trust="true">
+		</scp>
+	</target>
+
+	<target name="snapshot-deploy" depends="snapshot-tar" description="build a snapshot and deploy it to the test-server" unless="${eclipse.running}">
+		<property file="${user.home}/saaf.test.ssh.properties" />
+		<input message="Please enter the passphrase for your ssh-key:" addproperty="ssh.passphrase">
+			<handler classname="org.apache.tools.ant.input.SecureInputHandler" />
+		</input>
+		<tstamp />
+		<property name="ssh.snapshot.path" value="${ssh.user}@${ssh.host}:${ssh.snapshot.dir}/${snapshot.archive.name}" />
+		<scp file="${snapshot.archive.path}" remoteTofile="${ssh.snapshot.path}" keyfile="${ssh.identity}" passphrase="${ssh.passphrase}" trust="true">
+		</scp>
+	</target>
+
+	<target name="snapshot-test" depends="snapshot-deploy" description="starts a test of the previously deployed snapshot">
+		<sshexec trust="true" host="${ssh.host}" username="${ssh.user}" command="cd ${ssh.snapshot.dir}; tar xzf ${snapshot.archive.name}; rm ${snapshot.archive.name}; cd ..; screen -S ${snapshot.name} -d -m bash test-saaf.sh snapshots/${snapshot.name} ${testdata.dir}" keyfile="${ssh.identity}" passphrase="${ssh.passphrase}" />
+	</target>
+
+	<!-- Define the Sonar global properties (the most usual way is to pass these properties via the command line) -->
+	<property name="sonar.jdbc.url" value="jdbc:h2:tcp://localhost:9092/sonar" />
+	<property name="sonar.jdbc.username" value="sonar" />
+	<property name="sonar.jdbc.password" value="sonar" />
+
+	<!-- Define the Sonar project properties -->
+	<property name="sonar.projectKey" value="org.codehaus.sonar:example-java-ant" />
+	<property name="sonar.projectName" value="Simple Java Project analyzed with the Sonar Ant Task" />
+	<property name="sonar.projectVersion" value="1.0" />
+	<property name="sonar.language" value="java" />
+	<property name="sonar.sources" value="src" />
+	<property name="sonar.tests" value="test" />
+	<property name="sonar.binaries" value="${build.prod.dir}" />
+	<property name="sonar.libraries" value="${lib.dir}/*.jar" />
+	<!-- Define the Sonar target -->
+	<target name="sonar" xmlns:sonar="antlib:org.sonar.ant">
+		<taskdef uri="antlib:org.sonar.ant" resource="org/sonar/ant/antlib.xml">
+			<!-- Update the following line, or put the "sonar-ant-task-*.jar" file in your "$HOME/.ant/lib" folder -->
+			<!--<classpath path="lib/doc/sonar-ant-task-2.0.jar" />-->
+		</taskdef>
+
+		<!-- Execute Sonar -->
+		<sonar:sonar />
+	</target>
+</project>

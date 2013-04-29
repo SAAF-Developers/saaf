@@ -1,0 +1,125 @@
+group saaf-report;
+
+report (analysis) ::= <<
+<?xml version="1.0"?>
+<analysis>
+	<started>$analysis.start$</started>
+	<ended>$analysis.stop$</ended>
+	<status>$analysis.statusText$</status>
+	<sumedHvalue>$analysis.HeuristicValue$</sumedHvalue>
+	$application(analysis.app)$
+	$backtrack_results(analysis.BTResults)$
+	$heuristic_results(analysis.HResults)$
+</analysis>
+>>
+
+application(application) ::=<<
+	<application>
+		<name>$application.applicationName$</name>
+		<md5>$application.hash_md5$</md5>
+		<sha1>$application.hash_sha1$</sha1>
+		<sha256>$application.hash_sha256$</sha256>
+		$manifest(application.manifest)$
+	</application>
+>>
+
+
+manifest(manifest) ::=<<
+<manifest path="$manifest.path$">
+	$manifest_activities(manifest.Activities)$
+	$manifest_services(manifest.Services)$
+	$manifest_receivers(manifest.Receivers)$
+	$manifest_permissions(manifest.Permissions)$
+</manifest>
+>>
+
+manifest_permissions(perms) ::=<<
+	<permissions>
+		$perms:permission()$
+	</permissions>
+>>
+
+permission(p) ::=<<
+	<permission name="$p.name$" unknown="$p.unknown$" />
+>>
+
+manifest_activities(activities) ::=<<
+	<activities>
+		$activities:activity()$
+	</activities>
+>>
+
+activity(activity)::=<<
+	<activity name="$activity.name$">
+		$activity.IntentFilters:intent_filter()$
+	</activity>
+>>
+
+intent_filter(filter) ::=<<
+	<intent-filter priority="$filter.priority$">
+        $filter.actions:intent_action()$
+    </intent-filter>
+>>
+
+intent_action(action) ::=<<
+	<action name="$action.name$"/>
+>>
+
+manifest_services(services) ::=<<
+	<services>
+		$services:service()$
+	</services>
+>>
+
+service(service)::=<<
+	<service name="$service.name$">
+		$service.IntentFilters:intent_filter()$
+	</service>
+>>
+
+manifest_receivers(receivers) ::=<<
+	<receivers>
+		$receivers:receiver()$
+	</receivers>
+>>
+
+receiver(receiver)::=<<
+	<receiver name="$receiver.name$">
+		$receiver.IntentFilters:intent_filter()$
+	</receiver>
+>>
+
+backtrack_results(btresults) ::=<<
+<backtracking-results>
+	$btresults:backtrack_result()$
+</backtracking-results>
+>>
+
+
+
+backtrack_result(btresult) ::=<<
+	<backtrack-result>
+		<pattern id="$btresult.pattern.id$">$btresult.pattern.description$</pattern>
+		<file>$btresult.file.file.path$</file>
+		<line>$btresult.codeline.lineNr$</line>
+		<method>$btresult.method.name$</method>		
+	</backtrack-result>
+>>
+
+heuristic_results(hresults) ::=<<
+<heuristic-results>
+	$hresults:heuristic_result()$
+</heuristic-results>
+>>
+
+heuristic_result(hresult) ::=<<
+	<heuristic-result>
+		<pattern id="$hresult.pattern.id$">$hresult.pattern.description$</pattern>
+		<file>$hresult.file.file.path$</file>
+		<line>$hresult.codeline.lineNr$</line>
+		<method>$hresult.method.name$</method>
+		<hvalue>$hresult.pattern.Hvalue$</hvalue>
+	</heuristic-result>
+>>
+
+

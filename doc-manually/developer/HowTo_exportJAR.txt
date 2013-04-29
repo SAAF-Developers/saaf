@@ -1,0 +1,18 @@
+HowTO export SAAF from sourcecode to a runnable JAR:
+
+1. Export JAR from Eclipse Project
+-> Project -> Export
+  -> (Java-Runnable JAR file) next
+  -> chose
+       (Package regquired libraries into generated JAR)
+       (Launch configuration)
+       (Export Destination) -> in new empty directory
+     Finish
+
+2. Copy the other files from the SVN to the new directory
+ jad_linux_static
+ smali-1.2.6.jar
+ templates/*
+ getDBinfo.sh
+ doc-manually/*
+

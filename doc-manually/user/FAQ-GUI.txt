@@ -1,0 +1,95 @@
+# Frequently Asked Questions
+# author: Tilman Bender
+# date: 2012-04-29
+###################################
+
+Q: On what platforms does SAAF run?
+A: Allthough it is Java, SAAF has been developed and tested on linux only.
+
+Q: How do I install SAAF?
+A: Extract the SAAF-*.tar.gz file: tar -xvzf SAAF-*.tar.gz
+
+######################## GUI ####################
+
+Q: How do I use SAAF in GUI mode?
+A: (assuming you have setup SAAF)
+1. cd <SAAF-directory>
+2. ./bin/run_saaf.sh
+
+Q: How do I use the GUI to open an apk file?
+A: 
+1. File-> Open APK (ALT-O)
+2. Select an apk file and click OK
+3. Wait until SAAF has finished extracting the APK file (you should see Window displaying the contents in a tree structure)
+
+Q: How do I use the GUI to analyze the apk?
+A:
+1. Open the apk file 
+2. Analysis -> Perform Analysis (ALT-P)
+5. Wait.
+
+Q: How can I view the results of an analysis?
+A: 
+1. Run the analysis
+2. Analysis -> Show Report (ALT-R)
+
+Q: How can I search the smali code for a certain string?
+A: Misc -> Search Bytecode (ALT-B)
+
+Q: How can I show all the strings used in the application?
+A: Misc -> Search Bytecode (ALT-S)
+
+Q: How do I get java code?
+A: Misc -> Decompile to Java
+
+Q: I get an error when trying to decompile to java?!
+A: Make sure the variable "external.jad" in the config file is set to the correct path of jad
+
+Q: How do I generate control-flow graphs for all methods?
+A: WARNING: This can be time and memory intensive you may have to adjust VM_ARGs in run_saaf.sh
+1. Misc -> Generate all CFGs
+2. Read the warning, know what you are doing. Click OK.
+3. Depending on the size of your apk: go grab a coffee
+4. If everything goes fine you should be able to navigate to a certain smali-file
+5. right-click-><filename.java>  
+
+
+
+Q: How do I use the GUI to analyze all apks in a folder?
+A: Currently the GUI does not support this.
+
+
+######################## Commandline Interface ####################
+
+Q: How do I use SAAF to analyze a single apk?
+A: 
+1. cd <SAAF-directory>
+2. ./bin/run_saaf.sh -hl /absolute/path/to/malware.apk 
+
+Q: How do I use SAAF to analyze all apks in a folder?
+A: 
+1. cd <SAAF-directory>
+2. /bin/run_saaf.sh -hl /absolute/path/to/malware/folder
+
+Q: How do I use SAAF to analyze all apks in a folder and all its subdirectories?
+A:
+1. cd <SAAF-directory>
+2. /bin/run_saaf.sh -hl -r /absolute/path/to/malware/folder
+
+Q: What commandline options does SAAF take?
+A: Run SAAF with the -h/--help option to see an overview
+
+Q: How do I view the results?
+A: If you run SAAF as described above the results should be stored at <saaf-directory>/reports/Report-<yourmalware>-<timestamp>.xml
+
+Q: How do I store the results in a different folder?
+A. You can supply -rprt/--report /absoulte/path/to/reports/folder
+
+Q: Where can I find the contents of the extracted apks?
+A: Check <SAAF-directory>/bytecode/<apk-name>-<hash>/
+
+Q: I cannot find anything under the directory mentioned above?!
+A: Try running SAAF with -k/--keep-files
+
+Q: How do I decompile all dex to java code?
+A: Try running SAAF with -java/--generate-java

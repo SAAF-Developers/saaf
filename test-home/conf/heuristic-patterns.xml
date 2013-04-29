@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<heuristic-patterns xmlns="http://syssec.rub.de/SMAF"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://syssec.rub.de/SMAF schema/heuristic-patterns.xsd">
+	<heuristic-pattern
+		pattern="android/telephony/TelephonyManager->getSubscriberId" type="INVOKE"
+		hvalue="0" description="IMSI" active="true" />
+	<heuristic-pattern pattern="android/telephony/TelephonyManager->getDeviceId"
+		type="INVOKE" hvalue="0" description="IMEI" active="true" />
+	<heuristic-pattern pattern="android/telephony/SmsManager->sendTextMessage"
+		type="INVOKE" hvalue="0" description="send SMS" active="true" />
+	<heuristic-pattern
+		pattern="android/telephony/SmsManager->sendMultipartTextMessage" type="INVOKE"
+		hvalue="0" description="send multi-part SMS" active="true" />
+	<heuristic-pattern pattern="android/telephony/SmsManager->sendDataMessage"
+		type="INVOKE" hvalue="0" description="send data SMS" active="true" />
+	<heuristic-pattern
+		pattern="query(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor"
+		type="SMALI" hvalue="0" description="get Cursor for DB" active="true" />
+	<heuristic-pattern pattern="managedQuery(" type="SMALI"
+		hvalue="0" description="get Cursor for DB (deprecated)" active="true" />
+	<heuristic-pattern pattern="android/content/CursorLoader->CursorLoader"
+		type="INVOKE" hvalue="0" description="get Cursor for DB" active="true" />
+	<heuristic-pattern pattern="android.intent.action.CALL"
+		type="SMALI" hvalue="0" description="initiate call" active="true" />
+	<heuristic-pattern pattern="java/lang/System->loadLibrary"
+		type="INVOKE" hvalue="0" description="load Java or JNI Libaries/Classes"
+		active="true" />
+	<heuristic-pattern pattern="chmod" type="SMALI"
+		hvalue="0" description="change mode" active="true" />
+	<heuristic-pattern pattern="java/lang/Runtime->exec"
+		type="INVOKE" hvalue="0" description="execute command" active="true" />
+	<heuristic-pattern pattern="openConnection()Ljava/net/URLConnection"
+		type="SMALI" hvalue="0" description="open HTTP connection" active="true" />
+	<heuristic-pattern pattern="javax/crypto/Cipher->doFinal"
+		type="INVOKE" hvalue="0" description="use Java Crypto" active="true" />
+	<heuristic-pattern pattern="permission.INTERNET permission.READ_CONTACTS"
+		type="MANIFEST" hvalue="0" description="permissions: Internet and Read Contacts"
+		active="false" />
+	<heuristic-pattern
+		pattern="permission.READ_HISTORY_BOOKMARKS permission.INTERNET" type="MANIFEST"
+		hvalue="0" description="permission: Read Bookmarks and Internet"
+		active="false" />
+	<heuristic-pattern pattern="permission.SEND_SMS"
+		type="MANIFEST" hvalue="0" description="permission: Send SMS"
+		active="true" />
+	<heuristic-pattern pattern="permission.CALL_PHONE"
+		type="MANIFEST" hvalue="0" description="permission: Call Phone"
+		active="true" />
+	<heuristic-pattern
+		pattern="permission.READ_CONTACTS permission.INTERNET permission.READ_PHONE_STATE"
+		type="MANIFEST" hvalue="0"
+		description="permission: Internet, Read Contacts and Read Phone State"
+		active="true" />
+	<heuristic-pattern
+		pattern="permission.READ_SMS permission.INTERNET permission.READ_PHONE_STATE"
+		type="MANIFEST" hvalue="0"
+		description="permission: Internet, Read SMS and Read Phone State"
+		active="true" />
+	<heuristic-pattern pattern="noActivity permission.SEND_SMS"
+		type="MANIFEST" hvalue="0"
+		description="permission + Activity: no Activity and Send SMS" active="true" />
+	<heuristic-pattern
+		pattern="noActivity permission.READ_CONTACTS permission.INTERNET permission.READ_PHONE_STATE"
+		type="MANIFEST" hvalue="0" description="" active="true" />
+	<heuristic-pattern
+		pattern="noActivity permission.SEND_SMS permission.RECEIVE_SMS" type="MANIFEST"
+		hvalue="0" description="" active="true" />
+	<heuristic-pattern
+		pattern="noActivity permission.READ_SMS permission.INTERNET permission.READ_PHONE_STATE"
+		type="MANIFEST" hvalue="0" description="" active="true" />
+	<heuristic-pattern pattern="android/telephony/gsm/SmsManager->sendTextMessage"
+		type="INVOKE" hvalue="0" description="send SMS" active="true" />
+	<heuristic-pattern
+		pattern="android/telephony/gsm/SmsManager->sendMultipartTextMessage"
+		type="INVOKE" hvalue="0" description="send multi-part SMS" active="true" />
+	<heuristic-pattern pattern="android/telephony/gsm/SmsManager->sendDataMessage"
+		type="INVOKE" hvalue="0" description="send data SMS" active="true" />
+	<heuristic-pattern pattern="java/lang/Class->forName"
+		type="INVOKE" hvalue="0" description="Reflective class getter" active="true" />
+	<heuristic-pattern pattern="java/lang/Class->getMethod"
+		type="INVOKE" hvalue="0" description="Reflective method getter"
+		active="true" />
+	<heuristic-pattern pattern="javax/net/ssl/SSLSocket->setEnabledCipherSuites"
+		type="INVOKE" hvalue="0" description="SSL Cipher Suites" active="true" />
+	<heuristic-pattern pattern="javax/net/ssl/SSLSocketFactory->createSocket"
+		type="INVOKE" hvalue="0" description="SSL Connections" active="true" />
+	<heuristic-pattern pattern="java/lang/Thread->sleep"
+		type="INVOKE" hvalue="0" description="Thread.sleep(x)" active="true" />
+	<heuristic-pattern pattern="android/os/SystemClock->sleep"
+		type="INVOKE" hvalue="0" description="SystemClock.sleep(x)" active="true" />
+	<heuristic-pattern
+		pattern="android/support/v4/content/CursorLoader->CursorLoader" type="INVOKE"
+		hvalue="0" description="get Cursor for DB" active="true" />
+	<heuristic-pattern pattern="ACTION_CALL" type="SMALI"
+		hvalue="0" description="initiate call (const from android.content.intent"
+		active="true" />
+	<heuristic-pattern pattern="android/app/AlarmManager->setRepeating"
+		type="INVOKE" hvalue="0" description="alarm service, setRepeating()"
+		active="true" />
+	<heuristic-pattern pattern="android/app/AlarmManager->setInexactRepeating"
+		type="INVOKE" hvalue="0" description="alarm service, setInexactRepeating()"
+		active="true" />
+	<heuristic-pattern pattern="android/app/AlarmManager->set"
+		type="INVOKE" hvalue="0" description="alarm service, set()" active="true" />
+	<!-- Spaces around 'native' are relevant for search -->
+	<heuristic-pattern pattern=" native " type="METHOD_MOD"
+		hvalue="0" description="native invokes" active="true" />
+	<heuristic-pattern pattern="java.lang.ClassLoader"
+		type="SUPERCLASS" hvalue="0" description="classloader: j.l.ClassLoader"
+		active="true" />
+	<heuristic-pattern pattern="dalvik.system.BaseDexClassLoader"
+		type="SUPERCLASS" hvalue="0" description="classloader: d.s.BaseDexClassLoader"
+		active="true" />
+	<heuristic-pattern pattern="dalvik.system.DexClassLoader"
+		type="SUPERCLASS" hvalue="0" description="classloader: d.s.DexClassLoader"
+		active="true" />
+	<heuristic-pattern pattern="dalvik.system.PathClassLoader"
+		type="SUPERCLASS" hvalue="0" description="classloader: d.s.PathClassLoader"
+		active="true" />
+	<heuristic-pattern pattern="java.net.URLClassLoader"
+		type="SUPERCLASS" hvalue="0" description="classloader: j.n.URLClassLoader"
+		active="true" />
+	<heuristic-pattern pattern="java.security.SecureClassLoader"
+		type="SUPERCLASS" hvalue="0" description="classloader: j.s.SecureClassLoader"
+		active="true" />
+	<heuristic-pattern pattern=""
+		type="PATCHED_CODE" hvalue="0" description="Search for BBs w/ possible patched code"
+		active="true" />
+</heuristic-patterns>

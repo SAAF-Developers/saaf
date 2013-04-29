@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest android:versionCode="157287186" android:versionName="2.4" package="com.sileria.alsalah"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:label="AlSalah" android:icon="@drawable/alsalah">
+        <activity android:label="AlSalah" android:name=".android.AlSalah">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name="com.awake.alArabiyyah">
+            <intent-filter>
+                <action android:name="alArabiyyah" />
+            </intent-filter>
+        </service>
+        <receiver android:name="com.awake.arRabi">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <activity android:label="AlSalah - Places" android:name=".android.Places" android:configChanges="keyboardHidden|orientation" />
+        <activity android:theme="@android:style/Theme.Translucent" android:label="AlSalah - GPS" android:name=".android.GPS" android:configChanges="keyboardHidden|orientation" />
+        <activity android:label="AlSalah - Help" android:name=".android.Help" android:configChanges="keyboardHidden|orientation" />
+        <activity android:theme="@android:style/Theme.Translucent" android:label="AlSalah - About" android:name=".android.About" />
+        <activity android:label="AlSalah - Settings" android:name=".android.Settings" android:configChanges="keyboardHidden|orientation" />
+        <activity android:theme="@android:style/Theme.Translucent" android:label="AlSalah - Import" android:name=".android.Import" android:configChanges="keyboardHidden|orientation" />
+        <activity android:theme="@android:style/Theme.Translucent" android:label="AlSalah - Share" android:name=".android.Export" android:configChanges="keyboardHidden|orientation" />
+        <activity android:label="AlSalah - History" android:name=".android.History" android:configChanges="keyboardHidden|orientation" />
+    </application>
+</manifest>

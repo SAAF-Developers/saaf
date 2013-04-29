@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<heuristic-patterns xmlns="http://syssec.rub.de/SMAF"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://syssec.rub.de/SMAF schema/heuristic-patterns.xsd">
+	<!-- Spaces  around 'native' are relevant for search -->
+	<heuristic-pattern pattern=" native " type="METHOD_MOD" hvalue="0" description="native invokes"/>
+	<heuristic-pattern pattern="java.lang.ClassLoader" type="SUPERCLASS" hvalue="0" description="classloader: j.l.ClassLoader"/>
+	<heuristic-pattern pattern="dalvik.system.BaseDexClassLoader" type="SUPERCLASS" hvalue="0" description="classloader: d.s.BaseDexClassLoader"/>
+	<heuristic-pattern pattern="dalvik.system.DexClassLoader" type="SUPERCLASS" hvalue="0" description="classloader: d.s.DexClassLoader"/>
+	<heuristic-pattern pattern="dalvik.system.PathClassLoader" type="SUPERCLASS" hvalue="0" description="classloader: d.s.PathClassLoader"/>
+	<heuristic-pattern pattern="java.net.URLClassLoader" type="SUPERCLASS" hvalue="0" description="classloader: j.n.URLClassLoader"/>
+	<heuristic-pattern pattern="java.security.SecureClassLoader" type="SUPERCLASS" hvalue="0" description="classloader: j.s.SecureClassLoader"/>
+</heuristic-patterns>

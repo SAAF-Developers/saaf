@@ -1,0 +1,62 @@
+group saaf-report;
+
+report (analysis) ::= <<
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>Title of document</title>
+</head>
+
+<body>
+</body>
+</html>
+>>
+manifest(manifest) ::= <<
+<manifest path="$manifest.path$">
+	
+</manifest>
+>>
+
+backtrack_results(btresults) ::=<<
+<backtracking-results>
+	$btresults:backtrack_result()$
+</backtracking-results>
+>>
+
+backtrack_result(btresult) ::=<<
+	<backtrack-result>
+		<pattern id="$btresult.pattern.id$">$btresult.pattern.description$</pattern>
+		<file>$btresult.file.file.path$</file>
+		<line>$btresult.codeline.lineNr$</line>
+		<method>$btresult.method.name$</method>		
+	</backtrack-result>
+>>
+
+heuristic_results(hresults) ::=<<
+<heuristic-results>
+	$hresults:heuristic_result()$
+</heuristic-results>
+>>
+
+heuristic_result(hresult) ::=<<
+	<heuristic-result>
+		<pattern id="$hresult.pattern.id$">$hresult.pattern.description$</pattern>
+		<file>$hresult.file.file.path$</file>
+		<line>$hresult.codeline.lineNr$</line>
+		<method>$hresult.method.name$</method>
+		<hvalue>$hresult.pattern.Hvalue$</hvalue>
+	</heuristic-result>
+>>
+
+application(application) ::=<<
+	<application>
+		<name>$application.applicationName$</name>
+		<md5>$application.hash_md5$</md5>
+		<sha1>$application.hash_sha1$</sha1>
+		<sha256>$application.hash_sha256$</sha256>
+		$manifest(application.manifest)$
+	</application>
+>>

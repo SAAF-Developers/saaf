@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest android:versionCode="157287186" android:versionName="2.4" package="com.sileria.alsalah"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <application 
+    	android:label="TestApp" 
+    	android:icon="@drawable/testapp" 
+    	android:debuggable="true">
+    </application>
+</manifest>

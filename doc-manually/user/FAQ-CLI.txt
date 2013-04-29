@@ -1,0 +1,45 @@
+# Frequently Asked Questions
+# author: Tilman Bender
+# date: 2012-04-29
+###################################
+
+Q: On what platforms does SAAF run?
+A: Allthough it is Java, SAAF has been developed and tested on linux only.
+
+Q: How do I install SAAF?
+A: Extract the SAAF-*.tar.gz file: tar -xvzf SAAF-*.tar.gz
+
+######################## Commandline Interface ####################
+
+Q: How do I use SAAF to analyze a single apk?
+A: 
+1. cd <SAAF-directory>
+2. ./bin/run_saaf.sh -hl /absolute/path/to/malware.apk 
+
+Q: How do I use SAAF to analyze all apks in a folder?
+A: 
+1. cd <SAAF-directory>
+2. /bin/run_saaf.sh -hl /absolute/path/to/malware/folder
+
+Q: How do I use SAAF to analyze all apks in a folder and all its subdirectories?
+A:
+1. cd <SAAF-directory>
+2. /bin/run_saaf.sh -hl -r /absolute/path/to/malware/folder
+
+Q: What commandline options does SAAF take?
+A: Run SAAF with the -h/--help option to see an overview
+
+Q: How do I view the results?
+A: If you run SAAF as described above the results should be stored at <saaf-directory>/reports/Report-<yourmalware>-<timestamp>.xml
+
+Q: How do I store the results in a different folder?
+A. You can supply -rprt/--report /absoulte/path/to/reports/folder
+
+Q: Where can I find the contents of the extracted apks?
+A: Check <SAAF-directory>/bytecode/<apk-name>-<hash>/
+
+Q: I cannot find anything under the directory mentioned above?!
+A: Try running SAAF with -k/--keep-files
+
+Q: How do I decompile all dex to java code?
+A: Try running SAAF with -java/--generate-java

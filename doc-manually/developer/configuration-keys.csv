@@ -1,0 +1,61 @@
+	DIRECTORY_HOME "directory.home"  
+	DIRECTORY_APPS "path_apps"  "apps"  
+	DIRECTORY_BYTECODE "path_bytecode"  "bytecode"  
+	DIRECTORY_APK_CONTENT "subdir.apk.content"  "apk_content"  
+	DIRECTORY_DECOMPILED_CONTENT "subdir.decompiled"  "bytecode"  
+	DIRECTORY_REPORTS "reporting.output.folder"  "reports"  
+	DIRECTORY_REPORT_TEMPLATES "reporting.templates.folder"  "templates"  
+	DIRECTORY_CFGS "path_cfg"  "cfgs"  
+	ANALYSIS_DO_HEURISTIC "analysis.heuristic.enable"  true  
+	ANALYSIS_DO_BACKTRACK "analysis.backtrack.enable"  true  
+	ANALSIS_DO_SIMILARITY "analysis.similarity.enable"  false  
+	ANALYSIS_DROP_DB_AND_FILES "analysis.drop"  false  
+	ANALYSIS_KEEP_FILES "analysis.keep.files"  false  
+	ANALYSIS_GENERATE_JAVA "analysis.java.enable"  false  
+	ANALYSIS_GENERATE_CFG "analysis.flowgraphs.enable"  false  
+	ANALYSIS_GENERATE_REPORT "analysis.reporting.enable"  false  
+	ANALYSIS_GENERATE_FUZZYHASH "analysis.fuzzyhashing.enable"  false  
+	HEURISTIC_PATTERN_MANIFEST "heuristic.patterns.manifest.enable"  true  
+	HEURISTIC_PATTERN_INVOKE "heuristic.patterns.invoke.enable"  true  
+	HEURISTIC_PATTERN_SMALI "heuristic.patterns.smali.enable"  true  
+	HEURISTIC_PATTERN_METHOD_MOD "heuristic.patterns.method.enable"  true  
+	HEURISTIC_PATTERN_SUPERCLASS "heuristic.patterns.superclass.enable"  true  
+	HEURISTIC_SEARCH_PATCHED_CODE "heuristic.patterns.patched.enable"  true  
+	HEURISTIC_PATTERN_CRYPTOBLOCK "heuristic.patterns.crypto.enable"  true  
+	ANALYSIS_IS_HEADLESS "analysis.headless"  false  
+	ANALYSIS_QUIT_ON_ERROR "analysis.errorhandling.quit"  false  
+	ANALYSIS_SKIP_KNOWN_APP "analysis.skip"  false  
+	ANALYSIS_SAVE_PERSISTENT "analysis.save"  
+	ANALYSIS_KEEP_ONLY_ONE "analysis.exactlyone"  false  
+	ANALYSIS_INCLUDE_AD_FRAMEWORKS "analysis.include.adpackages"  
+	REPORT_TEMPLATE "reporting.templates.template.default"  "report"  
+	REPORT_NAME_PATTERN "reporting.output.naming.pattern"  
+	CFGS_INCLUDE_AD_FRAMEWORKS "cfg.include.ads" true  
+	LOGGING_CREATE_SEPERATE "logging.separate"  false  
+	LOGGING_FILE_PATH "logging.logfolder"  
+	LOGGING_USE_COLOR "logging.color"  false  
+	LOGGING_USE_INVERSE_COLOR "logging.color.inverted" false  
+	RECURSIVE_DIR_ANALYSIS "analysis.recursive"  false  
+	USE_FILE_LIST "analysis.use.list" false  
+	FILE_LIST_PREFIX "path_fileList_prefix"  
+	MULTITHREADING_ENABLED "multithreading.enable"  true  
+	MULTITHREADING_THREADS "multithreading.threads"  
+	DATASOURCE_PERMISSIONS "datasource.permissions" "conf/permissions.xml"  
+	DATASOURCE_SCHEMA_PERMISSIONS "datasource.schema.permissions" "conf/schema/permissions.xsd"  
+	DATASOURCE_SLICING_PATTERNS "datasource.patterns.backtracking" "conf/backtracking-patterns.xml"  
+	DATASOURCE_SCHEMA_SLICING "datasource.schema.backtracking" "conf/schema/backtracking-patterns.xsd"  
+	DATASOURCE_HEURISTIC_PATTERNS "datasource.patterns.heuristic" "conf/heuristic-patterns.xml"  
+	DATASOURCE_SCHEMA_HEURISTIC_PATTERNS "datasource.schema.heuristic" "conf/schema/heuristic-patterns.xsd"  
+	DATASOURCE_AD_NETWORKS "datasource.adnetworks" "conf/AdNetworks.xml"  
+	DATASOURCE_SCHEMA_AD_NETWORKS "datasource.schema.adnetworks" "conf/schema/AdNetworks.xsd"  
+	DATABASE_DRIVER "db.driver" "com.mysql.jdbc.Driver"  
+	DATABASE_DISABLED "db.disable"  false  
+	DATABASE_CONNECTION_STRING "db.connection.string" "jdbc:mysql://localhost/saaf"  
+	DATABASE_USER "db.user" "saafuser"  
+	DATABASE_PASSWORD "db.password" "saafpass"   
+	VIEWER_IMAGES "viewer.images"  
+	VIEWER_REPORTS "viewer.reports"  
+	EXECUTABLE_DOT "exec_dot"  
+	EXECUTABLE_JAD "exec_jad"  
+	EXECUTABLE_SSDEEP "exec_ssdeep"   
+	APKTOOL_TREATMENT "apktool.frameworks" "DONT_TOUCH" ;

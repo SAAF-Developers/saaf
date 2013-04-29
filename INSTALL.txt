@@ -1,0 +1,42 @@
+== Requirements ==
+dot (optional) - to generate png files for control-flow graphs
+ssdeep (optional) - to generate fuzzy hashing signatures
+jad (optional) - to decompile the apk to java code
+mysql-server (tested on 5.5)
+
+1. Extract the SAAF-*.tar.gz (you obviously did this already)
+2. Adjust the configuration to your needs:
+
+#### The conf directory ####
+
+All configuration of SAAF is done in the conf directory. You can find several files here:
+
+conf/
+├── AdNetworks.xml (contains the package paths that are treated as belonging to an ad-framework)
+├── backtracking-patterns.xml (contains the specifications of methods that are considered during program slicing)
+├── heuristic-patterns.xml (contains the patterns that are used for quick-checks)
+├── log4j.properties (contains the logging configuration)
+├── permissions.xml (contains the permissions that are known to SAAF)
+└── schema (contains xml-schema files used to validate the xml files. Mostly interesting if you want to write your own patterns)
+    ├── AdNetworks.xsd
+    ├── backtracking-patterns.xsd
+    ├── heuristic-patterns.xsd
+    └── permissions.xsd
+└── saaf.conf (the main configuration file. The following sections relate to this file)
+
+#### Setting up the Database ####
+
+By default SAAF does not store its results in a database.
+Create a database and a user for SAAF in your mysql (the user needs full privileges on the database)
+We assume you are familiar with setting up a database and user in MySQL.
+Make sure to set db.disable=false  in the configuration file.
+Then configure SAAF for MySQL by uncommenting and editing the lines with db.* 
+
+#### Setting up external programs ####
+Once you installed the external programs referred to in Requirements, go to the saaf.conf
+and adjust the values beginning with external.
+
+#### Setting up viewers ####
+To view the generated control flow graphs (PNG images) from the GUI adjust viewer.images to a program of your choice
+To view the xml reports from the GUI adjsut viewer.reports to a program of your choice
+-

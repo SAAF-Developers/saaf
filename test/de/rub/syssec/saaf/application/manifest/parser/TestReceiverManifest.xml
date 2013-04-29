@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest android:versionCode="157287186" android:versionName="2.4" package="com.sileria.alsalah"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:label="AlSalah" android:icon="@drawable/alsalah">
+        <receiver android:name="com.awake.arRabi">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

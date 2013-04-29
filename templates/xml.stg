@@ -1,0 +1,163 @@
+group saaf-report;
+
+report (analysis) ::= <<
+<?xml version="1.0"?>
+<analysis>
+	<started>$analysis.StartTime;format="xml"$</started>
+	<ended>$analysis.StopTime;format="xml"$</ended>
+	$status(analysis)$
+	<sumedHvalue>$analysis.HeuristicValue;format="xml"$</sumedHvalue>
+	$application(analysis.app)$
+	$backtrack_results(analysis.BTResults)$
+	$heuristic_results(analysis.HResults)$
+</analysis>
+>>
+
+status(analysis) ::= <<
+	<status>
+		<message>$analysis.status;format="xml"$</message>
+		$noncrit_exceptions(analysis.NonCriticalExceptions)$
+		$crit_exceptions(analysis.CriticalExceptions)$
+	</status>
+>>
+
+noncrit_exceptions(excptns) ::= <<
+	<non-critical-exceptions>
+		$excptns:exception()$
+	</non-critical-exceptions>
+>>
+
+crit_exceptions(excptns) ::= <<
+	<critical-exceptions>
+		$excptns:exception()$
+	</critical-exceptions>
+>>
+
+exception(e) ::=<<
+	<exception>$e.message;format="xml"$</exception>
+>>
+
+application(application) ::=<<
+	<application>
+		<name>$application.applicationName;format="xml"$</name>
+		<md5>$application.HashMD5;format="xml"$</md5>
+		<sha1>$application.HashSHA1;format="xml"$</sha1>
+		<sha256>$application.HashSHA256;format="xml"$</sha256>
+		$manifest(application.manifest)$
+	</application>
+>>
+
+
+manifest(manifest) ::=<<
+<manifest path="$manifest.path;format="xml"$">
+	$manifest_activities(manifest.Activities)$
+	$manifest_services(manifest.Services)$
+	$manifest_receivers(manifest.Receivers)$
+	$manifest_permissions(manifest.RequestedPermissions)$
+</manifest>
+>>
+
+manifest_permissions(perms) ::=<<
+	<permissions>
+		$perms:permission()$
+	</permissions>
+>>
+
+permission(p) ::=<<
+	<permission name="$p.RequestedPermission.name;format="xml"$" type="$p.RequestedPermission.Type;format="xml"$" known="$p.valid;format="xml"$" />
+	
+>>
+
+manifest_activities(activities) ::=<<
+	<activities>
+		$activities:activity()$
+	</activities>
+>>
+
+activity(activity)::=<<
+	<activity name="$activity.name;format="xml"$">
+		$activity.IntentFilters:intent_filter()$
+	</activity>
+	
+>>
+
+intent_filter(filter) ::=<<
+	<intent-filter priority="$filter.priority;format="xml"$">
+        $filter.actions:intent_action()$
+    </intent-filter>
+>>
+
+intent_action(action) ::=<<
+	<action name="$action.name;format="xml"$"/>
+	
+>>
+
+manifest_services(services) ::=<<
+	<services>
+		$services:service()$
+	</services>
+	
+>>
+
+service(service)::=<<
+	<service name="$service.name;format="xml"$">
+		$service.IntentFilters:intent_filter()$
+	</service>
+	
+>>
+
+manifest_receivers(receivers) ::=<<
+	<receivers>
+		$receivers:receiver()$
+	</receivers>
+>>
+
+receiver(receiver)::=<<
+	<receiver name="$receiver.name;format="xml"$">
+		$receiver.IntentFilters:intent_filter()$
+	</receiver>
+	
+>>
+
+backtrack_results(btresults) ::=<<
+<backtracking-results>
+	$btresults:backtrack_result()$
+</backtracking-results>
+>>
+
+
+
+backtrack_result(btresult) ::=<<
+	<backtrack-result>
+		<pattern id="$btresult.pattern.id;format="xml"$">$btresult.pattern.description;format="xml"$</pattern>
+		<file>$btresult.file.relativeFile;format="xml"$</file>
+		<line>$btresult.codeline.lineNr;format="xml"$</line>
+		<method>$btresult.codeline.method.ReadableJavaName;format="xml"$</method>
+		<value>$btresult.constant.value;format="xml"$</value>
+		<variable-type>$btresult.Constant.VariableType;format="xml"$</variable-type>
+		<variable-description>$btresult.Constant.TypeDescription;format="xml"$</variable-description>
+		<constant-type>$btresult.Constant.Type;format="xml"$</constant-type>
+		<fuzzy-level>$btresult.Constant.FuzzyLevel;format="xml"$</fuzzy-level>	
+		<ad-framework>$btresult.Constant.InAdFrameworkPackage;format="xml"$</ad-framework>
+		<path>$btresult.Constant.Path;format="xml"$</path>
+	</backtrack-result>
+	
+>>
+
+heuristic_results(hresults) ::=<<
+<heuristic-results>
+	$hresults:heuristic_result()$
+</heuristic-results>
+>>
+
+heuristic_result(hresult) ::=<<
+	<heuristic-result>
+		<pattern id="$hresult.pattern.id;format="xml"$">$hresult.pattern.description;format="xml"$</pattern>
+		<file>$hresult.file.relativeFile;format="xml"$</file>
+		<line>$hresult.codeline.lineNr;format="xml"$</line>
+		<method>$hresult.codeline.method.name;format="xml"$</method>
+	</heuristic-result>
+	
+>>
+
+

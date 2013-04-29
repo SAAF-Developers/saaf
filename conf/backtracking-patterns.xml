@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Backtracking patterns specify the class,method and arguments that are 
+	of interest for backtracking NOTE: -->
+<backtracking-patterns xmlns="http://syssec.rub.de/SAAF"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://syssec.rub.de/SAAF schema/backtracking-patterns.xsd">
+
+	<backtracking-pattern active="true"
+		class="android/telephony/SmsManager" method="sendTextMessage"
+		parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/app/PendingIntent;Landroid/app/PendingIntent;"
+		description="Number of a SMS message" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="android/telephony/SmsManager" method="sendTextMessage"
+		parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/app/PendingIntent;Landroid/app/PendingIntent;"
+		description="Text of a SMS message" interesting="2" />
+
+	<backtracking-pattern active="true"
+		class="android/telephony/gsm/SmsManager" method="sendTextMessage"
+		description="Number of a SMS message"
+		parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/app/PendingIntent;Landroid/app/PendingIntent;"
+		interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="android/telephony/gsm/SmsManager" method="sendTextMessage"
+		description="Text of a SMS message"
+		parameters="Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/app/PendingIntent;Landroid/app/PendingIntent;"
+		interesting="2" />
+
+	<backtracking-pattern active="true" class="java/lang/Runtime"
+		method="exec" parameters="Ljava/lang/String;"
+		description="Execute external program"
+		interesting="0" />	
+	
+	<backtracking-pattern active="true" class="java/lang/Runtime"
+		method="exec" parameters="[Ljava/lang/String;"
+		description="Execute external program"
+		interesting="0" />
+	
+	<backtracking-pattern active="true" class="java/lang/Runtime"
+		method="exec" parameters="Ljava/lang/String;[Ljava/lang/String;"
+		description="Execute external program"
+		interesting="0" />
+	
+	<backtracking-pattern active="true" class="java/lang/Runtime"
+		method="exec" parameters="[Ljava/lang/String;[Ljava/lang/String;"
+		description="Execute external program"
+		interesting="0" />
+	
+	<backtracking-pattern active="true" class="java/lang/Runtime"
+		method="exec" parameters="[Ljava/lang/String;[Ljava/lang/String;Ljava/io/File;"
+		description="Execute external program"
+		interesting="0" />
+	
+	<backtracking-pattern active="true" class="java/lang/Runtime"
+		method="exec" parameters="Ljava/lang/String;[Ljava/lang/String;Ljava/io/File;"
+		description="Execute external program"
+		interesting="0" />	
+
+	<backtracking-pattern active="true" class="java/lang/System"
+		method="loadLibrary" parameters="Ljava/lang/String;" description="Load and link library"
+		interesting="0" />
+
+	<backtracking-pattern active="true" class="java/lang/System"
+		method="load" parameters="Ljava/lang/String;" description="Load and link library (w/ path)"
+		interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="android/content/IntentFilter" method="&lt;init&gt;" parameters="Ljava/lang/String;"
+		description="IntentFilter action" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="android/content/IntentFilter" description="IntentFilter action"
+		method="&lt;init&gt;" parameters="Ljava/lang/String;Ljava/lang/String;"
+		interesting="0" />
+
+	<backtracking-pattern active="true" class="java/lang/Class"
+		description="Reflective class getter"
+		method="forName" parameters="Ljava/lang/String;"
+		interesting="0" />
+
+	<backtracking-pattern active="true" class="java/lang/Class"
+		description="Reflective method getter"
+		method="getMethod" parameters="Ljava/lang/String;"
+		interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="javax/net/ssl/SSLSocket" description="SSL Cipher Suites"
+		method="setEnabledCipherSuites" parameters="[Ljava/lang/String;"
+		interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="javax/net/ssl/SSLSocketFactory" description="SSL Connections"
+		method="createSocket" parameters="Ljava/lang/String;I" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="javax/net/ssl/SSLSocketFactory" description="SSL Connections"
+		method="createSocket" parameters="Ljava/lang/String;I" interesting="1" />
+
+	<backtracking-pattern active="true" class="android/net/Uri"
+		description="Android URI Parser" parameters="Ljava/lang/String;"
+		method="parse" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="java/net/URL"
+		description="Set URL -&gt; look for openConnection()"
+		method="&lt;init&gt;"
+		parameters="Ljava/lang/String;"
+		interesting="0" />
+
+	<backtracking-pattern active="true" class="java/net/URI"
+		description="Apache URI Parser" method="&lt;init&gt;" parameters="Ljava/lang/String;"
+		interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="org/apache/http/client/methods/HttpGet" description="Apache HTTP GET"
+		method="&lt;init&gt;" parameters="Ljava/lang/String;" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="org/apache/http/client/methods/HttpGet" description="Apache HTTP GET"
+		method="setURI" parameters="Ljava/lang/String;" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="org/apache/http/client/methods/HttpPost" description="Apache HTTP POST"
+		method="&lt;init&gt;" parameters="Ljava/lang/String;" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="org/apache/http/client/methods/HttpPost" description="Apache HTTP POST"
+		method="setURI" parameters="Ljava/lang/String;" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="org/apache/http/client/methods/HttpHead" description="Apache HTTP HEAD"
+		method="&lt;init&gt;" parameters="Ljava/lang/String;" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="org/apache/http/client/methods/HttpHead" description="Apache HTTP HEAD"
+		method="setURI" parameters="Ljava/lang/String;" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="org/apache/http/client/methods/HttpPut" description="Apache HTTP PUT"
+		method="&lt;init&gt;" parameters="Ljava/lang/String;" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="org/apache/http/client/methods/HttpPut" description="Apache HTTP PUT"
+		method="setURI" parameters="Ljava/lang/String;" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="org/apache/http/client/methods/HttpDelete" description="Apache HTTP DELETE"
+		method="&lt;init&gt;" parameters="Ljava/lang/String;" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="org/apache/http/client/methods/HttpDelete" description="Apache HTTP DELETE"
+		method="setURI" parameters="Ljava/lang/String;" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="android/webkit/WebView" description="Webview URL" method="loadUrl"
+		parameters="Ljava/lang/String;" interesting="0" />
+
+	<backtracking-pattern active="true"
+		class="android/webkit/WebView" description="Webview URL" method="loadUrl"
+		parameters="Ljava/lang/String;Ljava/util/Map;" interesting="0" />
+	<backtracking-pattern active="true"
+		class="android/webkit/WebView" description="Webview URL" method="loadUrl"
+		parameters="Ljava/lang/String;Ljava/util/Map;" interesting="1" />
+
+	<!-- '*' (wildcard) will match all classes) b/c Activities, Services etc 
+		are of the type Context and inherit this method -->
+	<backtracking-pattern active="true" class="*"
+		description="Android System Provider Getter" method="getSystemService"
+		parameters="Ljava/lang/String;" interesting="0" />
+
+	<!-- Read the time of sleep methods. J is long and long is two registers 
+		wide! So a call to the first function in SMALI looks like this: invoke-static 
+		{v1, v2}, Ljava/lang/Thread;->sleep(J)V. v2 is the second half of the long. -->
+	<backtracking-pattern active="true" class="java/lang/Thread"
+		description="Thread.sleep(long)" method="sleep" parameters="J"
+		interesting="0" />
+	<backtracking-pattern active="true" class="java/lang/Thread"
+		description="Thread.sleep(long, int)" method="sleep" parameters="JI"
+		interesting="0" />
+
+</backtracking-patterns>

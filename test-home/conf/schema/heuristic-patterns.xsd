@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://syssec.rub.de/SMAF" xmlns="http://syssec.rub.de/SMAF"
+	elementFormDefault="qualified">
+	<xs:element name="heuristic-patterns">
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:element minOccurs="0" maxOccurs="unbounded" ref="heuristic-pattern" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="heuristic-pattern">
+		<xs:complexType>
+			<xs:attribute name="description" use="required" />
+			<xs:attribute name="hvalue" type="xs:integer" />
+			<xs:attribute name="pattern" use="required" />
+			<xs:attribute name="type" use="required" type="xs:string" />
+			<xs:attribute name="active" use="required" />
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

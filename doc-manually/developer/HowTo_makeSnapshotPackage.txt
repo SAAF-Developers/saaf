@@ -1,0 +1,42 @@
+# HowTo create a snapshot build
+# author: Tilman Bender
+# date: 2012-05-23
+###################################
+
+# What it this?
+This is intended for developers and shows you how to use the build.xml file to deploy a snapshot-build.
+
+# What is a snapshot-bulid?
+A snapshot build is intended as a package that contains a runnable version of SAAF and all dependencies
+based on the current version of the source code in your working copy
+
+#What does it contain?
+|____templates (folder containing reporting templates)
+|		... 
+|____jad (java decompiler binary)
+|____lib (folder containing the dependencies needed to run saaf)
+|		...
+|____jad_linux_static (java decompiler static binary)
+|____saaf.jar (SAAF itself)
+|____doc (folder containing user documentation and a sample configuration file)
+		...
+|____smali-1.2.6.jar (smali binary used to decompile dex code)
+
+#What should I do before creating a snapshot build?
+
+1. make sure you have the latest code from the repository (svn update)
+2. make sure your code actually builds
+3. make sure ant knows that jsch (located in SAAF/lib/package folder) by adding it to ANT_HOME, 
+passing it to ant via the -lib parameter or (if you use eclipse) by adding it to ants classpath:
+Run->External Tools->External Tools Configuration->Classpath->Add JARs
+4. make sure the ssh.identity is correct for your setup (it uses ~/.ssh/id_dsa
+
+#How do I create the snapshot build?
+Run the deploy-snapshot target in build.xml. Either by opening build.xml in the ant editor in eclipse 
+and  right-click the deploy-snapshot target and run As -> ant build or by running ant in the project folder:
+
+ant -lib lib/package/jsch-0.1.48.jar deploy-snapshot
+
+If your public-key is NOT located at ~/.ssh/id_dsa you must start it (CAUTION: No space after -D):
+
+ant -Dssh.identity=<path to your key> -lib lib/package/jsch-0.1.48.jar deploy-snapshot
