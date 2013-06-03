@@ -47,6 +47,12 @@ public class GenerateCFGsAction extends AbstractAction {
 		super(title);
 		this.mainWindow=mainWindow;
 		this.enabled = Config.getInstance().isValidExecutable(ConfigKeys.EXECUTABLE_DOT);
+		if(this.enabled)
+		{
+			this.putValue(SHORT_DESCRIPTION, "Generates control flow grapsh for all methods.");
+		}else{
+			this.putValue(SHORT_DESCRIPTION, "The dot executable is not available.");
+		}
 	}
 
 	/* (non-Javadoc)

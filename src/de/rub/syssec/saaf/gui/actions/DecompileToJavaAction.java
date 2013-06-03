@@ -25,6 +25,7 @@ import de.rub.syssec.saaf.analysis.steps.decompile.DecompileToJavaStep;
 import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.gui.OpenAppsMgr;
 import de.rub.syssec.saaf.misc.config.Config;
+import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.analysis.AnalysisException;
 import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
 
@@ -70,6 +71,14 @@ public class DecompileToJavaAction extends AbstractAction {
 	public DecompileToJavaAction(String title,OpenAppsMgr appsManager) {
 		super(title);
 		this.appsManager = appsManager;
+		//this action is only enabled if the java decompiler is usable
+		this.enabled = Config.getInstance().isValidExecutable(ConfigKeys.EXECUTABLE_JAD);
+		if(this.enabled)
+		{
+			this.putValue(SHORT_DESCRIPTION, "Decompile apk to java source code");
+		}else{
+			this.putValue(SHORT_DESCRIPTION, "No decompiler available");
+		}
 	}
 
 }
