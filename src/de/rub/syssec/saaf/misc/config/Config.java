@@ -130,42 +130,43 @@ public class Config implements ConfigInterface {
 	 */
 	public void validate() {
 		boolean foundErrors = false;
-		HashSet<Object> pSet = new HashSet<Object>(settings.keySet());
+		HashSet<Object> keysInConfigFile = new HashSet<Object>(settings.keySet());
 		LOGGER.info("Validating configuration");
-		for (Object o : pSet) {
-			String entry = (String) o;
+		for (Object keyInConfigFile : keysInConfigFile) {
+			String entry = (String) keyInConfigFile;
 			try {
-				ConfigKeys.fromString(entry);
+				ConfigKeys key = ConfigKeys.fromString(entry);
+				//check if the external executables are required and available
+				if (key == ConfigKeys.EXECUTABLE_DOT && getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_CFG)) {
+					foundErrors |= !isValidExecutable(key);
+				} 
+				if(key == ConfigKeys.EXECUTABLE_JAD && getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_JAVA))
+				{
+					foundErrors |= !isValidExecutable(key);
+				}
+				if(key == ConfigKeys.EXECUTABLE_SSDEEP && getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_FUZZYHASH))
+				{
+					foundErrors |= !isValidExecutable(key);
+				}
+				
+				else if (entry.startsWith("path_")) {
+					File f = new File(settings.getProperty(entry));
+					if (!f.exists()
+							&& (entry.equalsIgnoreCase(APP_DIRECTORY) || entry
+									.equalsIgnoreCase(BYTECODE_DIRECTORY)))
+						f.mkdirs();
+					if (!f.exists() || !f.isDirectory() || !f.canRead()) {
+						LOGGER.error(entry + "=" + settings.getProperty(entry)
+								+ ": Directory does not exist or is not readable!");
+						foundErrors = true;
+					} else {
+						// System.out.println("CONF: "+entry+"="+prop.getProperty(entry));
+					}
+				}
 			} catch (IllegalArgumentException e) {
 				LOGGER.warn("Problem validating config: " + e.getMessage());
 			}
-			if (entry.startsWith("exec_")) {
-				File f = new File(settings.getProperty(entry));
-				if (!f.exists()) {
-					LOGGER.error(entry + "=" + settings.getProperty(entry)
-							+ ": File does not exist!");
-					foundErrors = true;
-				} else if (!f.getName().endsWith(".jar") && !f.canExecute()) {
-					LOGGER.error(entry + "=" + settings.getProperty(entry)
-							+ ": File is not executable!");
-					foundErrors = true;
-				} else {
-					// System.out.println("CONF: "+entry+"="+prop.getProperty(entry));
-				}
-			} else if (entry.startsWith("path_")) {
-				File f = new File(settings.getProperty(entry));
-				if (!f.exists()
-						&& (entry.equalsIgnoreCase(APP_DIRECTORY) || entry
-								.equalsIgnoreCase(BYTECODE_DIRECTORY)))
-					f.mkdirs();
-				if (!f.exists() || !f.isDirectory() || !f.canRead()) {
-					LOGGER.error(entry + "=" + settings.getProperty(entry)
-							+ ": Directory does not exist or is not readable!");
-					foundErrors = true;
-				} else {
-					// System.out.println("CONF: "+entry+"="+prop.getProperty(entry));
-				}
-			}
+	
 		}
 
 		if (!settings.containsKey(ConfigKeys.DIRECTORY_APPS.toString())) {
@@ -183,6 +184,24 @@ public class Config implements ConfigInterface {
 			LOGGER.error("Found errors in the configuration, aborting.");
 			System.exit(-5);
 		}
+	}
+
+	public boolean isValidExecutable(ConfigKeys key) {
+		boolean isValid=true;
+		String keyName = key.toString();
+		File f = new File(settings.getProperty(keyName));
+		if (!f.exists()) {
+			LOGGER.warn(key + "=" + settings.getProperty(keyName)
+					+ ": File does not exist!");
+			isValid = false;
+		} else if (!f.canExecute()) {
+			LOGGER.error(key + "=" + settings.getProperty(keyName)
+					+ ": File is not executable!");
+			isValid = false;
+		} else {
+			// System.out.println("CONF: "+entry+"="+prop.getProperty(entry));
+		}
+		return isValid;
 	}
 
 	public AdChecker getAdChecker() {

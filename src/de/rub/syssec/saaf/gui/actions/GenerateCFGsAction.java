@@ -25,6 +25,8 @@ import javax.swing.JOptionPane;
 import de.rub.syssec.saaf.analysis.steps.cfg.CfgBuilder;
 import de.rub.syssec.saaf.analysis.steps.hash.Hash;
 import de.rub.syssec.saaf.gui.MainWindow;
+import de.rub.syssec.saaf.misc.config.Config;
+import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
 import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.MethodInterface;
@@ -44,6 +46,7 @@ public class GenerateCFGsAction extends AbstractAction {
 	public GenerateCFGsAction(String title, MainWindow mainWindow) {
 		super(title);
 		this.mainWindow=mainWindow;
+		this.enabled = Config.getInstance().isValidExecutable(ConfigKeys.EXECUTABLE_DOT);
 	}
 
 	/* (non-Javadoc)

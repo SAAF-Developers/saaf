@@ -84,6 +84,7 @@ import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.log4j.Logger;
 
+import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
 import de.rub.syssec.saaf.model.application.ClassInterface;
@@ -464,6 +465,8 @@ public class FileTree extends JPanel {
 				
 				JMenuItem item = new JMenuItem(MENU_ACTION_CFG);
 				item.addActionListener(menuListener);
+				//this should only be enabled if the executable is there
+				item.setEnabled(Config.getInstance().isValidExecutable(ConfigKeys.EXECUTABLE_DOT));
 				popup.add(item);
 
 				popup.addSeparator();

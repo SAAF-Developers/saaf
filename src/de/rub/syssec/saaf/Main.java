@@ -128,7 +128,8 @@ public class Main {
 			// just touch the class to trigger the checks
 			Config conf = Config.getInstance();
 			parseOptions(cmdLine);
-
+			conf.validate();
+			
 			if (conf.getBooleanConfigValue(ConfigKeys.ANALYSIS_DROP_DB_AND_FILES)) {
 				if (!conf.getBooleanConfigValue(ConfigKeys.DATABASE_DISABLED)) {
 					LOGGER.info("Dropping database tables...");
