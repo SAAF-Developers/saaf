@@ -56,8 +56,8 @@ public class Config implements ConfigInterface {
 
 	private static final String APP_DIRECTORY = "path_apps";
 	private static final String BYTECODE_DIRECTORY = "path_bytecode";
-	//key value  store taht is read from the config file 
-	//and modified by cmdline parameters
+	// key value store taht is read from the config file
+	// and modified by cmdline parameters
 	private Properties settings;
 	private static Logger LOGGER;
 
@@ -98,20 +98,23 @@ public class Config implements ConfigInterface {
 			setConfigValue(ConfigKeys.DIRECTORY_HOME, saafHome);
 		} else {
 			// default to local directory if the variable is not set
-			setConfigValue(ConfigKeys.DIRECTORY_HOME,System.getProperty("user.dir"));
+			setConfigValue(ConfigKeys.DIRECTORY_HOME,
+					System.getProperty("user.dir"));
 		}
 		LOGGER.info("SAAF will be looking for configuration in:"
-				+ getConfigValue(ConfigKeys.DIRECTORY_HOME)+File.separator+"conf");
+				+ getConfigValue(ConfigKeys.DIRECTORY_HOME) + File.separator
+				+ "conf");
 
-		File config = new File(getConfigValue(ConfigKeys.DIRECTORY_HOME) + File.separator
-				+ "conf"+File.separator+"saaf.conf");
+		File config = new File(getConfigValue(ConfigKeys.DIRECTORY_HOME)
+				+ File.separator + "conf" + File.separator + "saaf.conf");
 		FileInputStream propInputStream = null;
 
 		if (config.exists()) {
 			propInputStream = new FileInputStream(config);
 		} else {
-			propInputStream = new FileInputStream(getConfigValue(ConfigKeys.DIRECTORY_HOME)
-					+ File.separator + "conf" + File.separator + "saaf.conf");
+			propInputStream = new FileInputStream(
+					getConfigValue(ConfigKeys.DIRECTORY_HOME) + File.separator
+							+ "conf" + File.separator + "saaf.conf");
 		}
 
 		settings.load(propInputStream);
@@ -130,33 +133,22 @@ public class Config implements ConfigInterface {
 	 */
 	public void validate() {
 		boolean foundErrors = false;
-		HashSet<Object> keysInConfigFile = new HashSet<Object>(settings.keySet());
+		HashSet<Object> keysInConfigFile = new HashSet<Object>(
+				settings.keySet());
 		LOGGER.info("Validating configuration");
 		for (Object keyInConfigFile : keysInConfigFile) {
 			String entry = (String) keyInConfigFile;
 			try {
-				ConfigKeys key = ConfigKeys.fromString(entry);
-				//check if the external executables are required and available
-				if (key == ConfigKeys.EXECUTABLE_DOT && getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_CFG)) {
-					foundErrors |= !isValidExecutable(key);
-				} 
-				if(key == ConfigKeys.EXECUTABLE_JAD && getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_JAVA))
-				{
-					foundErrors |= !isValidExecutable(key);
-				}
-				if(key == ConfigKeys.EXECUTABLE_SSDEEP && getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_FUZZYHASH))
-				{
-					foundErrors |= !isValidExecutable(key);
-				}
-				
-				else if (entry.startsWith("path_")) {
+				if (entry.startsWith("path_")) {
 					File f = new File(settings.getProperty(entry));
 					if (!f.exists()
 							&& (entry.equalsIgnoreCase(APP_DIRECTORY) || entry
 									.equalsIgnoreCase(BYTECODE_DIRECTORY)))
 						f.mkdirs();
 					if (!f.exists() || !f.isDirectory() || !f.canRead()) {
-						LOGGER.error(entry + "=" + settings.getProperty(entry)
+						LOGGER.error(entry
+								+ "="
+								+ settings.getProperty(entry)
 								+ ": Directory does not exist or is not readable!");
 						foundErrors = true;
 					} else {
@@ -166,8 +158,10 @@ public class Config implements ConfigInterface {
 			} catch (IllegalArgumentException e) {
 				LOGGER.warn("Problem validating config: " + e.getMessage());
 			}
-	
+
 		}
+
+		foundErrors = hasMissingExecutable();
 
 		if (!settings.containsKey(ConfigKeys.DIRECTORY_APPS.toString())) {
 			LOGGER.error("No 'apps' directory configured!");
@@ -186,27 +180,53 @@ public class Config implements ConfigInterface {
 		}
 	}
 
+	/**
+	 * Checks if the required external programss (for graphing, decompiling
+	 * etc.) are required and available.
+	 * 
+	 * @return
+	 */
+	private boolean hasMissingExecutable() {
+		boolean foundErrors = false;
+		// check if the external executables are required and available
+		if (getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_CFG)) {
+			foundErrors |= !isValidExecutable(ConfigKeys.EXECUTABLE_DOT);
+		}
+		if (getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_JAVA)) {
+			foundErrors |= !isValidExecutable(ConfigKeys.EXECUTABLE_JAD);
+		}
+		if (getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_FUZZYHASH)) {
+			foundErrors |= !isValidExecutable(ConfigKeys.EXECUTABLE_SSDEEP);
+		}
+		return foundErrors;
+	}
+
 	public boolean isValidExecutable(ConfigKeys key) {
-		boolean isValid=true;
+		boolean isValid = true;
 		String keyName = key.toString();
-		File f = new File(settings.getProperty(keyName));
-		if (!f.exists()) {
-			LOGGER.warn(key + "=" + settings.getProperty(keyName)
-					+ ": File does not exist!");
-			isValid = false;
-		} else if (!f.canExecute()) {
-			LOGGER.error(key + "=" + settings.getProperty(keyName)
-					+ ": File is not executable!");
-			isValid = false;
-		} else {
-			// System.out.println("CONF: "+entry+"="+prop.getProperty(entry));
+		if (settings.containsKey(keyName)) {
+			File f = new File(this.settings.getProperty(keyName));
+			if (!f.exists()) {
+				LOGGER.warn(key + "=" + settings.getProperty(keyName)
+						+ ": File does not exist!");
+				isValid = false;
+			} else if (!f.canExecute()) {
+				LOGGER.error(key + "=" + settings.getProperty(keyName)
+						+ ": File is not executable!");
+				isValid = false;
+			}
+		}else{
+			LOGGER.error(key + " could not be found in the configuration");
+			isValid=false;
 		}
 		return isValid;
 	}
 
 	public AdChecker getAdChecker() {
-		String adnetworks = this.getConfigValue(ConfigKeys.DATASOURCE_AD_NETWORKS);
-		String schema = this.getConfigValue(ConfigKeys.DATASOURCE_SCHEMA_AD_NETWORKS);
+		String adnetworks = this
+				.getConfigValue(ConfigKeys.DATASOURCE_AD_NETWORKS);
+		String schema = this
+				.getConfigValue(ConfigKeys.DATASOURCE_SCHEMA_AD_NETWORKS);
 		Datasource<AdNetwork> ds = new XMLAdnetworkDataSource(adnetworks,
 				schema);
 		return NameComparingAdChecker.getInstance(ds);
@@ -245,14 +265,18 @@ public class Config implements ConfigInterface {
 	}
 
 	public Datasource<HPatternInterface> getHTPatternSource() {
-		String patterns = this.getConfigValue(ConfigKeys.DATASOURCE_HEURISTIC_PATTERNS);
-		String schema = this.getConfigValue(ConfigKeys.DATASOURCE_SCHEMA_HEURISTIC_PATTERNS);
+		String patterns = this
+				.getConfigValue(ConfigKeys.DATASOURCE_HEURISTIC_PATTERNS);
+		String schema = this
+				.getConfigValue(ConfigKeys.DATASOURCE_SCHEMA_HEURISTIC_PATTERNS);
 		return new XMLHPatternSource(patterns, schema);
 	}
 
 	public Datasource<BTPatternInterface> getBTPatternSource() {
-		String patterns = this.getConfigValue(ConfigKeys.DATASOURCE_SLICING_PATTERNS);
-		String schema = this.getConfigValue(ConfigKeys.DATASOURCE_SCHEMA_SLICING);
+		String patterns = this
+				.getConfigValue(ConfigKeys.DATASOURCE_SLICING_PATTERNS);
+		String schema = this
+				.getConfigValue(ConfigKeys.DATASOURCE_SCHEMA_SLICING);
 		return new XMLBTPatternSource(patterns, schema);
 	}
 
@@ -292,8 +316,10 @@ public class Config implements ConfigInterface {
 	}
 
 	public Datasource<PermissionInterface> getPermissionSource() {
-		String patterns = this.getConfigValue(ConfigKeys.DATASOURCE_PERMISSIONS);
-		String schema = this.getConfigValue(ConfigKeys.DATASOURCE_SCHEMA_PERMISSIONS);
+		String patterns = this
+				.getConfigValue(ConfigKeys.DATASOURCE_PERMISSIONS);
+		String schema = this
+				.getConfigValue(ConfigKeys.DATASOURCE_SCHEMA_PERMISSIONS);
 		return new XMLPermissionDatasource(patterns, schema);
 	}
 
@@ -319,15 +345,14 @@ public class Config implements ConfigInterface {
 	}
 
 	public boolean getBooleanConfigValue(ConfigKeys key) {
-		return this.getBooleanConfigValue(key,key.defaultBoolean);
+		return this.getBooleanConfigValue(key, key.defaultBoolean);
 	}
 
 	public String getConfigValue(ConfigKeys key) {
 		return this.getConfigValue(key, key.defaultString);
 	}
 
-	public File getFileConfigValue(ConfigKeys key)
-	{
+	public File getFileConfigValue(ConfigKeys key) {
 		return new File(settings.getProperty(key.toString(), key.defaultString));
 	}
 }

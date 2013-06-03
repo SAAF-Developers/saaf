@@ -60,6 +60,7 @@ public class DecompileToJavaStep extends AbstractStep {
 		File apkFile = app.getApkFile();
 		File bytecodedir = app.getBytecodeDirectory();
 		File gen = null;
+		logger.info("Decompilation to Java started ...");
 		try {
 			//create jar 			
 			//TODO: Not sure where this went in the new version.
@@ -117,7 +118,7 @@ public class DecompileToJavaStep extends AbstractStep {
 							+ bytecodedir.getAbsolutePath(), e);
 				}
 			}
-
+			logger.info("Decompilation to Java finished ...");
 		} catch (Throwable e2) {
 			throw new AnalysisException(e2);
 		} finally {
@@ -126,6 +127,7 @@ public class DecompileToJavaStep extends AbstractStep {
 				gen.delete();
 			}
 		}
+
 		return true;
 	}
 
