@@ -343,9 +343,20 @@ public enum ConfigKeys {
 	 * What to do with framework files from an apktool.
 	 * See ApkDecoderInterface.Treatment. Default is "DONT_TOUCH"
 	 */
-	APKTOOL_TREATMENT("apktool.frameworks","DONT_TOUCH");
-
-
+	APKTOOL_TREATMENT("apktool.frameworks","DONT_TOUCH"),
+	/**
+	 * Signals that SAAF is running as a daemon.
+	 */
+	DAEMON_ENABLED("daemon.enabled",false),
+	/**
+	 * The value in milliseconds that SAAF will wait when polling for new APKs
+	 */
+	DAEMON_POLLING_INTERVAL("daemon.polling.interval"),
+	/**
+	 * The directory that SAAF will watch for new apks
+	 */
+	DAEMON_DIRECTORY("daemon.polling.directory","incoming");
+	
 	private String name;
 	public String defaultString;
 	public boolean defaultBoolean;

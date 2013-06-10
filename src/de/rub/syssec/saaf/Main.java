@@ -129,7 +129,7 @@ public class Main {
 			Config conf = Config.getInstance();
 			parseOptions(cmdLine);
 			conf.validate();
-			
+
 			if (conf.getBooleanConfigValue(ConfigKeys.ANALYSIS_DROP_DB_AND_FILES)) {
 				if (!conf.getBooleanConfigValue(ConfigKeys.DATABASE_DISABLED)) {
 					LOGGER.info("Dropping database tables...");
@@ -300,6 +300,11 @@ public class Main {
 				props.getProperty("options.hl.singlethreaded.short"),
 				props.getProperty("options.hl.singlethreaded.long"), false,
 				props.getProperty("options.hl.singlethreaded.descr"));
+
+		// option for running as daemon that watches a folder
+		headlessOptions.addOption(props.getProperty("options.daemon.short"),
+				props.getProperty("options.daemon.long"), false,
+				props.getProperty("options.daemon.descr"));
 		// TODO does not work yet
 		// headlessOptions.addOption("sc", false, "do Similarity Check");
 		// headlessOptions.addOption("Nsc", "no-sc", false,
@@ -475,6 +480,15 @@ public class Main {
 					+ "not possible!");
 			exit();
 		}
+		
+		if (cmdLine.hasOption(props.getProperty("options.daemon.short"))) {
+			conf.setBooleanConfigValue(ConfigKeys.ANALYSIS_IS_HEADLESS, true);
+			conf.setBooleanConfigValue(ConfigKeys.DAEMON_ENABLED, true);
+			String watched = cmdLine.getOptionValue(props
+					.getProperty("options.daemon.short"));
+			conf.setConfigValue(ConfigKeys.DAEMON_DIRECTORY, watched);
+
+		}
 
 		if (cmdLine.hasOption(props.getProperty("options.headless.short"))) {
 			conf.setBooleanConfigValue(ConfigKeys.ANALYSIS_IS_HEADLESS, true);
@@ -535,6 +549,8 @@ public class Main {
 		if (cmdLine.hasOption(props.getProperty("options.keep.short"))) {
 			conf.setBooleanConfigValue(ConfigKeys.ANALYSIS_KEEP_FILES, true);
 		}
+
+
 	}
 
 	/**
