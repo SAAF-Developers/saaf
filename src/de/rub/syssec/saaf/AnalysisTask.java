@@ -30,7 +30,7 @@ import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
  * @author Hanno Lemoine <hanno.lemoine@gdata.de>
  * @author Johannes Hoffmann <johannes.hoffmann@rub.de>
  */
-public class AnalysisThread implements Runnable {
+public class AnalysisTask implements Runnable {
 	private Analysis analysis = null;
 	private boolean hasNonCriticalExceptions = false;
 	private boolean hasCriticalExceptions = false;
@@ -43,7 +43,7 @@ public class AnalysisThread implements Runnable {
 	 * @param apk A file pointing to an APK to be analyzed.
 	 * @throws AnalysisException 
 	 */
-	public AnalysisThread(File apk) throws AnalysisException {
+	public AnalysisTask(File apk) throws AnalysisException {
 		app = new Application(apk, false);
 		analysis = new Analysis(app);
 	}

@@ -17,6 +17,7 @@
 package de.rub.syssec.saaf.application;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -407,5 +408,45 @@ public class Application implements ApplicationInterface {
 	@Override
 	public String toString() {
 		return "Application [applicationName=" + applicationName + "]";
+	}
+	
+	/**
+	 * @param app
+	 */
+	public static boolean isAPKFile(File apk) {
+			FileInputStream fis = null;
+		try {
+			if (apk.length() <= 2) {
+				LOGGER.info("File too small. Aborting.");
+				return false;
+			}
+			if (!apk.canRead()) {
+				LOGGER.info("File not readable. Aborting.");
+				return false;
+			}
+			fis = new FileInputStream(apk);
+			byte[] fileHead = new byte[8];
+			int read = fis.read(fileHead);
+			if (read <= 2) {
+				LOGGER.info("Could not read file: "+apk.getName()+". Aborting.");
+				return false;
+			}
+			if (
+				fileHead[0] != 'P' ||
+				fileHead[1] != 'K'
+			) {
+				LOGGER.info("Magic bytes do not match! Aborting.");
+				return false;
+			}
+		} catch (IOException e) {
+			LOGGER.info("Could not check file, aborting. Message: "+e.getMessage());
+			return false;
+		}
+		finally {
+			if (fis != null) {
+				try { fis.close(); } catch (Exception e) { /* ignore */ }
+			}
+		}
+		return true;
 	}
 }

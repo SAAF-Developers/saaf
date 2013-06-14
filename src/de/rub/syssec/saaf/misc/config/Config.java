@@ -135,7 +135,7 @@ public class Config implements ConfigInterface {
 		boolean foundErrors = false;
 		HashSet<Object> keysInConfigFile = new HashSet<Object>(
 				settings.keySet());
-		LOGGER.info("Validating configuration");
+		LOGGER.info("Validating configuration...");
 		for (Object keyInConfigFile : keysInConfigFile) {
 			String entry = (String) keyInConfigFile;
 			try {

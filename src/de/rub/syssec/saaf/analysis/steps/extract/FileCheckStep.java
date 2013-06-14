@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import de.rub.syssec.saaf.analysis.steps.AbstractStep;
+import de.rub.syssec.saaf.application.Application;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.model.analysis.AnalysisException;
 import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
@@ -45,46 +46,53 @@ public class FileCheckStep extends AbstractStep {
 	 */
 	@Override
 	public boolean doProcessing(AnalysisInterface analysis) throws AnalysisException {
-		if (!enabled) return true;
-		
+		boolean valid = true;		
 		logger.info("Checking APK...");
 		
 		ApplicationInterface app = analysis.getApp(); 
+		valid = Application.isAPKFile(app.getApkFile());
+		logger.info("Success.");
+		return valid;
+	}
+
+	/**
+	 * @param app
+	 */
+	private boolean isAPKFile(File apk) {
+		boolean valid = true;	
 		FileInputStream fis = null;
 		try {
-			File apk = app.getApkFile();
 			if (apk.length() <= 2) {
 				logger.info("File too small. Aborting.");
-				return false;
+				valid=false;
 			}
 			if (!apk.canRead()) {
 				logger.info("File not readable. Aborting.");
-				return false;
+				valid=false;
 			}
 			fis = new FileInputStream(apk);
 			byte[] fileHead = new byte[8];
 			int read = fis.read(fileHead);
 			if (read <= 2) {
 				logger.info("Could not read file: "+apk.getName()+". Aborting.");
-				return false;
+				valid=false;
 			}
 			if (
 				fileHead[0] != 'P' ||
 				fileHead[1] != 'K'
 			) {
 				logger.info("Magic bytes do not match! Aborting.");
-				return false;
+				valid=false;
 			}
 		} catch (IOException e) {
 			logger.info("Could not check file, aborting. Message: "+e.getMessage());
-			return false;
+			valid=false;
 		}
 		finally {
 			if (fis != null) {
 				try { fis.close(); } catch (Exception e) { /* ignore */ }
 			}
 		}
-		logger.info("Success.");
-		return true;
+		return valid;
 	}
 }

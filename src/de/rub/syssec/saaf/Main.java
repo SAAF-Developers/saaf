@@ -28,6 +28,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.cli.UnrecognizedOptionException;
 import org.apache.commons.io.FileUtils;
@@ -38,6 +39,9 @@ import org.jf.util.ConsoleUtil;
 import org.jf.util.SmaliHelpFormatter;
 
 import de.rub.syssec.saaf.db.DatabaseHelper;
+import de.rub.syssec.saaf.db.datasources.DataSourceException;
+import de.rub.syssec.saaf.db.persistence.exceptions.InvalidEntityException;
+import de.rub.syssec.saaf.db.persistence.exceptions.PersistenceException;
 import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
@@ -57,26 +61,128 @@ public class Main {
 
 	private static Properties props;
 
+	private static File apkPath;
+
 	public static void main(String[] args) throws Exception {
 		// make sure log4j configuration is read before doing anything else
 		updateLog4jConfiguration(false, false);
-		// Schedule a job for the event-dispatching thread:
-		// creating and showing this Application's GUI.
-		// Option Handling
-		props = parseVersionProperties();
-		if (props != null) {
-			title = props.getProperty("software.name");
-			// VERSION = props.getProperty("software.version");
-		} else {
-			System.out
-					.println("Could not load commandline properties. Exiting.");
-			exit();
+		try {
+			//Setup the commandline
+			buildOptions();
+			Config conf = Config.getInstance();
+			//Parse the arguments and adjust configuration accordingly
+			processCommandline(args);
+			//Check if the adjusted configuration contains any errors/inconsistencies
+			conf.validate();
+			//prepare database and filesystem
+			prepare(conf);
+
+			//should we just watch a folder for incoming apks?
+			if(conf.getBooleanConfigValue(ConfigKeys.DAEMON_ENABLED))
+			{
+				String watched = conf.getConfigValue(ConfigKeys.DAEMON_DIRECTORY);
+				long interval = conf.getIntConfigValue(ConfigKeys.DAEMON_POLLING_INTERVAL,5000);
+				FolderWatcher watcher = new FolderWatcher(watched,interval);
+				watcher.startWatching();
+			}
+			// Create GUI?
+			else if (conf.getBooleanConfigValue(
+					ConfigKeys.ANALYSIS_IS_HEADLESS)) {
+				// no GUI
+				Headless.startAnalysis(apkPath);
+			} else {
+				// yes, I want a GUI
+				// Schedule a job for the event-dispatching thread:
+				// creating and showing this Application's GUI.
+				// TODO: use apk_path in gui mode!
+				javax.swing.SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						MainWindow m = new MainWindow();
+						m.createAndShowGUI();
+					}
+				});
+			}
+		} catch (Exception e) {
+			LOGGER.error("An error occured", e);
+			System.exit(0);
 		}
 
-		buildOptions();
+	}
+
+	/**
+	 * Reads the config file and prepares database and filessystem accordingly.
+	 * 
+	 * @param conf
+	 * @throws PersistenceException
+	 * @throws SQLException
+	 * @throws IOException
+	 * @throws InvalidEntityException
+	 * @throws DataSourceException
+	 */
+	private static void prepare(Config conf) throws PersistenceException,
+			SQLException, IOException, InvalidEntityException,
+			DataSourceException {
+		if (conf.getBooleanConfigValue(ConfigKeys.ANALYSIS_DROP_DB_AND_FILES)) {
+			if (!conf.getBooleanConfigValue(ConfigKeys.DATABASE_DISABLED)) {
+				LOGGER.info("Dropping database tables...");
+				DatabaseHelper dbh = new DatabaseHelper(conf);
+				dbh.dropTables();
+				dbh.getConnection().close();
+			}
+			LOGGER.info("Deleting directories...");
+
+			FileUtils.deleteDirectory(new File(conf
+					.getConfigValue(ConfigKeys.DIRECTORY_APPS)));
+			File f = new File(
+					conf.getConfigValue(ConfigKeys.DIRECTORY_APPS));// necessary?
+			f.mkdirs();// necessary?
+			FileUtils.deleteDirectory(new File(conf
+					.getConfigValue(ConfigKeys.DIRECTORY_APPS)));
+			f = new File(conf.getConfigValue(ConfigKeys.DIRECTORY_BYTECODE));// necessary?
+			f.mkdirs();// necessary?
+		}
+
+		if (!conf.getBooleanConfigValue(ConfigKeys.DATABASE_DISABLED)) {
+			LOGGER.info("Checking DB and creating tables if necessary...");
+			DatabaseHelper dbh = new DatabaseHelper(conf);
+			dbh.createDatabaseSchema(); // New DB Layout
+			dbh.populateTables();
+			dbh.getConnection().close();
+			LOGGER.info("DB check successful.");
+		}
+
+		if (!conf.getBooleanConfigValue(ConfigKeys.ANALYSIS_KEEP_FILES)) {
+			// Add a shutdown hook which ensures cleanup if the VM exists.
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				public void run() {
+					LOGGER.debug("Running ShutdownHook: Deleting directories as -k/--keep was not requested.");
+					File dir = new File(Config.getInstance()
+							.getConfigValue(ConfigKeys.DIRECTORY_APPS,
+									"apps"));
+					FileUtils.deleteQuietly(dir);
+					dir.mkdir();
+					dir = new File(Config.getInstance().getConfigValue(
+							ConfigKeys.DIRECTORY_BYTECODE, "bytecode"));
+					FileUtils.deleteQuietly(dir);
+					dir.mkdir();
+					LOGGER.debug("ShutdownHook finished.");
+				}
+			});
+		}
+	}
+
+	/**
+	 * Parses the commandline and sets config parameters accordingly.
+	 * 
+	 * @param args
+	 * @return
+	 * @throws ParseException
+	 */
+	private static void processCommandline(String[] args)
+			throws ParseException {
 		CommandLineParser parser = new PosixParser();
 		CommandLine cmdLine = null;
-		File apkPath = null;
+		apkPath = null;
 
 		try {
 			cmdLine = parser.parse(options, args);
@@ -122,83 +228,8 @@ public class Main {
 			// usage();
 			exit();
 		}
-
-		try {
-			LOGGER.info("Checking config file...");
-			// just touch the class to trigger the checks
-			Config conf = Config.getInstance();
-			parseOptions(cmdLine);
-			conf.validate();
-
-			if (conf.getBooleanConfigValue(ConfigKeys.ANALYSIS_DROP_DB_AND_FILES)) {
-				if (!conf.getBooleanConfigValue(ConfigKeys.DATABASE_DISABLED)) {
-					LOGGER.info("Dropping database tables...");
-					DatabaseHelper dbh = new DatabaseHelper(conf);
-					dbh.dropTables();
-					dbh.getConnection().close();
-				}
-				LOGGER.info("Deleting directories...");
-
-				FileUtils.deleteDirectory(new File(conf
-						.getConfigValue(ConfigKeys.DIRECTORY_APPS)));
-				File f = new File(
-						conf.getConfigValue(ConfigKeys.DIRECTORY_APPS));// necessary?
-				f.mkdirs();// necessary?
-				FileUtils.deleteDirectory(new File(conf
-						.getConfigValue(ConfigKeys.DIRECTORY_APPS)));
-				f = new File(conf.getConfigValue(ConfigKeys.DIRECTORY_BYTECODE));// necessary?
-				f.mkdirs();// necessary?
-			}
-
-			if (!conf.getBooleanConfigValue(ConfigKeys.DATABASE_DISABLED)) {
-				LOGGER.info("Checking DB and creating tables if necessary...");
-				DatabaseHelper dbh = new DatabaseHelper(conf);
-				dbh.createDatabaseSchema(); // New DB Layout
-				dbh.populateTables();
-				dbh.getConnection().close();
-				LOGGER.info("DB check successful.");
-			}
-
-			if (!conf.getBooleanConfigValue(ConfigKeys.ANALYSIS_KEEP_FILES)) {
-				// Add a shutdown hook which ensures cleanup if the VM exists.
-				Runtime.getRuntime().addShutdownHook(new Thread() {
-					public void run() {
-						LOGGER.debug("Running ShutdownHook: Deleting directories as -k/--keep was not requested.");
-						File dir = new File(Config.getInstance()
-								.getConfigValue(ConfigKeys.DIRECTORY_APPS,
-										"apps"));
-						FileUtils.deleteQuietly(dir);
-						dir.mkdir();
-						dir = new File(Config.getInstance().getConfigValue(
-								ConfigKeys.DIRECTORY_BYTECODE, "bytecode"));
-						FileUtils.deleteQuietly(dir);
-						dir.mkdir();
-						LOGGER.debug("ShutdownHook finished.");
-					}
-				});
-			}
-
-			// Create GUI?
-			if (Config.getInstance().getBooleanConfigValue(
-					ConfigKeys.ANALYSIS_IS_HEADLESS)) {
-				// no GUI
-				Headless.startAnalysis(apkPath);
-			} else {
-				// yes, I want a GUI
-				// TODO: use apk_path in gui mode!
-				javax.swing.SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						MainWindow m = new MainWindow();
-						m.createAndShowGUI();
-					}
-				});
-			}
-		} catch (SQLException e) {
-			LOGGER.error("Error while creating necessary tables", e);
-			// die if something went wrong with the database setup.
-			throw e;
-		}
-
+		
+		parseOptions(cmdLine);
 	}
 
 	private static void exit() {
@@ -245,6 +276,16 @@ public class Main {
 	 * @param props
 	 */
 	private static void buildOptions() {
+		props = parseVersionProperties();
+		if (props != null) {
+			title = props.getProperty("software.name");
+			// VERSION = props.getProperty("software.version");
+		} else {
+			System.out
+					.println("Could not load commandline properties. Exiting.");
+			exit();
+		}
+		
 		basicOptions.addOption(props.getProperty("options.version.short"),
 				props.getProperty("options.version.long"), false,
 				props.getProperty("options.version.descr"));
@@ -303,7 +344,7 @@ public class Main {
 
 		// option for running as daemon that watches a folder
 		headlessOptions.addOption(props.getProperty("options.daemon.short"),
-				props.getProperty("options.daemon.long"), false,
+				props.getProperty("options.daemon.long"), true,
 				props.getProperty("options.daemon.descr"));
 		// TODO does not work yet
 		// headlessOptions.addOption("sc", false, "do Similarity Check");

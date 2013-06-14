@@ -52,7 +52,7 @@ class SAAFThreadPoolExecutor extends ThreadPoolExecutor {
 		apkCount = apks.size();
 		for (File apk : apks) { // submit jobs
 			try {
-				AnalysisThread aft = new AnalysisThread(apk);
+				AnalysisTask aft = new AnalysisTask(apk);
 				this.submit(aft, aft); // ignore future
 			}
 			catch (AnalysisException e) {
@@ -81,7 +81,7 @@ class SAAFThreadPoolExecutor extends ThreadPoolExecutor {
 		else if (r instanceof FutureTask<?>) {
 			try {
 				@SuppressWarnings("unchecked")
-				AnalysisThread at = ((FutureTask<AnalysisThread>) r).get();
+				AnalysisTask at = ((FutureTask<AnalysisTask>) r).get();
 			   	if (at.hasNonCriticalExceptions()) {
 			   		uncriticalExceptionCount ++;
 			   	}
