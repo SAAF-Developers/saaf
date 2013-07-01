@@ -84,10 +84,11 @@ import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.log4j.Logger;
 
-import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
 import de.rub.syssec.saaf.model.application.ClassInterface;
+import de.rub.syssec.saaf.model.application.CodeLineInterface;
+import de.rub.syssec.saaf.model.application.MethodInterface;
 
 /**
  * Display a file system in a JTree view (extended with lots of SAAF stuff).
@@ -123,6 +124,9 @@ public class FileTree extends JPanel {
 	private final JTextArea lines;
 	private final JScrollPane editorScrollPane;
 
+	private JTree outlineTree;
+	private JSplitPane outerSplitPane;
+
 	private final static StyleContext STYLE_CONTEXT = new StyleContext();
 	/** A cache for already parsed documents */
 	private final static WeakHashMap<String, DefaultStyledDocument> DOCUMENT_MAP = new WeakHashMap<String, DefaultStyledDocument>();
@@ -155,6 +159,25 @@ public class FileTree extends JPanel {
 		}
 	}
 	
+	private class MethodNode {
+		private String methodName;
+		private CodeLineInterface cl;
+
+		public MethodNode(String methodName, CodeLineInterface cl) {
+			this.methodName = methodName;
+			this.cl = cl;
+		}
+
+		// this is shown in the tree
+		public String toString() {
+			return methodName;
+		}
+
+		public int getLine() {
+			return cl.getLineNr();
+		}	
+	}
+	
 	
 	protected FileTree(final ApplicationInterface app, File dir, OpenAnalysis open) {
 		super(new GridLayout(1, 0));
@@ -164,6 +187,44 @@ public class FileTree extends JPanel {
 		JTree tree = new JTree(addNodes(null, dir));
 		
 		jTree = tree;
+		
+		outlineTree = new JTree();
+		outlineTree.addTreeSelectionListener(new TreeSelectionListener() {
+			
+			public void valueChanged(TreeSelectionEvent e) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) e
+						.getPath().getLastPathComponent();
+
+				Object nodeInfo = node.getUserObject();
+				if (node.isLeaf()) {
+					FileNode nodeObject; 
+					try {
+						nodeObject = (FileNode) nodeInfo;
+					}
+					catch (ClassCastException cce) {
+						// No file in this node (empty directory)
+						return;
+					}
+					
+					linkEditorKit.setLastClickedFile(nodeObject.getFile());
+
+					try {
+						// Load text from file
+						DefaultStyledDocument doc = loadDocument(nodeObject.getFile());						
+						editor.setDocument(doc);
+						lines.setText(getNumberedLine());
+						editor.setCaretPosition(0);
+						if (nodeObject.getFile().getName().endsWith("smali")) {
+							smali = nodeObject.getFile();
+						}
+					} catch (Exception e1) {
+						logger.warn("Problem during tree construction", e1);
+					}
+				}
+			}
+		});
+		
+		
 		tree.addMouseListener(ma);
 		setLayout(new BorderLayout());
 		this.app = app;
@@ -203,8 +264,59 @@ public class FileTree extends JPanel {
 						editor.setDocument(doc);
 						lines.setText(getNumberedLine());
 						editor.setCaretPosition(0);
+
+						//TODO: improve updating of the MethodTree and just remove it, if a non smali file is selected (now updating is done via removing and adding of the tree)
+						outerSplitPane.remove(outlineTree);
+
 						if (nodeObject.getFile().getName().endsWith("smali")) {
 							smali = nodeObject.getFile();
+							//root element
+							ClassInterface smaliFile = app.getSmaliClass(smali);
+
+							//children
+							DefaultMutableTreeNode file = new DefaultMutableTreeNode( new MethodNode(smaliFile.getClassName(),smaliFile.getAllCodeLines().getFirst()));
+							for( MethodInterface m : smaliFile.getMethods()){
+								 file.add(new DefaultMutableTreeNode(new MethodNode(m.getName()+" ("+m.getParameterString()+")",m.getCodeLines().getFirst())));
+							}
+							 
+							outlineTree = new JTree(file);
+							outlineTree.addTreeSelectionListener(new TreeSelectionListener() {
+								
+								public void valueChanged(TreeSelectionEvent e) {
+									DefaultMutableTreeNode node = (DefaultMutableTreeNode) e
+											.getPath().getLastPathComponent();
+
+									Object nodeInfo = node.getUserObject();
+									if (node.isLeaf()) {
+										MethodNode nodeObject; 
+										try {
+											nodeObject = (MethodNode) nodeInfo;
+										}
+										catch (ClassCastException cce) {
+											// No file in this node (empty directory)
+											return;
+										}
+
+										try {
+
+											String[] content = editor.getDocument()
+													.getText(0, editor.getDocument().getLength())
+													.split("\n");
+
+
+											int oldCursor = editor.getCaretPosition();
+											editor.setCaretPosition(determinePosition(content, oldCursor, nodeObject.getLine()));
+											
+										} catch (Exception e1) {
+											logger.warn("Problem during tree construction", e1);
+										}
+									}
+								}
+
+							});
+
+							outerSplitPane.setRightComponent(outlineTree);
+							outerSplitPane.setDividerLocation(750);
 						}
 					} catch (Exception e1) {
 						logger.warn("Problem during tree construction", e1);
@@ -309,20 +421,26 @@ public class FileTree extends JPanel {
 		editorScrollPane
 				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		// Add the scroll panes to a split pane.
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		splitPane.setTopComponent(treeScrollPane);
-		// splitPane.setBottomComponent(htmlView);
-		splitPane.setBottomComponent(editorScrollPane);
+		//Add the scroll panes to a split pane.
+		JSplitPane innersplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		innersplitPane.setLeftComponent(treeScrollPane);
+
+		innersplitPane.setRightComponent(editorScrollPane);
 
 		Dimension minimumSize = new Dimension(300, 300);
 		editorScrollPane.setMinimumSize(minimumSize);
 		treeScrollPane.setMinimumSize(minimumSize);
-		splitPane.setDividerLocation(300);
-		splitPane.setPreferredSize(new Dimension(500, 300));
+		innersplitPane.setDividerLocation(300);
+		innersplitPane.setPreferredSize(new Dimension(750, 300));
+		
+		outerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		outerSplitPane.setPreferredSize(new Dimension(800, 300));
+		
+		outerSplitPane.setLeftComponent(innersplitPane);
+		outerSplitPane.setDividerLocation(750);
 
 		// Add the split pane to this panel.
-		add(splitPane);
+		add(outerSplitPane);
 
 		try {
 			editor.setText(FileUtils.readFileToString(new File(directory
@@ -334,6 +452,55 @@ public class FileTree extends JPanel {
 
 	}
 	
+	/**
+	 * return the # of bytes from the begining of the array until line number line
+	 * @param content
+	 * @param line
+	 * @return
+	 */
+	private int byteCount(String[] content, int line) {
+		int c1 = 0;
+		if ( line >= content.length)
+			line = content.length-2;
+
+		for (int i = 0; i < (line); i++) {
+			//line length
+			c1 = c1 + content[i].length();
+			//new line
+			c1 = c1 + 1;
+		}
+		c1++;
+		return c1;
+	}
+	
+	private int determinePosition(String[] content, int oldCursor, int line) {
+		//visible lines on a single page
+		int numVisibleLines = (int)Math.floor(editor.getVisibleRect().getHeight() / editor.getFontMetrics(editor.getFont()).getHeight());
+
+		int numCharsOnFirstPage = 0;
+		
+		for (int i = 0; i < (numVisibleLines); i++) {
+			//length of line
+			numCharsOnFirstPage = numCharsOnFirstPage + content[i].length();
+			//for the new line
+			numCharsOnFirstPage = numCharsOnFirstPage + 1;
+
+		}
+		numCharsOnFirstPage++;
+
+		int c1=0;
+		int c2=0;
+		int n1 = line-1;
+		c1 = byteCount(content, n1);
+
+		n1 = line-1 + numVisibleLines - 1     -1;
+		c2 = byteCount(content, n1);
+
+		if(c1>=oldCursor )
+			return c2+1;
+		else
+			return c1+1;
+	}
 	
 	public DefaultMutableTreeNode searchNode(String nodeStr, String lineNr) {
 		
@@ -356,28 +523,21 @@ public class FileTree extends JPanel {
 				jTree.scrollPathToVisible(path);
 				jTree.setSelectionPath(path);
 				if (lineNr != null) {
-					editor.setCaretPosition(Integer.parseInt(lineNr));
-
 					try {
-						String[] test = editor.getDocument()
+						String[] content = editor.getDocument()
 								.getText(0, editor.getDocument().getLength())
 								.split("\n");
-						int cursorpos = 0;
 
-						for (int i = 0; i < Integer.parseInt(lineNr); i++) {
-							cursorpos = cursorpos + test[i].length();
-							if (test[i].length() == 0) {
-								// cursorpos = cursorpos + 1;
-							}
-						}
-						editor.setCaretPosition(cursorpos
-								+ Integer.parseInt(lineNr));
-					} catch (BadLocationException e1) {
-						logger.warn("Problem searching for node "+nodeStr+" in line "+lineNr, e1);
+						int oldCursor = editor.getCaretPosition();
+						editor.setCaretPosition(determinePosition(content, oldCursor, Integer.parseInt(lineNr)));	
+					} catch (Exception e1) {
+						logger.warn("Problem during tree construction", e1);
 					}
 				}
+
 				return node;
 			}
+	
 		}
 		return null;
 	}
@@ -453,7 +613,6 @@ public class FileTree extends JPanel {
 			Object nodeInfo = node.getUserObject();
 			FileNode node_object = (FileNode) nodeInfo;
 			lastClick = node_object;
-			// Application.lastClick_file = lastClick.getFile();
 
 			smali = node_object.getFile();
 			File myDir = new File(smali.getParent());
@@ -465,8 +624,6 @@ public class FileTree extends JPanel {
 				
 				JMenuItem item = new JMenuItem(MENU_ACTION_CFG);
 				item.addActionListener(menuListener);
-				//this should only be enabled if the executable is there
-				item.setEnabled(Config.getInstance().isValidExecutable(ConfigKeys.EXECUTABLE_DOT));
 				popup.add(item);
 
 				popup.addSeparator();
@@ -596,6 +753,21 @@ public class FileTree extends JPanel {
 		if (doc == null) {
 			doc = new DefaultStyledDocument(STYLE_CONTEXT);
 		}
+		if (file.getName().endsWith(".smali")) {
+			ClassInterface smali = app.getSmaliClass(file.getAbsoluteFile());
+			String cls = "";
+			
+			for(CodeLineInterface cl : smali.getAllCodeLines()){				
+				cls += new String(cl.getLine()) + "\n";
+			}
+
+			doc.insertString(0, cls, null);
+			
+			SmaliTextStyler ts = new SmaliTextStyler();
+			ts.highlightStrings(app, doc, cls);
+
+		} else {
+
 		
 		/*
 		 * TODO: Some files, such as images, cannot properly be displayed.
@@ -604,13 +776,8 @@ public class FileTree extends JPanel {
 		
 		String fileAsString = FileUtils.readFileToString(file); 
 		doc.insertString(0, fileAsString, null);
-
-		// Only style smali files
-		if (file.getName().endsWith(".smali")) {
-			SmaliTextStyler ts = new SmaliTextStyler();
-			ts.highlightStrings(app, doc, fileAsString);
 		}
-		
+
 		return doc;
 	}
 }
