@@ -43,7 +43,7 @@ import de.rub.syssec.saaf.model.application.ApplicationInterface;
  */
 public class STReportGenerator implements ReportGenerator, STErrorListener {
 
-	private String reportNamePattern="Report-<analysis.app.applicationName>-<time>.xml";
+	private String reportNamePattern="Report-<analysis.app.apkFile.Name>-<time>.xml";
 	
 	private String template="report";
 	
