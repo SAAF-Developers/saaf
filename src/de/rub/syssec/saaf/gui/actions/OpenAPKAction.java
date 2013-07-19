@@ -16,6 +16,7 @@
  */
 package de.rub.syssec.saaf.gui.actions;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -39,7 +40,7 @@ import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
  * Open an APK file and show a window.
  * 
  * @author Tilman Bender <tilman.bender@rub.de>
- *
+ * 
  */
 public class OpenAPKAction extends AbstractAction {
 
@@ -48,61 +49,84 @@ public class OpenAPKAction extends AbstractAction {
 	private OpenAppsMgr openAppsMgr;
 	private boolean prompt;
 	private String title;
-	
-	
-	
+
 	/**
 	 * @param openAppsMgr
 	 * @param mainWindow
-	 * @param b 
+	 * @param b
 	 */
-	public OpenAPKAction(String title, OpenAppsMgr openAppsMgr, MainWindow mainWindow, boolean prompt) {
+	public OpenAPKAction(String title, OpenAppsMgr openAppsMgr,
+			MainWindow mainWindow, boolean prompt) {
 		super(title);
-		this.title=title;
+		this.title = title;
 		this.mainWindow = mainWindow;
 		this.openAppsMgr = openAppsMgr;
-		this.prompt=prompt;		
+		this.prompt = prompt;
 	}
 
- 
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		File apk;
-		if(this.prompt)
-		{
+		final ActionEvent event = arg0;
+		final File apk;
+		if (this.prompt) {
 			apk = OpenFileDialog.createOpenFileDialog(mainWindow, "apk");
-		}else
-		{
+		} else {
 			apk = new File(this.title);
 		}
-			
+
 		if (apk != null) {
-					mainWindow.setTitle(Main.title+": " + apk.getName());					
-					new ShowLogAction("foo", mainWindow).actionPerformed(arg0);
+			Thread doit = new Thread() {
+
+				@Override
+				public void run() {
+					mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					mainWindow.setTitle(Main.title + ": " + apk.getName());
+					new ShowLogAction("foo", mainWindow).actionPerformed(event);
 					try {
 						Application app = new Application(apk, true);
 						Config config = Config.getInstance();
 						AnalysisInterface analysis = new Analysis(app);
 						analysis.doPreprocessing();
-						openAppsMgr.addAnalysis(analysis);	
+						openAppsMgr.addAnalysis(analysis);
 						// abort an app w/ the same hash is already opened
 						if (!openAppsMgr.addNewAnalysis(analysis)) {
-							MainWindow.showInfoDialog(
-									"This application is already opened.\nHash="
-											+ app.getMessageDigest(Hash.DEFAULT_DIGEST), "Open Application");
-						} else { 
-							mainWindow.roaList.addOpenedApk(apk.getAbsolutePath());
-							// show the filetree and the manifest as an default operation
-							openAppsMgr.openFrame(analysis, de.rub.syssec.saaf.gui.OpenAnalysis.AppFrame.FILETREE);
+							MainWindow
+									.showInfoDialog(
+											"This application is already opened.\nHash="
+													+ app.getMessageDigest(Hash.DEFAULT_DIGEST),
+											"Open Application");
+						} else {
+							mainWindow.roaList.addOpenedApk(apk
+									.getAbsolutePath());
+							// show the filetree and the manifest as an default
+							// operation
+							openAppsMgr
+									.openFrame(
+											analysis,
+											de.rub.syssec.saaf.gui.OpenAnalysis.AppFrame.FILETREE);
 						}
 					} catch (Exception e1) {
-						MainWindow.showInfoDialog("Could not create app object for file "
-								+ apk.getAbsolutePath()+".\n"+e1.getMessage(),"Problem Opening Application");
+						MainWindow.showInfoDialog(
+								"Could not create app object for file "
+										+ apk.getAbsolutePath() + ".\n"
+										+ e1.getMessage(),
+								"Problem Opening Application");
+					}finally
+					{
+						mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
 					}
 				}
+
+			};
+			doit.start();
+		}
 	}
 
 }

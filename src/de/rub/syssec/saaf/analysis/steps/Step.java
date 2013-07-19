@@ -40,5 +40,7 @@ public interface Step {
 	public abstract boolean isEnabled();
 	
 	public abstract boolean process(AnalysisInterface analysis) throws AnalysisException;
+	
+	public void addProgressListener(ProgressListener p);
 
 }

@@ -130,31 +130,6 @@
 		</junit>
 	</target>
 
-<!--
-	<target name="jar" depends="test, test-db">
-		<mkdir dir="${dist.dir}" />
-		the relative path from the file given in the jarfile attribute 
-		to the elements of the nested classpath must be the same 
-		as you expect them to be when deploying the jar. 
-		<manifestclasspath jarfile="${jar.name}" property="jar.classpath">
-			<classpath refid="SAAF.classpath" />
-		</manifestclasspath>
-		make sure we include the properties files 
-		<copy verbose="true" todir="${build.prod.dir}">
-			<fileset dir="${src.dir}">
-				<include name="**/*.properties" />
-			</fileset>
-		</copy>
-		<jar destfile="${jar.name}" basedir="${build.prod.dir}">
-			<manifest>
-				<attribute name="Class-Path" value="${jar.classpath}" />
-				<attribute name="Main-Class" value="de.rub.syssec.saaf.Main" />
-			</manifest>
-		</jar>
-		<move file="${jar.name}" tofile="${jar.path}" />
-	</target>
--->
-
 	<property name="fjepPath" value="${lib.dir}/package/net.sf.fjep.fatjar_0.0.31/fatjar.jar" />
 	<taskdef name="fatjar.build" classname="net.sf.fjep.anttask.FJBuildTask" classpath="${fjepPath}" loaderref="${fjepPath}" />
 	<typedef name="fatjar.manifest" classname="net.sf.fjep.anttask.FJManifestType" classpath="${fjepPath}" loaderref="${fjepPath}" />
@@ -206,67 +181,12 @@
 		</jar>
 	</target>
 
-	<!--
-	<target name="zip" depends="fat-jar" description="packages the release">
-		<zip destfile="${zip.path}">
-			<zipfileset dir="${basedir}" prefix="${release}">
-				<include name="jad*static" />
-				<include name="README.txt" />
-			</zipfileset>
-			<zipfileset dir="${script.dir}" prefix="${release}/scripts">
-				<include name="*.sh" />
-			</zipfileset>
-			<zipfileset dir="${conf.dir}" prefix="${release}/conf">
-				<include name="*.properties" />
-				<include name="*.xml" />
-			</zipfileset>
-			<zipfileset dir="doc-manually" prefix="${release}/doc" />
-			<zipfileset dir="lib" prefix="${release}/lib">
-				<exclude name="*-javadoc*" />
-				<exclude name="*-source*" />
-				<exclude name="*package/" />
-				<exclude name="*test/" />
-			</zipfileset>
-			<zipfileset dir="templates" prefix="${release}/templates" />
-			<zipfileset dir="dist" includes="${jar.name}" prefix="${release}/" />
-			<zipfileset dir="svgs" prefix="${release}/svgs" />
-		</zip>
-	</target>
--->
 	<target name="create-timestamp" description="just a pseudo task to create a snapshot name">
 		<tstamp />
 		<property name="snapshot.name" value="${release}-${DSTAMP}-${TSTAMP}" />
 		<property name="snapshot.archive.name" value="${snapshot.name}.tar.gz" />
 		<property name="snapshot.archive.path" value="${dist.dir}/${snapshot.archive.name}"/>
 	</target>
-	<!-- Create a zip file and include date and time in the name 
-	<target name="snapshot-zip" depends="fat-jar,create-timestamp" description="tags the release zip with a timestamp">
-		<zip destfile="${dist.dir}/${snapshot.name}.zip">
-			<zipfileset dir="${basedir}" prefix="${snapshot.name}">
-				<include name="jad*static" />
-				<include name="README.txt" />
-			</zipfileset>
-			<zipfileset dir="${script.dir}" prefix="${snapshot.name}/scripts">
-				<include name="run*.sh" />
-			</zipfileset>
-			<zipfileset dir="${conf.dir}" prefix="${snapshot.name}/conf">
-				<include name="log4j.properties" />
-				<include name="*.xml" />
-				<include name="**/*.xsd"/>
-			</zipfileset>
-			<zipfileset dir="doc-manually" prefix="${snapshot.name}/doc" />
-			<zipfileset dir="lib" prefix="${snapshot.name}/lib">
-				<exclude name="*-javadoc*" />
-				<exclude name="*-source*" />
-				<exclude name="*package/" />
-				<exclude name="*test/" />
-			</zipfileset>
-			<zipfileset dir="templates" prefix="${snapshot.name}/templates" />
-			<zipfileset dir="dist" includes="${jar.name}" prefix="${snapshot.name}/" />
-			<zipfileset dir="svgs" prefix="${snapshot.name}/cfgs" />
-		</zip>
-	</target>
--->	
 	<target name="prepare-conf" description="prepares the configuration for the release">
 		<copy todir="${dist.dir}/conf">
 			<fileset dir="${conf.dir}">

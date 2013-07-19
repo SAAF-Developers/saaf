@@ -16,6 +16,8 @@
  */
 package de.rub.syssec.saaf.analysis.steps;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.apache.log4j.Logger;
 
 import de.rub.syssec.saaf.misc.config.Config;
@@ -36,6 +38,7 @@ public abstract class AbstractStep implements Step {
 	protected Config config;
 	protected boolean enabled;
 	protected Logger logger = Logger.getLogger(getClass());
+	protected CopyOnWriteArrayList<ProgressListener> listeners;
 
 	@Override
 	public void setName(String name) {
@@ -106,12 +109,63 @@ public abstract class AbstractStep implements Step {
 		boolean success = true;
 		if (this.enabled) {
 			if (doBefore(analysis)) {
+				notifyStarted();
 				success = doProcessing(analysis);
 				doAfter(analysis);
+				notifyFinsihed();
 			}
 			
 		}
 		return success;
+	}
+
+	protected void notifyFinsihed() {
+		if(this.listeners==null){this.listeners = new CopyOnWriteArrayList<ProgressListener>();}
+		for( ProgressListener listener : listeners)
+		{
+			listener.finished();
+		}		
+	}
+
+	protected void notifyStarted() {
+		if(this.listeners==null){this.listeners = new CopyOnWriteArrayList<ProgressListener>();}
+		for( ProgressListener listener : listeners)
+		{
+			listener.started();
+		}
+	}
+	
+	protected void notifyCanceled()
+	{
+		if(this.listeners==null){this.listeners = new CopyOnWriteArrayList<ProgressListener>();}
+		for( ProgressListener listener : listeners)
+		{
+			listener.canceled();
+		}
+	}
+	
+	protected void notifyProgress(int progress)
+	{
+		if(this.listeners==null){this.listeners = new CopyOnWriteArrayList<ProgressListener>();}
+		for( ProgressListener listener : listeners)
+		{
+			listener.setProgress(progress);
+		}
+	}
+	
+	protected void notifyProgress(String message) {
+		if(this.listeners==null){this.listeners = new CopyOnWriteArrayList<ProgressListener>();}
+		for( ProgressListener listener : listeners)
+		{
+			listener.setProgress(message);
+		}
+	}
+	
+
+	@Override
+	public void addProgressListener(ProgressListener p) {
+		if(this.listeners==null){this.listeners = new CopyOnWriteArrayList<ProgressListener>();}
+		this.listeners.add(p);		
 	}
 
 	/**

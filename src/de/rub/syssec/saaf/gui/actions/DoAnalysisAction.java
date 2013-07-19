@@ -28,7 +28,7 @@ import de.rub.syssec.saaf.gui.MainWindow;
 
 /**
  * @author Tilman Bender <tilman.bender@rub.de>
- *
+ * 
  */
 public class DoAnalysisAction extends AbstractAction {
 
@@ -37,32 +37,46 @@ public class DoAnalysisAction extends AbstractAction {
 	 */
 	private static final long serialVersionUID = -1410257192594360380L;
 	private MainWindow mainWindow;
-	private static final Logger LOGGER = Logger.getLogger(DoAnalysisAction.class);
-	
+	private static final Logger LOGGER = Logger
+			.getLogger(DoAnalysisAction.class);
+
 	public DoAnalysisAction(String title, MainWindow mainWindow) {
 		super(title);
-		this.mainWindow=mainWindow;
+		this.mainWindow = mainWindow;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Analysis selectedAnalysis = mainWindow.getUserselectedAnalysisIfMultipleAreOpened();
-		if (selectedAnalysis == null) {
-			JOptionPane.showMessageDialog(mainWindow,
-					"Please open an application first.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		try {
-			selectedAnalysis.doAnalysis();
-			selectedAnalysis.doGenerateReport();
-		} catch (Exception e1) {
-			LOGGER.error("An error occured while running the analysis.", e1);
-			MainWindow.showErrorDialog("Analysis failed, see the log for more info", "Error");
-		}
+		final Analysis selectedAnalysis = mainWindow
+				.getUserselectedAnalysisIfMultipleAreOpened();
+		Thread doit = new Thread() {
+
+			public void run() {
+				if (selectedAnalysis == null) {
+					JOptionPane.showMessageDialog(mainWindow,
+							"Please open an application first.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				try {
+					selectedAnalysis.doAnalysis();
+					selectedAnalysis.doGenerateReport();
+				} catch (Exception e1) {
+					LOGGER.error(
+							"An error occured while running the analysis.", e1);
+					MainWindow.showErrorDialog(
+							"Analysis failed, see the log for more info",
+							"Error");
+				}
+			}
+		};
+		doit.start();
 	}
 
 }

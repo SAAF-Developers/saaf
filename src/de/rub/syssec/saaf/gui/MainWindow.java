@@ -255,7 +255,7 @@ public class MainWindow extends JFrame implements ActionListener {
 		// menuItem.addActionListener(this);
 		miscMenu.add(menuItem);
 
-		menuItem = new JMenuItem(new DecompileToJavaAction("Decompile to Java",
+		menuItem = new JMenuItem(new DecompileToJavaAction("Decompile to Java",this,
 				openAppsMgr));
 		miscMenu.add(menuItem);
 		

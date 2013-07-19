@@ -19,6 +19,7 @@ package de.rub.syssec.saaf.analysis.steps;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.rub.syssec.saaf.application.SmaliClass;
 import de.rub.syssec.saaf.db.datasources.DataSourceException;

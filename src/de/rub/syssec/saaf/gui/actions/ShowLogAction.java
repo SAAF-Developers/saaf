@@ -56,6 +56,9 @@ public class ShowLogAction extends AbstractAction {
 			} else {
 				logframe = new LogFrame(); // make a new one
 				MainWindow.getDesktopPane().add(logframe);
+				int height = logframe.getHeight();
+				int width =  mainWindow.getDesktopPane().getWidth(); 
+				logframe.setBounds(0, mainWindow.getDesktopPane().getHeight()-height-30,width,height);
 				logframe.setVisible(true); // show it
 			}
 		}

@@ -73,6 +73,9 @@ public class OpenAnalysis {
 				// Bytecode von apk anzeigen
 				iFrame = new InternalFrameStub("FileTree - Bytecode - "+ analysis.getApp().getApplicationName());
 				MainWindow.getDesktopPane().add(iFrame);
+				int height = MainWindow.getDesktopPane().getHeight() - iFrame.getPreferredSize().height;
+				int width = MainWindow.getDesktopPane().getWidth();
+				iFrame.setBounds(0, 0, width ,height );
 				iFrame.addInternalFrameListener(new InternalFrameListener(){
 					public void internalFrameClosing(InternalFrameEvent e){
 						apps.closeAnalysis(getAnalysis());
@@ -115,18 +118,9 @@ public class OpenAnalysis {
 					}
 				});
 				tree = new FileTree(analysis.getApp(), analysis.getApp().getUnpackedDataDir(), this);
-				
 				// Add content to the window.
-				//TODO: rename to getByteCodeDir()
 				iFrame.add(tree);
 				iFrame.pack();
-				/* HL: following lines are useless and destroy the layout
-				// TODO: Delete this lines if no longer needed.
-				// TODO: This was the last use of ManifestParser, isn't it? Perhaps remote the class? 
-				// Now show the manifest as default opened file in a window
-				XmlTree manifest = ManifestParser.parse(app);
-				iFrame.add(manifest);
-				*/
 				break;
 				
 			case SMALI_SEARCH:

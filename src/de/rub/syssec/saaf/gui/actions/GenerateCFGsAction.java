@@ -16,11 +16,13 @@
  */
 package de.rub.syssec.saaf.gui.actions;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.util.LinkedList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
+import javax.swing.ProgressMonitor;
 
 import de.rub.syssec.saaf.analysis.steps.cfg.CfgBuilder;
 import de.rub.syssec.saaf.analysis.steps.hash.Hash;
@@ -33,7 +35,7 @@ import de.rub.syssec.saaf.model.application.MethodInterface;
 
 /**
  * @author Tilman Bender <tilman.bender@rub.de>
- *
+ * 
  */
 public class GenerateCFGsAction extends AbstractAction {
 
@@ -45,48 +47,78 @@ public class GenerateCFGsAction extends AbstractAction {
 
 	public GenerateCFGsAction(String title, MainWindow mainWindow) {
 		super(title);
-		this.mainWindow=mainWindow;
-		this.enabled = Config.getInstance().isValidExecutable(ConfigKeys.EXECUTABLE_DOT);
-		if(this.enabled)
-		{
-			this.putValue(SHORT_DESCRIPTION, "Generates control flow grapsh for all methods.");
-		}else{
-			this.putValue(SHORT_DESCRIPTION, "The dot executable is not available.");
+		this.mainWindow = mainWindow;
+		this.enabled = Config.getInstance().isValidExecutable(
+				ConfigKeys.EXECUTABLE_DOT);
+		if (this.enabled) {
+			this.putValue(SHORT_DESCRIPTION,
+					"Generates control flow grapsh for all methods.");
+		} else {
+			this.putValue(SHORT_DESCRIPTION,
+					"The dot executable is not available.");
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		AnalysisInterface selectedAnalysis = mainWindow.getUserselectedAnalysisIfMultipleAreOpened();
+		final AnalysisInterface selectedAnalysis = mainWindow
+				.getUserselectedAnalysisIfMultipleAreOpened();
 		if (selectedAnalysis == null) {
 			JOptionPane.showMessageDialog(mainWindow,
 					"Please open an application first.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		int answer = JOptionPane.showConfirmDialog(null,
-                "This might take a while and can consume\n" +
-                "several hundred megabytes of disk space.\n" +
-                "depending on the application size.\n" +
-                "\nAre you sure?",
-                "Generate all Control Flow Graphs", 
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
+		final int answer = JOptionPane.showConfirmDialog(null,
+				"This might take a while and can consume\n"
+						+ "several hundred megabytes of disk space.\n"
+						+ "depending on the application size.\n"
+						+ "\nAre you sure?",
+				"Generate all Control Flow Graphs", JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE);
 		if (answer == JOptionPane.YES_OPTION) {
-			LinkedList<ClassInterface> files = selectedAnalysis.getApp()
-					.getAllSmaliClasss(true);
-			for (ClassInterface file : files) {// every file of the current apk
-				LinkedList<MethodInterface> methods = file.getMethods();
-				for (MethodInterface method : methods) {// every method in the
-														// file
-					CfgBuilder.generateDotAndCfg(file, method, true, null,
-							selectedAnalysis.getApp().getApplicationName() + "_"
-									+ selectedAnalysis.getApp().getMessageDigest(Hash.DEFAULT_DIGEST));
+			Thread doit = new Thread() {
+
+				public void run() {
+					mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					LinkedList<ClassInterface> files = selectedAnalysis
+							.getApp().getAllSmaliClasss(true);
+					int processed = 0;
+					ProgressMonitor monitor = new ProgressMonitor(mainWindow, "Generating Graphs..", "Generating graphs for all methods in all classes", processed, files.size());
+					for (ClassInterface file : files) {// every file of the
+														// current apk
+						monitor.setNote("Generating graphs for methods of class "+file);
+						LinkedList<MethodInterface> methods = file.getMethods();
+						for (MethodInterface method : methods) {// every method
+																// in the
+																// file
+							CfgBuilder
+									.generateDotAndCfg(
+											file,
+											method,
+											true,
+											null,
+											selectedAnalysis.getApp()
+													.getApplicationName()
+													+ "_"
+													+ selectedAnalysis
+															.getApp()
+															.getMessageDigest(
+																	Hash.DEFAULT_DIGEST));
+						}
+						processed++;
+						monitor.setProgress(processed);
+					}
+					mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				}
-			}
+			};
+			doit.start();
 		}
 	}
 

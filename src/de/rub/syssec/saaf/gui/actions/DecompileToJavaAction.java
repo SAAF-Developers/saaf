@@ -16,11 +16,14 @@
  */
 package de.rub.syssec.saaf.gui.actions;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.ProgressMonitor;
 
+import de.rub.syssec.saaf.analysis.steps.ProgressListener;
 import de.rub.syssec.saaf.analysis.steps.decompile.DecompileToJavaStep;
 import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.gui.OpenAppsMgr;
@@ -33,52 +36,112 @@ import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
  * Triggers the decompilation of the complete application.
  * 
  * @author Tilman Bender <tilman.bender@rub.de>
- *
+ * 
  */
 public class DecompileToJavaAction extends AbstractAction {
 
-	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4240488138238632093L;
 	private OpenAppsMgr appsManager;
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		DecompileToJavaStep decompile= new DecompileToJavaStep(Config.getInstance(), true);
-		List<AnalysisInterface> analyses = appsManager.getAllAnalyses();
-		for(AnalysisInterface analysis : analyses)
-		{
-			try {
-				decompile.doProcessing(analysis);
-			} catch (AnalysisException e) {
-				e.printStackTrace();
-				MainWindow.showErrorDialog("An error occured during decompilation of "+analysis.getApp().getApplicationName(), "Decompilation Error");
-			}
-		}
-		
-
-	}
+	private final MainWindow mainwindow;
 
 	/**
 	 * @param appsManager
 	 * @param mainWindow
 	 */
-	public DecompileToJavaAction(String title,OpenAppsMgr appsManager) {
+	public DecompileToJavaAction(String title, MainWindow mainwindow,
+			OpenAppsMgr appsManager) {
 		super(title);
+		this.mainwindow = mainwindow;
 		this.appsManager = appsManager;
-		//this action is only enabled if the java decompiler is usable
-		this.enabled = Config.getInstance().isValidExecutable(ConfigKeys.EXECUTABLE_JAD);
-		if(this.enabled)
-		{
-			this.putValue(SHORT_DESCRIPTION, "Decompile apk to java source code");
-		}else{
+		// this action is only enabled if the java decompiler is usable
+		this.enabled = Config.getInstance().isValidExecutable(
+				ConfigKeys.EXECUTABLE_JAD);
+		if (this.enabled) {
+			this.putValue(SHORT_DESCRIPTION,
+					"Decompile apk to java source code");
+		} else {
 			this.putValue(SHORT_DESCRIPTION, "No decompiler available");
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		Thread doit = new Thread() {
+			public void run() {
+
+				mainwindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				DecompileToJavaStep decompile = new DecompileToJavaStep(
+						Config.getInstance(), true);
+				
+
+				List<AnalysisInterface> analyses = appsManager.getAllAnalyses();
+				for (AnalysisInterface analysis : analyses) {
+					final int numberOfClasses = analysis.getApp()
+							.getAllClassFiles(true).size();
+					final ProgressMonitor monitor = new ProgressMonitor(mainwindow,
+							"Decompiling to Java ...", "Decompiling "
+									+ analysis.getApp().getApplicationName(),
+							0, numberOfClasses);
+					
+					decompile.addProgressListener(new ProgressListener() {
+						
+						@Override
+						public void started() {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void setProgress(String note) {
+							monitor.setNote(note);
+							
+						}
+						
+						@Override
+						public void setProgress(int progress) {
+							monitor.setProgress(progress);
+							
+						}
+						
+						@Override
+						public void finished() {
+							monitor.setProgress(numberOfClasses);
+							
+						}
+						
+						@Override
+						public void canceled() {
+							// TODO Auto-generated method stub
+							
+						}
+					});
+					try {
+						decompile.process(analysis);
+					} catch (AnalysisException e) {
+						e.printStackTrace();
+						MainWindow.showErrorDialog(
+								"An error occured during decompilation of "
+										+ analysis.getApp()
+												.getApplicationName(),
+								"Decompilation Error");
+					}finally{
+						mainwindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+					}
+				}
+			}
+		};
+		doit.start();
+
 	}
 
 }

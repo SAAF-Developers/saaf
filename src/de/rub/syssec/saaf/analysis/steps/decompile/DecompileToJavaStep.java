@@ -92,6 +92,7 @@ public class DecompileToJavaStep extends AbstractStep {
 
 			String jadPath = config.getConfigValue(ConfigKeys.EXECUTABLE_JAD);
 			File toDecompile = null;
+			int decompiled =0;
 			for (int i = 0; i < files.size(); i++) {
 				try {
 
@@ -107,6 +108,10 @@ public class DecompileToJavaStep extends AbstractStep {
 
 					p.waitFor();
 					toDecompile.delete();
+					decompiled++;
+					
+					notifyProgress("Decompiled "+toDecompile.getName());
+					notifyProgress(decompiled);
 					// System.out.println(System.getProperty("user.dir") +
 					// File.separator + "jad -sjava -ff -o -lnc " +
 					// files.get(i));
