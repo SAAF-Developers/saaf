@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.rub.syssec.saaf.analysis.MockAnalysis;
 import de.rub.syssec.saaf.analysis.steps.heuristic.HPattern;
 import de.rub.syssec.saaf.analysis.steps.heuristic.HResult;
 import de.rub.syssec.saaf.application.MockApplication;
@@ -30,7 +31,6 @@ import de.rub.syssec.saaf.db.dao.mysql.MySQLHPatternDAO;
 import de.rub.syssec.saaf.db.dao.mysql.MySQLHResultDAO;
 import de.rub.syssec.saaf.db.dao.mysql.MySQLMethodDAO;
 import de.rub.syssec.saaf.db.dao.mysql.MySQLPackageDAO;
-import de.rub.syssec.saaf.logicTier.MockAnalysis;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.model.analysis.HPatternInterface;
 import de.rub.syssec.saaf.model.analysis.HResultInterface;

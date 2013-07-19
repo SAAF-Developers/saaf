@@ -103,4 +103,21 @@ public interface AnalysisInterface extends Entity {
 	public abstract void doCleanUp() throws AnalysisException;
 
 	public abstract void doGenerateReport() throws AnalysisException;
+
+	/**
+	 * Add an exception that does not require an immediate stop of the analysis.
+	 * 
+	 * This method does not stop the analysis but merely records the exception in a list
+	 * that can later be accessed (e.g. for generating the report)
+	 * @param e
+	 */
+	public void addNonCriticalException(Exception e);
+	/**
+	 * Add an exception that will cause immediate stop of the analysis.
+	 * 
+	 * This method does not stop the analysis but merely records the exception in a list
+	 * that can later be accessed (e.g. for generating the report)
+	 * @param e
+	 */
+	public void addCriticalException(Exception e);
 }

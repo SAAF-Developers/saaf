@@ -11,13 +11,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.rub.syssec.saaf.analysis.MockAnalysis;
 import de.rub.syssec.saaf.application.MockApplication;
 import de.rub.syssec.saaf.db.DatabaseHelper;
 import de.rub.syssec.saaf.db.dao.exceptions.DAOException;
 import de.rub.syssec.saaf.db.dao.exceptions.NoSuchEntityException;
 import de.rub.syssec.saaf.db.dao.mysql.MySQLAnalysisDAO;
 import de.rub.syssec.saaf.db.dao.mysql.MySQLApplicaitonDAO;
-import de.rub.syssec.saaf.logicTier.MockAnalysis;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
 

@@ -61,7 +61,10 @@ public class ParseMetaDataStep extends AbstractStep {
 					success=true;
 				}
 			} catch (ManifestParserException e) {
-				throw new AnalysisException(e);
+				analysis.addNonCriticalException(e);
+				logger.warn("An Exception occured while parsing the Mainfest",e);
+				//let us not halt the whole process just because the manifest is not available
+				success=true;
 			}
 
 		}

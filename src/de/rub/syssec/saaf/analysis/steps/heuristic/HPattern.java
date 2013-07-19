@@ -77,7 +77,7 @@ public class HPattern implements Comparable<HPatternInterface>, Entity, HPattern
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.HPatternInterface#getPattern()
+	 * @see de.rub.syssec.saaf.analysis.HPatternInterface#getPattern()
 	 */
 	@Override
 	public String getPattern() {
@@ -85,7 +85,7 @@ public class HPattern implements Comparable<HPatternInterface>, Entity, HPattern
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.HPatternInterface#getDescription()
+	 * @see de.rub.syssec.saaf.analysis.HPatternInterface#getDescription()
 	 */
 	@Override
 	public String getDescription() {
@@ -93,7 +93,7 @@ public class HPattern implements Comparable<HPatternInterface>, Entity, HPattern
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.HPatternInterface#getHvalue()
+	 * @see de.rub.syssec.saaf.analysis.HPatternInterface#getHvalue()
 	 */
 	@Override
 	public int getHvalue() {
@@ -101,7 +101,7 @@ public class HPattern implements Comparable<HPatternInterface>, Entity, HPattern
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.HPatternInterface#getSearchin()
+	 * @see de.rub.syssec.saaf.analysis.HPatternInterface#getSearchin()
 	 */
 	@Override
 	public PatternType getSearchin() {
@@ -128,7 +128,7 @@ public class HPattern implements Comparable<HPatternInterface>, Entity, HPattern
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.HPatternInterface#setPattern(java.lang.String)
+	 * @see de.rub.syssec.saaf.analysis.HPatternInterface#setPattern(java.lang.String)
 	 */
 	@Override
 	public void setPattern(String pattern) {
@@ -137,7 +137,7 @@ public class HPattern implements Comparable<HPatternInterface>, Entity, HPattern
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.HPatternInterface#setDescription(java.lang.String)
+	 * @see de.rub.syssec.saaf.analysis.HPatternInterface#setDescription(java.lang.String)
 	 */
 	@Override
 	public void setDescription(String description) {
@@ -146,7 +146,7 @@ public class HPattern implements Comparable<HPatternInterface>, Entity, HPattern
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.HPatternInterface#setHvalue(int)
+	 * @see de.rub.syssec.saaf.analysis.HPatternInterface#setHvalue(int)
 	 */
 	@Override
 	public void setHvalue(int hvalue) {
@@ -155,7 +155,7 @@ public class HPattern implements Comparable<HPatternInterface>, Entity, HPattern
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.HPatternInterface#setSearchin(de.rub.syssec.saaf.heuristic.PatternType)
+	 * @see de.rub.syssec.saaf.analysis.HPatternInterface#setSearchin(de.rub.syssec.saaf.heuristic.PatternType)
 	 */
 	@Override
 	public void setSearchin(PatternType searchin) {

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.rub.syssec.saaf.logicTier;
+package de.rub.syssec.saaf.analysis.steps.slicing;
 
 import de.rub.syssec.saaf.model.analysis.BTPatternInterface;
 

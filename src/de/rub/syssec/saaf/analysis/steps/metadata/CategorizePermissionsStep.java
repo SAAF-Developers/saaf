@@ -54,6 +54,13 @@ public class CategorizePermissionsStep extends AbstractStep {
 		this.enabled=enabled;
 	}
 
+	
+	@Override
+	protected boolean doBefore(AnalysisInterface analysis)
+			throws AnalysisException {
+		boolean fine = super.doBefore(analysis);
+		return fine &&  analysis.getApp().getManifest() != null;
+	}
 
 
 	@Override

@@ -233,31 +233,34 @@ public class Heuristic {
 	private LinkedList<HResultInterface> checkManifest(AnalysisInterface ana,
 			LinkedList<HPatternInterface> pattern) {
 		LinkedList<HResultInterface> hResults = new LinkedList<HResultInterface>();
-		ManifestInterface man = ana.getApp().getManifest();
-
-		for (HPatternInterface hPat : pattern) {
-			boolean patternMatched = true;
-			String[] permissions = hPat.getPattern().split("\\s+");
-			for (int z = 0; z < permissions.length; z++) {
-				if (permissions[z].trim().equals("noActivity")) {
-					patternMatched &= man.hasNoActivities();
-				} else if (permissions[z].trim().equals("priorityBR")) {
-					patternMatched &= man.hasPriorityBR();
-				} else {
-					patternMatched &= man.hasPermission("android."
-							+ permissions[z].trim());
+		ManifestInterface manifest = ana.getApp().getManifest();
+		if (manifest != null) {
+			for (HPatternInterface hPat : pattern) {
+				boolean patternMatched = true;
+				String[] patterns = hPat.getPattern().split("\\s+");
+				for (int z = 0; z < patterns.length; z++) {
+					if (patterns[z].trim().equals("noActivity")) {
+						patternMatched &= manifest.hasNoActivities();
+					} else if (patterns[z].trim().equals("priorityBR")) {
+						patternMatched &= manifest.hasPriorityBR();
+					} else {
+						patternMatched &= manifest.hasPermission("android."
+								+ patterns[z].trim());
+					}
+					if (!patternMatched) {
+						/*
+						 * b/c all checks are ANDed with patternMatched we can
+						 * bail out if it is false at any time
+						 */
+						break;
+					}
 				}
-				if (!patternMatched) {
-					/*
-					 * b/c all checks are ANDed with patternMatched we
-					 * can bail out if it is false at any time
-					 */
-					break; 
+				if (patternMatched) {
+					hResults.add(new HResult(ana, hPat));
 				}
 			}
-			if (patternMatched) {
-				hResults.add(new HResult(ana, hPat));
-			}
+		}else{
+			LOGGER.warn("Could not find a Manifest. Skipping manifest patterns.");
 		}
 		return hResults;
 	}
