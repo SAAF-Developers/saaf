@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.rub.syssec.saaf.analysis.MockAnalysis;
 import de.rub.syssec.saaf.application.MockApplication;
 import de.rub.syssec.saaf.application.manifest.permissions.Permission;
 import de.rub.syssec.saaf.application.manifest.permissions.PermissionRequest;
@@ -23,7 +24,6 @@ import de.rub.syssec.saaf.db.dao.mysql.MySQLAnalysisDAO;
 import de.rub.syssec.saaf.db.dao.mysql.MySQLApplicaitonDAO;
 import de.rub.syssec.saaf.db.dao.mysql.MySQLPermissionDAO;
 import de.rub.syssec.saaf.db.dao.mysql.MySQLPermissionRequestDAO;
-import de.rub.syssec.saaf.logicTier.MockAnalysis;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.model.application.PermissionInterface;
 import de.rub.syssec.saaf.model.application.manifest.PermissionRequestInterface;

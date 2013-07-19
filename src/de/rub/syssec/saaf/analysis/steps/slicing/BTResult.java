@@ -64,7 +64,7 @@ public class BTResult implements BTResultInterface {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.BTResultInterface#getAnalysis()
+	 * @see de.rub.syssec.saaf.analysis.BTResultInterface#getAnalysis()
 	 */
 	@Override
 	public AnalysisInterface getAnalysis() {
@@ -72,7 +72,7 @@ public class BTResult implements BTResultInterface {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.BTResultInterface#getPattern()
+	 * @see de.rub.syssec.saaf.analysis.BTResultInterface#getPattern()
 	 */
 	@Override
 	public BTPatternInterface getPattern() {
@@ -80,7 +80,7 @@ public class BTResult implements BTResultInterface {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.BTResultInterface#getFile()
+	 * @see de.rub.syssec.saaf.analysis.BTResultInterface#getFile()
 	 */
 	@Override
 	public ClassInterface getFile() {
@@ -88,7 +88,7 @@ public class BTResult implements BTResultInterface {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.BTResultInterface#getCodeline()
+	 * @see de.rub.syssec.saaf.analysis.BTResultInterface#getCodeline()
 	 */
 	@Override
 	public CodeLineInterface getCodeline() {
@@ -96,21 +96,21 @@ public class BTResult implements BTResultInterface {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.BTResultInterface#getConstant()
+	 * @see de.rub.syssec.saaf.analysis.BTResultInterface#getConstant()
 	 */
 	@Override
 	public ConstantInterface getConstant() {
 		return constant;
 	}
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.BTResultInterface#getArgument()
+	 * @see de.rub.syssec.saaf.analysis.BTResultInterface#getArgument()
 	 */
 	@Override
 	public int getArgument() {
 		return argument;
 	}
 	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.logicTier.BTResultInterface#getCl()
+	 * @see de.rub.syssec.saaf.analysis.BTResultInterface#getCl()
 	 */
 	@Override
 	public CodeLineInterface getCl() {

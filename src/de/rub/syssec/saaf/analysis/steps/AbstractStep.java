@@ -27,7 +27,7 @@ import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
  * 
  * 
  * @author Tilman Bender <tilman.bender@rub.de>
- *
+ * 
  */
 public abstract class AbstractStep implements Step {
 
@@ -35,11 +35,11 @@ public abstract class AbstractStep implements Step {
 	protected String description = "I do nothing";
 	protected Config config;
 	protected boolean enabled;
-	protected Logger logger=Logger.getLogger(getClass());
+	protected Logger logger = Logger.getLogger(getClass());
 
 	@Override
 	public void setName(String name) {
-		this.name=name;
+		this.name = name;
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public abstract class AbstractStep implements Step {
 
 	@Override
 	public void setDescription(String description) {
-		this.description = description;	
+		this.description = description;
 	}
 
 	@Override
@@ -65,7 +65,8 @@ public abstract class AbstractStep implements Step {
 	}
 
 	/**
-	 * @param config the config to set
+	 * @param config
+	 *            the config to set
 	 */
 	public void setConfig(Config config) {
 		this.config = config;
@@ -81,28 +82,34 @@ public abstract class AbstractStep implements Step {
 		return this.enabled;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "[name=" + name + ", description=" + description
-				+ ", enabled=" + enabled + "]";
+		return "[name=" + name + ", description=" + description + ", enabled="
+				+ enabled + "]";
 	}
-	
-	
-	
-	/* (non-Javadoc)
-	 * @see de.rub.syssec.saaf.analysis.steps.analysis.AnalysisStep#process(de.rub.syssec.saaf.model.analysis.AnalysisInterface)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.rub.syssec.saaf.analysis.steps.analysis.AnalysisStep#process(de.rub
+	 * .syssec.saaf.model.analysis.AnalysisInterface)
 	 */
 	@Override
-	public final boolean process(AnalysisInterface analysis) throws AnalysisException {
+	public final boolean process(AnalysisInterface analysis)
+			throws AnalysisException {
 		boolean success = true;
-		if(this.enabled)
-		{
-			doBefore(analysis);
-			success = doProcessing(analysis);
-			doAfter(analysis);
+		if (this.enabled) {
+			if (doBefore(analysis)) {
+				success = doProcessing(analysis);
+				doAfter(analysis);
+			}
+			
 		}
 		return success;
 	}
@@ -112,8 +119,9 @@ public abstract class AbstractStep implements Step {
 	 * 
 	 * @return true if the processing of further steps should proceed
 	 */
-	protected abstract boolean doProcessing(AnalysisInterface analysis)throws AnalysisException;
-	
+	protected abstract boolean doProcessing(AnalysisInterface analysis)
+			throws AnalysisException;
+
 	/**
 	 * A hook that can be implemented by subclasses to do things before main
 	 * processing.
@@ -121,10 +129,12 @@ public abstract class AbstractStep implements Step {
 	 * @param analysis
 	 * @return true if the doProcessing method should be processed
 	 */
-	protected boolean doBefore(AnalysisInterface analysis)throws AnalysisException{
-		logger.debug("Start Analysis Step: "+this.name);
+	protected boolean doBefore(AnalysisInterface analysis)
+			throws AnalysisException {
+		logger.debug("Start Analysis Step: " + this.name);
 		return true;
 	}
+
 	/**
 	 * A hook that can be implemented by subclasses to do things before main
 	 * processing.
@@ -132,8 +142,9 @@ public abstract class AbstractStep implements Step {
 	 * @param analysis
 	 * @return if the processing of further steps should proceed
 	 */
-	protected boolean doAfter(AnalysisInterface analysis) throws AnalysisException{
-		logger.debug("Stop Analysis Step: "+this.name);
+	protected boolean doAfter(AnalysisInterface analysis)
+			throws AnalysisException {
+		logger.debug("Stop Analysis Step: " + this.name);
 		return true;
 	}
 

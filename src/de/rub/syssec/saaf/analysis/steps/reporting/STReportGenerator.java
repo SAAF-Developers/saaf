@@ -76,7 +76,7 @@ public class STReportGenerator implements ReportGenerator, STErrorListener {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * reporting.ReportGenerator#generateReport(de.rub.syssec.saaf.logicTier.HResult)
+	 * reporting.ReportGenerator#generateReport(de.rub.syssec.saaf.analysis.HResult)
 	 */
 	@Override
 	public File generateReport(AnalysisInterface analysis) throws ReportingException {

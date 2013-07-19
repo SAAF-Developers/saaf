@@ -40,8 +40,8 @@ import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
 /**
  * Class to quickly check an APK against certain things.
  * <p>
- * Two examples would be the search for invocations of certain methods
- * and whether some String can be found in the smali files.
+ * Two examples would be the search for invocations of certain methods and
+ * whether some String can be found in the smali files.
  * </p>
  * 
  * TODO: This class needs a lot of love.
@@ -51,8 +51,10 @@ import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
  * 
  */
 public class Heuristic {
-	private static final boolean DEBUG=Boolean.parseBoolean(System.getProperty("debug.heuristic","false"));
-	private static final String DEBUG_FILE=System.getProperty("debug.heuristic.file","perf.log.bak");
+	private static final boolean DEBUG = Boolean.parseBoolean(System
+			.getProperty("debug.heuristic", "false"));
+	private static final String DEBUG_FILE = System.getProperty(
+			"debug.heuristic.file", "perf.log.bak");
 	private static final Logger LOGGER = Logger.getLogger(Heuristic.class);
 	private List<HPatternInterface> patterns;
 
@@ -63,7 +65,8 @@ public class Heuristic {
 	/**
 	 * Check the APK against all set patterns.
 	 * 
-	 * @param ana the analysis holding representing the APK
+	 * @param ana
+	 *            the analysis holding representing the APK
 	 * @return the results
 	 */
 	public LinkedList<HResultInterface> check(AnalysisInterface ana) {
@@ -83,7 +86,7 @@ public class Heuristic {
 		LinkedList<HPatternInterface> patchedCodePattern = new LinkedList<HPatternInterface>();
 
 		for (HPatternInterface pattern : patterns) {
-			if(pattern.isActive()) {
+			if (pattern.isActive()) {
 				switch (pattern.getSearchin()) {
 				case MANIFEST:
 					manifestPattern.add(pattern);
@@ -109,14 +112,14 @@ public class Heuristic {
 			}
 		}
 
-		Date d1=new Date(System.currentTimeMillis());
-		Date d2=d1;
-		Date d3=d1;
-		Date d4=d1; 
-		Date d5=d1; 
-		Date d6=d1; 
-		Date d7=d1; 
-		Date d8=d1;
+		Date d1 = new Date(System.currentTimeMillis());
+		Date d2 = d1;
+		Date d3 = d1;
+		Date d4 = d1;
+		Date d5 = d1;
+		Date d6 = d1;
+		Date d7 = d1;
+		Date d8 = d1;
 		Config conf = Config.getInstance();
 		// check for MANIFEST-Pattern
 		if (DEBUG)
@@ -156,16 +159,16 @@ public class Heuristic {
 		if (DEBUG)
 			d5 = Calendar.getInstance().getTime();
 		if (conf.getBooleanConfigValue(ConfigKeys.HEURISTIC_PATTERN_SUPERCLASS)) {
-			LOGGER.debug("Start HeuristicSearch for " + superclassPattern.size()
-					+ " SUPERCLASS-Pattern.");
+			LOGGER.debug("Start HeuristicSearch for "
+					+ superclassPattern.size() + " SUPERCLASS-Pattern.");
 			hResults.addAll(checkInheritance(ana, superclassPattern));
 		}
-		
+
 		if (DEBUG)
 			d6 = Calendar.getInstance().getTime();
 		if (conf.getBooleanConfigValue(ConfigKeys.HEURISTIC_SEARCH_PATCHED_CODE)) {
-			LOGGER.debug("Start HeuristicSearch for " + patchedCodePattern.size()
-					+ " PATCHED_CODE-Pattern.");
+			LOGGER.debug("Start HeuristicSearch for "
+					+ patchedCodePattern.size() + " PATCHED_CODE-Pattern.");
 			hResults.addAll(searchPatchedCode(ana, patchedCodePattern));
 		}
 
@@ -190,7 +193,7 @@ public class Heuristic {
 			LOGGER.debug(ana.getApp().getApplicationName()
 					+ " METHOD_MOD-Pattern time:  " + diffTime(d4, d5));
 			LOGGER.debug(ana.getApp().getApplicationName()
-					+ " SUPERCLASS-Pattern time:  " + diffTime(d5, d6));			
+					+ " SUPERCLASS-Pattern time:  " + diffTime(d5, d6));
 			LOGGER.debug(ana.getApp().getApplicationName()
 					+ " PATCHED_CODE-Pattern time:  " + diffTime(d6, d7));
 			LOGGER.debug(ana.getApp().getApplicationName()
@@ -199,65 +202,70 @@ public class Heuristic {
 					+ " Total time:               " + diffTime(d1, d8));
 		}
 
-//		if (DEBUG) {
-//			// Achtung es hängt sehr von der Reihenfolge der Aufrufe ab
-//			// WENN checkINVOKE nach checkSMALI aufgerufen wird, braucht es im
-//			// Schnitt nur 1 ms ansonsten 30ms
-//			// TODO: Test mit größerem Sample und mehr INVOKE Pattern
-//			String name = "INV";
-//			Writer fw = null;
-//			try {
-//				fw = new FileWriter(DEBUG_FILE, true);
-//				fw.write("Performance: \t " + name + "\t" + d1.toString()
-//						+ "\t" + (d2.getTime() - d1.getTime()) + "\t"
-//						+ (d3.getTime() - d2.getTime()) + "\t"
-//						+ (d4.getTime() - d3.getTime()) + "\t"
-//						+ (d5.getTime() - d4.getTime()) + "\t"
-//						+ (d5.getTime() - d1.getTime()) + "\n");
-//			} catch (IOException e) {
-//				LOGGER.info("Could not create file.");
-//			} finally {
-//				if (fw != null)	try { fw.close(); } catch (IOException ignore) { }
-//			}
-//		}
+		// if (DEBUG) {
+		// // Achtung es hängt sehr von der Reihenfolge der Aufrufe ab
+		// // WENN checkINVOKE nach checkSMALI aufgerufen wird, braucht es im
+		// // Schnitt nur 1 ms ansonsten 30ms
+		// // TODO: Test mit größerem Sample und mehr INVOKE Pattern
+		// String name = "INV";
+		// Writer fw = null;
+		// try {
+		// fw = new FileWriter(DEBUG_FILE, true);
+		// fw.write("Performance: \t " + name + "\t" + d1.toString()
+		// + "\t" + (d2.getTime() - d1.getTime()) + "\t"
+		// + (d3.getTime() - d2.getTime()) + "\t"
+		// + (d4.getTime() - d3.getTime()) + "\t"
+		// + (d5.getTime() - d4.getTime()) + "\t"
+		// + (d5.getTime() - d1.getTime()) + "\n");
+		// } catch (IOException e) {
+		// LOGGER.info("Could not create file.");
+		// } finally {
+		// if (fw != null) try { fw.close(); } catch (IOException ignore) { }
+		// }
+		// }
 		return hResults;
 	}
 
 	/**
 	 * Checks an APK against all patterns related to the Manifest file.
 	 * 
-	 * @param ana the analysis representing the APK
-	 * @param pattern the pattern
+	 * @param ana
+	 *            the analysis representing the APK
+	 * @param pattern
+	 *            the pattern
 	 * @return all found results
 	 */
 	private LinkedList<HResultInterface> checkManifest(AnalysisInterface ana,
 			LinkedList<HPatternInterface> pattern) {
 		LinkedList<HResultInterface> hResults = new LinkedList<HResultInterface>();
-		ManifestInterface man = ana.getApp().getManifest();
-
-		for (HPatternInterface hPat : pattern) {
-			boolean patternMatched = true;
-			String[] permissions = hPat.getPattern().split("\\s+");
-			for (int z = 0; z < permissions.length; z++) {
-				if (permissions[z].trim().equals("noActivity")) {
-					patternMatched &= man.hasNoActivities();
-				} else if (permissions[z].trim().equals("priorityBR")) {
-					patternMatched &= man.hasPriorityBR();
-				} else {
-					patternMatched &= man.hasPermission("android."
-							+ permissions[z].trim());
+		ManifestInterface manifest = ana.getApp().getManifest();
+		if (manifest != null) {
+			for (HPatternInterface hPat : pattern) {
+				boolean patternMatched = true;
+				String[] patterns = hPat.getPattern().split("\\s+");
+				for (int z = 0; z < patterns.length; z++) {
+					if (patterns[z].trim().equals("noActivity")) {
+						patternMatched &= manifest.hasNoActivities();
+					} else if (patterns[z].trim().equals("priorityBR")) {
+						patternMatched &= manifest.hasPriorityBR();
+					} else {
+						patternMatched &= manifest.hasPermission("android."
+								+ patterns[z].trim());
+					}
+					if (!patternMatched) {
+						/*
+						 * b/c all checks are ANDed with patternMatched we can
+						 * bail out if it is false at any time
+						 */
+						break;
+					}
 				}
-				if (!patternMatched) {
-					/*
-					 * b/c all checks are ANDed with patternMatched we
-					 * can bail out if it is false at any time
-					 */
-					break; 
+				if (patternMatched) {
+					hResults.add(new HResult(ana, hPat));
 				}
 			}
-			if (patternMatched) {
-				hResults.add(new HResult(ana, hPat));
-			}
+		}else{
+			LOGGER.warn("Could not find a Manifest. Skipping manifest patterns.");
 		}
 		return hResults;
 	}
@@ -265,8 +273,10 @@ public class Heuristic {
 	/**
 	 * Checks an APK against all patterns related to invoke opcodes.
 	 * 
-	 * @param ana the analysis representing the APK
-	 * @param pattern the pattern
+	 * @param ana
+	 *            the analysis representing the APK
+	 * @param pattern
+	 *            the pattern
 	 * @return all found results
 	 */
 	private LinkedList<HResultInterface> checkInvoke(AnalysisInterface ana,
@@ -281,15 +291,18 @@ public class Heuristic {
 	/**
 	 * Checks an APK against all patterns related to smali bytecode.
 	 * 
-	 * @param ana the analysis representing the APK
-	 * @param pattern the pattern
+	 * @param ana
+	 *            the analysis representing the APK
+	 * @param pattern
+	 *            the pattern
 	 * @return all found results
 	 */
 	private LinkedList<HResult> checkSmali(AnalysisInterface ana,
 			LinkedList<HPatternInterface> pattern) {
 		LinkedList<HResult> hResults = new LinkedList<HResult>();
 		LinkedList<ClassInterface> appFiles = ana.getApp().getAllSmaliClasss(
-				Config.getInstance().getBooleanConfigValue(ConfigKeys.ANALYSIS_INCLUDE_AD_FRAMEWORKS));
+				Config.getInstance().getBooleanConfigValue(
+						ConfigKeys.ANALYSIS_INCLUDE_AD_FRAMEWORKS));
 		for (ClassInterface sf : appFiles) {
 			LinkedList<CodeLineInterface> codeLines = sf.getAllCodeLines();
 			for (CodeLineInterface cl : codeLines) {
@@ -301,47 +314,54 @@ public class Heuristic {
 		}
 		return hResults;
 	}
-	
+
 	/**
-	 * Search for methods which contain dead code. This might be an
-	 * indicator for a patched program as the compiler would normally not
-	 * generate such code. See {@link BasicBlockInterface.hasDeadCode()}
-	 * and {@link MethodInterface.hasUnlinkedBBs()} for more information
-	 * about this.
-	 * @param ana the analysis representing the APK
-	 * @param pattern pattern the pattern
+	 * Search for methods which contain dead code. This might be an indicator
+	 * for a patched program as the compiler would normally not generate such
+	 * code. See {@link BasicBlockInterface.hasDeadCode()} and {@link
+	 * MethodInterface.hasUnlinkedBBs()} for more information about this.
+	 * 
+	 * @param ana
+	 *            the analysis representing the APK
+	 * @param pattern
+	 *            pattern the pattern
 	 * @return all found results
 	 */
 	private LinkedList<HResult> searchPatchedCode(AnalysisInterface ana,
 			LinkedList<HPatternInterface> pattern) {
 		LinkedList<HResult> hResults = new LinkedList<HResult>();
 		LinkedList<ClassInterface> appFiles = ana.getApp().getAllSmaliClasss(
-				Config.getInstance().getBooleanConfigValue(ConfigKeys.ANALYSIS_INCLUDE_AD_FRAMEWORKS));
+				Config.getInstance().getBooleanConfigValue(
+						ConfigKeys.ANALYSIS_INCLUDE_AD_FRAMEWORKS));
 		for (ClassInterface sf : appFiles) {
 			for (MethodInterface method : sf.getMethods()) {
 				if (method.isProbablyPatched()) {
 					for (HPatternInterface hPat : pattern) {
-						hResults.add(new HResult(ana, hPat, method.getCodeLines().getFirst()));
+						hResults.add(new HResult(ana, hPat, method
+								.getCodeLines().getFirst()));
 					}
 				}
 			}
 		}
 		return hResults;
 	}
-	
+
 	/**
-	 * Searches for a pattern in all method declarations.
-	 * Used, eg, to search for 'native' methods.
+	 * Searches for a pattern in all method declarations. Used, eg, to search
+	 * for 'native' methods.
 	 * 
-	 * @param ana ana the analysis representing the APK
-	 * @param pattern pattern the pattern
+	 * @param ana
+	 *            ana the analysis representing the APK
+	 * @param pattern
+	 *            pattern the pattern
 	 * @return all found results
 	 */
-	private LinkedList<HResultInterface> checkMethodDeclaration(AnalysisInterface ana,
-			LinkedList<HPatternInterface> pattern) {
+	private LinkedList<HResultInterface> checkMethodDeclaration(
+			AnalysisInterface ana, LinkedList<HPatternInterface> pattern) {
 		LinkedList<HResultInterface> hResults = new LinkedList<HResultInterface>();
 		LinkedList<ClassInterface> appFiles = ana.getApp().getAllSmaliClasss(
-				Config.getInstance().getBooleanConfigValue(ConfigKeys.ANALYSIS_INCLUDE_AD_FRAMEWORKS));
+				Config.getInstance().getBooleanConfigValue(
+						ConfigKeys.ANALYSIS_INCLUDE_AD_FRAMEWORKS));
 		for (ClassInterface sf : appFiles) {
 			for (HPatternInterface hPat : pattern) {
 				for (MethodInterface m : sf.getEmptyMethods()) {
@@ -357,11 +377,13 @@ public class Heuristic {
 	}
 
 	/**
-	 * This method checks against pattern which check whether
-	 * some method is invoked in the APK or not.
+	 * This method checks against pattern which check whether some method is
+	 * invoked in the APK or not.
 	 * 
-	 * @param ana the analysis representing the APK
-	 * @param pattern pattern the pattern
+	 * @param ana
+	 *            the analysis representing the APK
+	 * @param pattern
+	 *            pattern the pattern
 	 * @return all found results
 	 */
 	private LinkedList<HResultInterface> findInvokePattern(
@@ -369,7 +391,8 @@ public class Heuristic {
 		LinkedList<HResultInterface> hResults = new LinkedList<HResultInterface>();
 		// Where to search
 		LinkedList<ClassInterface> appFiles = ana.getApp().getAllSmaliClasss(
-				Config.getInstance().getBooleanConfigValue(ConfigKeys.ANALYSIS_INCLUDE_AD_FRAMEWORKS));
+				Config.getInstance().getBooleanConfigValue(
+						ConfigKeys.ANALYSIS_INCLUDE_AD_FRAMEWORKS));
 		// What to search
 		if (pattern.getSearchin() == PatternType.INVOKE) {
 			byte[][] cm = new byte[2][];
@@ -401,15 +424,19 @@ public class Heuristic {
 	 * Search for all classes which extend some given other class (the
 	 * superclass).
 	 * 
-	 * @param ana the analysis representing the APK
-	 * @param pattern pattern the pattern
+	 * @param ana
+	 *            the analysis representing the APK
+	 * @param pattern
+	 *            pattern the pattern
 	 * @return all found results
 	 */
 	private LinkedList<HResultInterface> checkInheritance(
 			AnalysisInterface analysis, LinkedList<HPatternInterface> pattern) {
 		LinkedList<HResultInterface> hResults = new LinkedList<HResultInterface>();
 		LinkedList<ClassInterface> appFiles = analysis.getApp()
-				.getAllSmaliClasss(Config.getInstance().getBooleanConfigValue(ConfigKeys.ANALYSIS_INCLUDE_AD_FRAMEWORKS));
+				.getAllSmaliClasss(
+						Config.getInstance().getBooleanConfigValue(
+								ConfigKeys.ANALYSIS_INCLUDE_AD_FRAMEWORKS));
 
 		for (HPatternInterface p : pattern) {
 			String superClass = p.getPattern(); // search for this super class
@@ -417,28 +444,28 @@ public class Heuristic {
 				if (superClass.equalsIgnoreCase(sf.getSuperClass())) {
 					// use the first codeline as it refers to the class which
 					// extends the superclass in question
-					hResults.add(new HResult(analysis, p, sf
-							.getAllCodeLines().getFirst()));
+					hResults.add(new HResult(analysis, p, sf.getAllCodeLines()
+							.getFirst()));
 				}
 			}
 		}
 		return hResults;
 
 	}
-	
+
 	/**
-	 * TODO: Heuristic values are currently set to 0.
-	 * This method will therefore also only return 0.
+	 * TODO: Heuristic values are currently set to 0. This method will therefore
+	 * also only return 0.
 	 * 
 	 * @param hResults
 	 * @return
 	 */
 	private int sumHValue(LinkedList<HResultInterface> hResults) {
-//		int x = 0;
-//		for (HResultInterface hResult : hResults) {
-//			x += hResult.getPattern().getHvalue();
-//		}
-//		return x;
+		// int x = 0;
+		// for (HResultInterface hResult : hResults) {
+		// x += hResult.getPattern().getHvalue();
+		// }
+		// return x;
 		return 0;
 	}
 

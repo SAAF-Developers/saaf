@@ -244,7 +244,7 @@ public class Analysis implements AnalysisInterface {
 	private void handleCaughtException(Exception e) {
 		LOGGER.error("Analysis for " + app.getApplicationName() + " failed!", e);
 		status = Status.FAILED;
-		criticalExceptions.add(new SAAFException(e.getMessage(), e, this));
+		this.addCriticalException(e);
 	}
 
 	/**
@@ -511,5 +511,16 @@ public class Analysis implements AnalysisInterface {
 	public void setReportFile(File report)
 	{
 		this.reportFile=report;
+	}
+
+	@Override
+	public void addNonCriticalException(Exception e) {
+		nonCriticalExceptions.add(new SAAFException(e.getMessage(), e, this));		
+
+	}
+
+	@Override
+	public void addCriticalException(Exception e) {
+		criticalExceptions.add(new SAAFException(e.getMessage(), e, this));		
 	}
 }

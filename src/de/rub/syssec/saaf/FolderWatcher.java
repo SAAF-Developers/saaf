@@ -14,7 +14,6 @@ import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.log4j.Logger;
 
-import de.rub.syssec.saaf.analysis.Analysis;
 import de.rub.syssec.saaf.application.Application;
 import de.rub.syssec.saaf.model.analysis.AnalysisException;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.rub.syssec.saaf.logicTier;
+package de.rub.syssec.saaf.analysis;
 
 import java.io.File;
 import java.util.Date;
@@ -206,6 +206,18 @@ public class MockAnalysis implements AnalysisInterface {
 	}
 
 	public void doGenerateReport() throws AnalysisException {
+	}
+
+	@Override
+	public void addNonCriticalException(Exception e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addCriticalException(Exception e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

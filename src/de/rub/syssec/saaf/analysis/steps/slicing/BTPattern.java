@@ -51,7 +51,7 @@ public class BTPattern implements Comparable<BTPattern>, BTPatternInterface {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.rub.syssec.saaf.logicTier.BTPatternInterface#getQualifiedClassName()
+	 * @see de.rub.syssec.saaf.analysis.BTPatternInterface#getQualifiedClassName()
 	 */
 	@Override
 	public String getQualifiedClassName() {
@@ -61,7 +61,7 @@ public class BTPattern implements Comparable<BTPattern>, BTPatternInterface {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.rub.syssec.saaf.logicTier.BTPatternInterface#getMethodName()
+	 * @see de.rub.syssec.saaf.analysis.BTPatternInterface#getMethodName()
 	 */
 	@Override
 	public String getMethodName() {
@@ -71,7 +71,7 @@ public class BTPattern implements Comparable<BTPattern>, BTPatternInterface {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.rub.syssec.saaf.logicTier.BTPatternInterface#getDescription()
+	 * @see de.rub.syssec.saaf.analysis.BTPatternInterface#getDescription()
 	 */
 	@Override
 	public String getDescription() {
@@ -148,7 +148,7 @@ public class BTPattern implements Comparable<BTPattern>, BTPatternInterface {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.rub.syssec.saaf.logicTier.BTPatternInterface#getArgumentsTypes()
+	 * @see de.rub.syssec.saaf.analysis.BTPatternInterface#getArgumentsTypes()
 	 */
 	@Override
 	public byte[] getArgumentsTypes() {
@@ -160,7 +160,7 @@ public class BTPattern implements Comparable<BTPattern>, BTPatternInterface {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.rub.syssec.saaf.logicTier.BTPatternInterface#getParameterOfInterest()
+	 * @see de.rub.syssec.saaf.analysis.BTPatternInterface#getParameterOfInterest()
 	 */
 	@Override
 	public int getParameterOfInterest() {
@@ -214,7 +214,7 @@ public class BTPattern implements Comparable<BTPattern>, BTPatternInterface {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.rub.syssec.saaf.logicTier.BTPatternInterface#setQualifiedClassName(java
+	 * de.rub.syssec.saaf.analysis.BTPatternInterface#setQualifiedClassName(java
 	 * .lang.String)
 	 */
 	@Override
@@ -227,7 +227,7 @@ public class BTPattern implements Comparable<BTPattern>, BTPatternInterface {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.rub.syssec.saaf.logicTier.BTPatternInterface#setMethodName(java.lang.String
+	 * de.rub.syssec.saaf.analysis.BTPatternInterface#setMethodName(java.lang.String
 	 * )
 	 */
 	@Override
@@ -240,7 +240,7 @@ public class BTPattern implements Comparable<BTPattern>, BTPatternInterface {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.rub.syssec.saaf.logicTier.BTPatternInterface#setDescription(java.lang.String
+	 * de.rub.syssec.saaf.analysis.BTPatternInterface#setDescription(java.lang.String
 	 * )
 	 */
 	@Override
@@ -253,7 +253,7 @@ public class BTPattern implements Comparable<BTPattern>, BTPatternInterface {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.rub.syssec.saaf.logicTier.BTPatternInterface#setParameterSpecification(
+	 * de.rub.syssec.saaf.analysis.BTPatternInterface#setParameterSpecification(
 	 * java.lang.String)
 	 */
 	@Override
@@ -266,7 +266,7 @@ public class BTPattern implements Comparable<BTPattern>, BTPatternInterface {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.rub.syssec.saaf.logicTier.BTPatternInterface#setParameterOfInterest(int)
+	 * de.rub.syssec.saaf.analysis.BTPatternInterface#setParameterOfInterest(int)
 	 */
 	@Override
 	public void setParameterOfInterest(int parameterOfInterest) {
