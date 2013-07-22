@@ -755,16 +755,18 @@ public class FileTree extends JPanel {
 		}
 		if (file.getName().endsWith(".smali")) {
 			ClassInterface smali = app.getSmaliClass(file.getAbsoluteFile());
-			String cls = "";
+			StringBuilder builder = new StringBuilder();
+			String separator = System.getProperty("line.separator");
 			
-			for(CodeLineInterface cl : smali.getAllCodeLines()){				
-				cls += new String(cl.getLine()) + "\n";
+			for(CodeLineInterface cl : smali.getAllCodeLines()){
+				builder.append(new String(cl.getLine()));
+				builder.append(separator);
 			}
-
-			doc.insertString(0, cls, null);
+			
+			doc.insertString(0, builder.toString(), null);
 			
 			SmaliTextStyler ts = new SmaliTextStyler();
-			ts.highlightStrings(app, doc, cls);
+			ts.highlightStrings(app, doc, builder.toString());
 
 		} else {
 
