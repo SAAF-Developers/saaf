@@ -39,6 +39,7 @@ import de.rub.syssec.saaf.application.manifest.components.Receiver;
 import de.rub.syssec.saaf.application.manifest.components.Service;
 import de.rub.syssec.saaf.application.manifest.permissions.Permission;
 import de.rub.syssec.saaf.application.manifest.permissions.PermissionRequest;
+import de.rub.syssec.saaf.model.application.manifest.DuplicateEntryPointException;
 import de.rub.syssec.saaf.model.application.manifest.IntentFilterInterface;
 import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
 import de.rub.syssec.saaf.model.application.manifest.PermissionRequestInterface;
@@ -193,7 +194,13 @@ public class DOMManifestParser implements ManifestParser {
 
 				// look for intent-filters and add them
 				parseIntentFilters(activityNode, activity);
-
+				if (activity.isEntryPoint()) {
+					try {
+						stats.setDefaultActivity(activity);
+					} catch (DuplicateEntryPointException e) {
+						LOGGER.warn("The manifest defines a second entry point for the application");
+					}
+				}
 				stats.addActivity(activity);
 				LOGGER.debug("Found activity: " + activity);
 			}
@@ -234,6 +241,9 @@ public class DOMManifestParser implements ManifestParser {
 				}
 			}
 			parseFilterActions(filterNode, filter);
+			if (filter.hasAction("android.intent.action.MAIN")) {
+				component.setEntryPoint(true);
+			}
 			component.addIntentFilter(filter);
 		}
 	}

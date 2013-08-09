@@ -22,7 +22,7 @@ import java.util.LinkedList;
 
 import de.rub.syssec.saaf.model.Entity;
 
-public interface ClassInterface extends Entity {
+public interface ClassInterface extends Entity, Obfuscatable {
 
 	public enum SearchType {
 		INSTRUCTIONS_ONLY,

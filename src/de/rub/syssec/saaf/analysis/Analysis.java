@@ -27,6 +27,7 @@ import java.util.NoSuchElementException;
 import org.apache.log4j.Logger;
 
 import de.rub.syssec.saaf.analysis.steps.CheckSimilartiyStep;
+import de.rub.syssec.saaf.analysis.steps.DetectObfuscationStep;
 import de.rub.syssec.saaf.analysis.steps.ParseSmaliStep;
 import de.rub.syssec.saaf.analysis.steps.SetupFileSystemStep;
 import de.rub.syssec.saaf.analysis.steps.SetupLoggingStep;
@@ -276,6 +277,7 @@ public class Analysis implements AnalysisInterface {
 		List<Step> analysisSteps = new LinkedList<Step>();
 		analysisSteps.add(new TrashOldAnalysisStep(config, manager
 				.getAnalysisManager(), config.getBooleanConfigValue(ConfigKeys.ANALYSIS_KEEP_ONLY_ONE)));
+		analysisSteps.add(new DetectObfuscationStep(config, true));
 		analysisSteps.add(new CategorizePermissionsStep(config, true));
 		analysisSteps.add(new HeuristicSearchStep(config, manager
 				.gethPatternManager().readAll(), config.getBooleanConfigValue(ConfigKeys.ANALYSIS_DO_HEURISTIC)));

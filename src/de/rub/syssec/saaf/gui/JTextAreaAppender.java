@@ -17,6 +17,7 @@
 package de.rub.syssec.saaf.gui;
 
 import javax.swing.JTextArea;
+import javax.swing.text.DefaultCaret;
 
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
@@ -27,11 +28,13 @@ public class JTextAreaAppender extends AppenderSkeleton  {
 	
 	public JTextAreaAppender (JTextArea area){
 		textArea = area;
+		DefaultCaret c = (DefaultCaret) textArea.getCaret();
+		c.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 	}
 
 	protected void append(LoggingEvent arg0) {
 		textArea.append(arg0.getMessage().toString()+"\n");
-		textArea.setCaretPosition(textArea.getText().length() - 1);
+		//textArea.setCaretPosition(textArea.getText().length() - 1);
 	}
 
 

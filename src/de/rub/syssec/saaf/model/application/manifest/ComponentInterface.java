@@ -22,4 +22,8 @@ public interface ComponentInterface {
 
 	public abstract void setName(String name);
 
+	public abstract void setEntryPoint(boolean b);
+
+	public abstract boolean isEntryPoint();
+
 }

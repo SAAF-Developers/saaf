@@ -265,6 +265,7 @@ public class DatabaseHelper {
 						+ "source VARCHAR(127),"
 						+ "extends VARCHAR(127),"
 						+ "implements text,"
+						+ "entropy DOUBLE,"
 						+ "FOREIGN KEY(id_packages) REFERENCES packages(id) ON UPDATE CASCADE ON DELETE CASCADE,"
 						+ "UNIQUE KEY packge_sha1_fuzzy_name (id_packages,hash_fuzzy,name)"
 						+ ") ENGINE = INNODB;");
@@ -291,6 +292,7 @@ public class DatabaseHelper {
 						+ "parameters VARCHAR(255),"
 						+ "return_value VARCHAR(255),"
 						+ "path_to_cfg text,"
+						+ "entropy DOUBLE,"
 						+ "FOREIGN KEY(id_classes) REFERENCES classes(id) ON UPDATE CASCADE ON DELETE CASCADE,"
 						+ "UNIQUE KEY class_name_params (id_classes,name,parameters,return_value)"
 						+ ") ENGINE = INNODB;");

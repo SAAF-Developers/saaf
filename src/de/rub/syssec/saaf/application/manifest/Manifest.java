@@ -25,6 +25,7 @@ import java.util.Set;
 import de.rub.syssec.saaf.application.manifest.permissions.Permission;
 import de.rub.syssec.saaf.application.manifest.permissions.PermissionRequest;
 import de.rub.syssec.saaf.model.application.manifest.ActivityInterface;
+import de.rub.syssec.saaf.model.application.manifest.DuplicateEntryPointException;
 import de.rub.syssec.saaf.model.application.manifest.IntentFilterInterface;
 import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
 import de.rub.syssec.saaf.model.application.manifest.PermissionRequestInterface;
@@ -55,6 +56,8 @@ public class Manifest implements ManifestInterface {
 	private String appLabel;
 	private String appLabelResolved; // Does not Contain any more @string/...
 	private boolean appDebuggable = false; // True or False
+
+	private ActivityInterface defaultActivity;
 
 	public Manifest(File analyzedPath) {
 		super();
@@ -394,5 +397,20 @@ public class Manifest implements ManifestInterface {
 	@Override
 	public void setAppDebuggable(boolean appDebuggable) {
 		this.appDebuggable = appDebuggable;
+	}
+	
+	@Override
+	public ActivityInterface getDefaultActivity() {
+		return defaultActivity;
+	}
+
+	@Override
+	public void setDefaultActivity(ActivityInterface activity)throws DuplicateEntryPointException {
+		if (this.defaultActivity == null) {
+			this.defaultActivity = activity;
+		} else {
+			throw new DuplicateEntryPointException("Entrypoint already defined: "+this.defaultActivity.getName());
+		}
+
 	}
 }

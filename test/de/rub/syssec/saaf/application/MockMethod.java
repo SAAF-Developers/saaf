@@ -262,4 +262,32 @@ public class MockMethod implements MethodInterface {
 		return hasUnlinkedBBs();
 	}
 
+
+	@Override
+	public void setObfuscated(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public boolean isObfuscated() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public void setEntropy(double entropy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public double getEntropy() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

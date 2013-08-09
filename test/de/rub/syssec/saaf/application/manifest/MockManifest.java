@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.rub.syssec.saaf.model.application.manifest.ActivityInterface;
+import de.rub.syssec.saaf.model.application.manifest.DuplicateEntryPointException;
 import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
 import de.rub.syssec.saaf.model.application.manifest.PermissionRequestInterface;
 import de.rub.syssec.saaf.model.application.manifest.ReceiverInterface;
@@ -305,6 +306,19 @@ public class MockManifest implements ManifestInterface {
 	public void setAppDebuggable(boolean b) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public ActivityInterface getDefaultActivity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setDefaultActivity(ActivityInterface activity)
+			throws DuplicateEntryPointException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -82,6 +82,8 @@ public class SmaliClass implements ClassInterface {
 	
 	private boolean inAdFramework=false;
 	private boolean changed;
+	private boolean obfuscated;
+	private double entropy;
 	
 	/**
 	 * The parsed SMALI file.
@@ -522,5 +524,30 @@ public class SmaliClass implements ClassInterface {
 	
 	public String toString(){
 		return getClassName();
+	}
+
+
+
+	@Override
+	public void setObfuscated(boolean b) {
+		this.obfuscated = b;
+	}
+
+
+
+	@Override
+	public boolean isObfuscated() {
+		return this.obfuscated;
+	}
+	
+	@Override
+	public void setEntropy(double entropy) {
+		this.entropy=entropy;
+	}
+
+
+	@Override
+	public double getEntropy() {
+		return this.entropy;
 	}
 }

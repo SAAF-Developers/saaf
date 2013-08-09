@@ -42,6 +42,10 @@ public class Field implements FieldInterface {
 	private int arrayDimension = 0;
 	
 	private String fieldName = null;
+
+	private boolean obfuscated;
+
+	private double entropy;
 	
 	private static final Logger LOGGER = Logger.getLogger(Field.class);
 	
@@ -161,5 +165,29 @@ public class Field implements FieldInterface {
 	@Override
 	public CodeLineInterface getCodeLine() {
 		return cl;
+	}
+
+
+	@Override
+	public void setObfuscated(boolean b) {
+		this.obfuscated=b;
+	}
+
+
+	@Override
+	public boolean isObfuscated() {
+		return this.obfuscated;
+	}
+
+
+	@Override
+	public void setEntropy(double entropy) {
+		this.entropy=entropy;
+	}
+
+
+	@Override
+	public double getEntropy() {
+		return this.entropy;
 	}
 }

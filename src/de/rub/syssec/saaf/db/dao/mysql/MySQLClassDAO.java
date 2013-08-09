@@ -44,6 +44,7 @@ public class MySQLClassDAO implements NuClassDAO {
 	private static final String DB_COLUMN_EXTENDS = "extends";
 	private static final String DB_COLUMN_IMPLEMENTS = "implements";
 	private static final String DB_COLUMN_PACKAGES = "id_packages";
+	private static final String DB_COLUMN_ENTROPY = "entropy";
 	
 	private static final String DB_QUERY_INSERT = "INSERT INTO classes " +
 			"("+
@@ -53,8 +54,9 @@ public class MySQLClassDAO implements NuClassDAO {
 			DB_COLUMN_NAME+", "+
 			DB_COLUMN_SOURCE+", "+
 			DB_COLUMN_EXTENDS+", "+
-			DB_COLUMN_IMPLEMENTS+
-			")VALUES(?,?,?,?,?,?,?)";
+			DB_COLUMN_IMPLEMENTS+", "+
+			DB_COLUMN_ENTROPY+
+			")VALUES(?,?,?,?,?,?,?,?)";
 	
 	
 	private static final String DB_QUERY_UPDATE = "UPDATE classes SET "+
@@ -64,7 +66,8 @@ public class MySQLClassDAO implements NuClassDAO {
 			DB_COLUMN_NAME+"=?, "+
 			DB_COLUMN_SOURCE+"=?, "+
 			DB_COLUMN_EXTENDS+"=?, "+
-			DB_COLUMN_IMPLEMENTS+"=? WHERE "+
+			DB_COLUMN_IMPLEMENTS+"=?, "+
+			DB_COLUMN_ENTROPY+"=? WHERE "+
 			DB_COLUMN_ID+"=?";
 	
 	private static final String DB_QUERY_DELETE = "DELETE FROM classes WHERE "+DB_COLUMN_ID+"=?";
@@ -126,6 +129,8 @@ public class MySQLClassDAO implements NuClassDAO {
 			}else{
 				statement.setNull(++index, Types.VARCHAR);
 			}
+			
+			statement.setDouble(++index, entity.getEntropy());
 
 			statement.executeUpdate();
 			ResultSet rs = statement.getGeneratedKeys();
@@ -194,6 +199,8 @@ public class MySQLClassDAO implements NuClassDAO {
 			}else{
 				update.setNull(++index, Types.VARCHAR);
 			}
+			
+			update.setDouble(++index, entity.getEntropy());
 			update.setInt(++index, entity.getId());
 			recordsUpdated = update.executeUpdate();
 			// this should affect at most one record

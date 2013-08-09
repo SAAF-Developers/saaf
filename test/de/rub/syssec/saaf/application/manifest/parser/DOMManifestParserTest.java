@@ -185,5 +185,22 @@ public class DOMManifestParserTest {
 		ManifestInterface manifest = parser.parse(testfile);
 		assertEquals("Application.isDebuggable was not set correctly","TestApp",manifest.getAppLabel());
 	}
+	@Test
+	public void testMainActivity() throws Exception{
+		setupTestFile("TestActivityManifest.xml");
+		ManifestInterface manifest = parser.parse(testfile);
+		ActivityInterface a = manifest.getDefaultActivity();
+		assertNotNull("Default Activity was not set!",a);
+		assertTrue("A default activity must have the entrypoint flag set",a.isEntryPoint());
+		
+	}
+	@Test
+	public void testNoMainActivity() throws Exception{
+		setupTestFile("TestNoActivityAndroidManifest.xml");
+		ManifestInterface manifest = parser.parse(testfile);
+		ActivityInterface a = manifest.getDefaultActivity();
+		org.junit.Assert.assertNull("When there is no activity there cannot be a default activity!",a);
+	}
+	
 
 }

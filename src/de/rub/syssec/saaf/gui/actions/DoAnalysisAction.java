@@ -16,6 +16,7 @@
  */
 package de.rub.syssec.saaf.gui.actions;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -65,6 +66,7 @@ public class DoAnalysisAction extends AbstractAction {
 					return;
 				}
 				try {
+					mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 					selectedAnalysis.doAnalysis();
 					selectedAnalysis.doGenerateReport();
 				} catch (Exception e1) {
@@ -73,6 +75,8 @@ public class DoAnalysisAction extends AbstractAction {
 					MainWindow.showErrorDialog(
 							"Analysis failed, see the log for more info",
 							"Error");
+				}finally{
+					mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				}
 			}
 		};

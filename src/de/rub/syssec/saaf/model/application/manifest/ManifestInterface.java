@@ -58,7 +58,8 @@ public interface ManifestInterface {
 	/**
 	 * Add a permission to the set of requested permissions.
 	 * 
-	 * @param p the permission to add.
+	 * @param p
+	 *            the permission to add.
 	 */
 	public abstract void addPermissionRequest(PermissionRequestInterface p);
 
@@ -79,13 +80,14 @@ public interface ManifestInterface {
 	/**
 	 * Add a service to the list of defined services.
 	 * 
-	 * @param service the service to add.
+	 * @param service
+	 *            the service to add.
 	 */
 	public abstract void addService(ServiceInterface service);
 
 	/**
 	 * Return a collection of all services requested in this interface.
-	 *  
+	 * 
 	 * @return the services
 	 */
 	public abstract Collection<ServiceInterface> getServices();
@@ -100,7 +102,8 @@ public interface ManifestInterface {
 	/**
 	 * Add a receiver to the list of defined receivers.
 	 * 
-	 * @param receiver the receiver to add
+	 * @param receiver
+	 *            the receiver to add
 	 */
 	public abstract void addReceiver(ReceiverInterface receiver);
 
@@ -125,7 +128,9 @@ public interface ManifestInterface {
 
 	/**
 	 * Set the path of the Manifest.xml represented by this object.
-	 * @param path the path to set
+	 * 
+	 * @param path
+	 *            the path to set
 	 */
 	public abstract void setPath(File path);
 
@@ -139,7 +144,9 @@ public interface ManifestInterface {
 
 	/**
 	 * Query if the Manifest requests a certain permission.
-	 * @param perm as String, like "android.permission.SEND_SMS"
+	 * 
+	 * @param perm
+	 *            as String, like "android.permission.SEND_SMS"
 	 * @return
 	 */
 	public abstract boolean hasPermission(String perm);
@@ -151,7 +158,8 @@ public interface ManifestInterface {
 	public int getVersionCode();
 
 	/**
-	 * @param versionCode the versionCode to set
+	 * @param versionCode
+	 *            the versionCode to set
 	 */
 	public void setVersionCode(int versionCode);
 
@@ -161,7 +169,8 @@ public interface ManifestInterface {
 	public String getVersionName();
 
 	/**
-	 * @param versionName the versionName to set
+	 * @param versionName
+	 *            the versionName to set
 	 */
 	public void setVersionName(String versionName);
 
@@ -171,7 +180,8 @@ public interface ManifestInterface {
 	public String getPackageName();
 
 	/**
-	 * @param packageName the packageName to set
+	 * @param packageName
+	 *            the packageName to set
 	 */
 	public void setPackageName(String packageName);
 
@@ -181,7 +191,8 @@ public interface ManifestInterface {
 	public int getMinSdkVersion();
 
 	/**
-	 * @param minSdkVersion the minSdkVersion to set
+	 * @param minSdkVersion
+	 *            the minSdkVersion to set
 	 */
 	public void setMinSdkVersion(int minSdkVersion);
 
@@ -191,7 +202,8 @@ public interface ManifestInterface {
 	public String getAppLabel();
 
 	/**
-	 * @param appLabel the appLabel to set
+	 * @param appLabel
+	 *            the appLabel to set
 	 */
 	public void setAppLabel(String appLabel);
 
@@ -201,7 +213,8 @@ public interface ManifestInterface {
 	public String getAppLabelResolved();
 
 	/**
-	 * @param appLabelResolved the appLabelResolved to set
+	 * @param appLabelResolved
+	 *            the appLabelResolved to set
 	 */
 	public void setAppLabelResolved(String appLabelResolved);
 
@@ -211,7 +224,24 @@ public interface ManifestInterface {
 	public boolean isAppDebuggable();
 
 	/**
-	 * @param b the appDebuggable to set
+	 * @param b
+	 *            the appDebuggable to set
 	 */
 	public void setAppDebuggable(boolean b);
+
+	/**
+	 * Returns the activity that is used to start the application.
+	 * 
+	 * @return
+	 */
+	public ActivityInterface getDefaultActivity();
+
+	/**
+	 * 
+	 * @param activity
+	 *            the name of the activity (relative the the Manifests package.
+	 * 
+	 */
+	public void setDefaultActivity(ActivityInterface activity)
+			throws DuplicateEntryPointException;
 }

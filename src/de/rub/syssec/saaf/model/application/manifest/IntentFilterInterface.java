@@ -53,4 +53,6 @@ public interface IntentFilterInterface {
 	 */
 	public abstract void setPriority(int priority);
 
+	public abstract boolean hasAction(String string);
+
 }

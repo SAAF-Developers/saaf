@@ -20,7 +20,7 @@ import java.util.LinkedList;
 
 import de.rub.syssec.saaf.model.Entity;
 
-public interface MethodInterface extends Entity {
+public interface MethodInterface extends Entity, Obfuscatable {
 
 	/**
 	 * Does this method contain anything else besides an empty declaration?

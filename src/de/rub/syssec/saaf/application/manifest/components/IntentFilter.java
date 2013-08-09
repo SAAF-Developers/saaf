@@ -162,5 +162,16 @@ public class IntentFilter implements Comparable, IntentFilterInterface{
 		return 0;
 	}
 
+	@Override
+	public boolean hasAction(String string) {
+		boolean found = false;
+		for (ActionInterface a : actions) {
+			if (a.getName().equals(string)) {
+				found = true;
+			}
+		}
+		return found;
+	}
+
 
 }

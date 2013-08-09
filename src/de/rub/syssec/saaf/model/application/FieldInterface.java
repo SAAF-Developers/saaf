@@ -19,7 +19,7 @@ package de.rub.syssec.saaf.model.application;
 import java.util.EnumSet;
 
 
-public interface FieldInterface {
+public interface FieldInterface extends Obfuscatable {
 
 	/**
 	 * All possible modifiers.

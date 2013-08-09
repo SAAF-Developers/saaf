@@ -28,6 +28,7 @@ import de.rub.syssec.saaf.model.application.manifest.ComponentInterface;
 public class Component implements ComponentInterface {
 
 	protected String name;
+	private boolean isEntryPoint;
 
 	public Component() {
 		super();
@@ -56,6 +57,14 @@ public class Component implements ComponentInterface {
 	public String toString() {
 		return this.name;
 	}
-
+	@Override
+	public void setEntryPoint(boolean b) {
+		this.isEntryPoint=b;
+	}
+	
+	@Override
+	public boolean isEntryPoint() {
+		return this.isEntryPoint;
+	}
 	
 }

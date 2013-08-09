@@ -43,6 +43,7 @@ import de.rub.syssec.saaf.analysis.Analysis;
 import de.rub.syssec.saaf.gui.actions.AboutAction;
 import de.rub.syssec.saaf.gui.actions.CloseAnalysisAction;
 import de.rub.syssec.saaf.gui.actions.DecompileToJavaAction;
+import de.rub.syssec.saaf.gui.actions.DetectObfuscationAction;
 import de.rub.syssec.saaf.gui.actions.DoAnalysisAction;
 import de.rub.syssec.saaf.gui.actions.GenerateCFGsAction;
 import de.rub.syssec.saaf.gui.actions.OpenAPKAction;
@@ -243,7 +244,10 @@ public class MainWindow extends JFrame implements ActionListener {
 		// menuItem.setActionCommand(CMD_FIND_STRINGS);
 		// menuItem.addActionListener(this);
 		miscMenu.add(menuItem);
-
+		
+		menuItem = new JMenuItem(new DetectObfuscationAction("Check for obfuscation",this,openAppsMgr));
+		miscMenu.add(menuItem);
+		
 		Separator sep5 = new Separator();
 		miscMenu.add(sep5);
 

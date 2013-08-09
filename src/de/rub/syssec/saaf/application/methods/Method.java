@@ -1167,6 +1167,8 @@ public class Method implements MethodInterface {
 
 	private Float arithOpsAmount = null;
 	private boolean changed;
+	private boolean obfuscated;
+	private double entropy;
 
 	/**
 	 * Calculate the percentage of artithmetic operations in this function.
@@ -1406,5 +1408,26 @@ public class Method implements MethodInterface {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void setObfuscated(boolean b) {
+		this.obfuscated=b;
+		
+	}
+
+	@Override
+	public boolean isObfuscated() {
+		return this.obfuscated;
+	}
+
+	@Override
+	public void setEntropy(double entropy) {
+		this.entropy=entropy;
+	}
+
+	@Override
+	public double getEntropy() {
+		return this.entropy;
 	}
 }
