@@ -519,7 +519,10 @@ public class SmaliClass implements ClassInterface {
 
 	@Override
 	public String getRelativeFile() {
-		return this.smaliFile.getAbsolutePath().replaceFirst(app.getDecompiledContentDir().getAbsolutePath()+File.separator+"smali"+File.separator, "");
+		String separator = File.separator;//this is too fix issues with File.separator under windows being "\", which makes the replaceFirst fail, due to \ being a special char in regex
+		if(separator.equals("\\"))
+			separator = separator + separator;
+		return this.smaliFile.getAbsolutePath().replaceFirst(app.getDecompiledContentDir().getAbsolutePath()+separator+"smali"+separator, "");
 	}
 	
 	public String toString(){

@@ -19,6 +19,7 @@ package de.rub.syssec.saaf.gui.frame;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -52,7 +53,7 @@ public class FoundBytecodeFrame extends JInternalFrame {
 	
 	
 	public FoundBytecodeFrame(final ApplicationInterface app, final FileTree fileTree) {
-	    super("Search in SMALI Bytecode Files - "+ app.getApplicationName(), true, true,	true, true);
+	    super("Search in SMALI Bytecode Files - "+ app.getApplicationName(), true, true, true, true);
     	this.app = app;
         patternField = new javax.swing.JTextField();
         searchBtn = new javax.swing.JButton();
@@ -163,7 +164,10 @@ public class FoundBytecodeFrame extends JInternalFrame {
 			case 0:
 				// FIXME: Not so nice, but no way to tell whats the smali content dir?
 				String s = cl.getSmaliClass().getFile().getAbsolutePath();
-				String split[] = s.split("/smali/", 2);
+				String separator = File.separator;//this is too fix issues with File.separator under windows being "\", which makes the replaceFirst fail, due to \ being a special char in regex
+				if(separator.equals("\\"))
+					separator = separator + separator;
+				String split[] = s.split(separator+"smali"+separator, 2);
 				return split[1];
 			case 1:
 				return cl.getLineNr();

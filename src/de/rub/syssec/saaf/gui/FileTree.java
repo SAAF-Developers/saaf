@@ -345,7 +345,9 @@ public class FileTree extends JPanel {
 			}
 		};
 		
+		
 		lines = new JTextArea("1");
+		editor.setFont(lines.getFont());
 
 		lines.setBackground(Color.LIGHT_GRAY);
 		lines.setEditable(false);
@@ -515,7 +517,7 @@ public class FileTree extends JPanel {
 			String filepath = "";
 
 			for (int i = 0; i < node.getPath().length; i++) {
-				filepath = filepath + "/" + node.getPath()[i];
+				filepath = filepath + File.separator + node.getPath()[i];
 			}
 			if (filepath.startsWith(nodeStr)) {
 				TreeNode[] nodes = node.getPath();

@@ -16,6 +16,7 @@
  */
 package de.rub.syssec.saaf.gui.frame;
 
+import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JInternalFrame;
@@ -62,7 +63,6 @@ public class FoundStringsFrame extends JInternalFrame {
 								FoundString fs = foundStringsVec.get(viewRow);
 								int appDirLength = app.getUnpackedDataDir().getParentFile().getAbsolutePath().length(); // cut the unnecessary part
 								String fileName = fs.getCodeLine().getSmaliClass().getFile().getAbsolutePath().substring(appDirLength);
-								
 								fileTree.searchNode(fileName,
 										""+fs.getCodeLine().getLineNr());
 							}
@@ -128,7 +128,10 @@ public class FoundStringsFrame extends JInternalFrame {
 			case 0:
 				// FIXME: Not so nice, but no way to tell whats the smali content dir?
 				String s = fs.getCodeLine().getSmaliClass().getFile().getAbsolutePath();
-				String split[] = s.split("/smali/", 2);
+				String separator = File.separator;//this is too fix issues with File.separator under windows being "\", which makes the replaceFirst fail, due to \ being a special char in regex
+				if(separator.equals("\\"))
+					separator = separator + separator;
+				String split[] = s.split(separator+"smali"+separator, 2);
 				return split[1];
 			case 1:
 				return fs.getCodeLine().getLineNr();

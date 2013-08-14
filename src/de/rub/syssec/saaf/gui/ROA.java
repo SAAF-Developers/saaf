@@ -44,7 +44,7 @@ public class ROA {
 	
 	public ROA() {
 		if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-			delimiter = "\\\\"; // escaped backslashes
+			delimiter = "/"; // was \\\\ // escaped backslashes
 		}
 		else {
 			delimiter = "//"; // Linux etc, but not Windows
