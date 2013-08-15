@@ -1245,7 +1245,6 @@ public class Method implements MethodInterface {
 	public String getParameterString(){
 		if(parameters == null) {
 			parameters = new String(this.getParameters());
-			parameters = parameters.replaceAll("L.[^;]*;", "L");
 		}
 
 		return parameters;

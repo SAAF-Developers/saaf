@@ -1,2 +1,3 @@
 Most of the code is licensed under the GPL-v3 license, see GPL-v3.txt. Some
 java files have separate licenses as stated in the header of each file.
+Jgraphx is licensed under the 3 clause BSD license, see the file jgraph_license.txt for it.

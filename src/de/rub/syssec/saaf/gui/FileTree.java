@@ -160,22 +160,30 @@ public class FileTree extends JPanel {
 	}
 	
 	private class MethodNode {
+		private MethodInterface method;
 		private String methodName;
 		private CodeLineInterface cl;
 
-		public MethodNode(String methodName, CodeLineInterface cl) {
-			this.methodName = methodName;
+		public MethodNode(MethodInterface method, String name, CodeLineInterface cl) {
+			this.method = method;
+			methodName = name;
 			this.cl = cl;
 		}
 
 		// this is shown in the tree
 		public String toString() {
-			return methodName;
+			if (method == null)
+				return methodName;
+			return method.getName()+" ("+method.getParameterString()+")"+method.getReturnValueString();
 		}
 
 		public int getLine() {
 			return cl.getLineNr();
-		}	
+		}
+		
+		public MethodInterface getMethod(){
+			return method;
+		}
 	}
 	
 	
@@ -274,12 +282,73 @@ public class FileTree extends JPanel {
 							ClassInterface smaliFile = app.getSmaliClass(smali);
 
 							//children
-							DefaultMutableTreeNode file = new DefaultMutableTreeNode( new MethodNode(smaliFile.getClassName(),smaliFile.getAllCodeLines().getFirst()));
+							DefaultMutableTreeNode file = new DefaultMutableTreeNode( new MethodNode(null, smaliFile.getClassName(),smaliFile.getAllCodeLines().getFirst()));
 							for( MethodInterface m : smaliFile.getMethods()){
-								 file.add(new DefaultMutableTreeNode(new MethodNode(m.getName()+" ("+m.getParameterString()+")",m.getCodeLines().getFirst())));
+								 file.add(new DefaultMutableTreeNode(new MethodNode(m, m.getName()+" ("+m.getParameterString()+")"+m.getReturnValueString() ,m.getCodeLines().getFirst())));
 							}
 							 
 							outlineTree = new JTree(file);
+							outlineTree.addMouseListener(new MouseAdapter(){
+								
+								public void mousePressed(MouseEvent e) {
+									if (e.isPopupTrigger())
+										myPopupEvent(e);
+								}
+
+								public void mouseReleased(MouseEvent e) {
+									if (e.isPopupTrigger())
+										myPopupEvent(e);
+								}
+								
+								private void myPopupEvent(MouseEvent e) {
+									int x = e.getX();
+									int y = e.getY();
+									JTree tree = (JTree) e.getSource();
+									TreePath path = tree.getPathForLocation(x, y);
+									if (path == null)
+										return;
+
+									tree.setSelectionPath(path);
+
+									DefaultMutableTreeNode node = (DefaultMutableTreeNode) path
+											.getLastPathComponent();
+									Object nodeInfo = node.getUserObject();
+									MethodNode node_object = (MethodNode) nodeInfo;
+									
+
+									//smali = node_object.methodName;
+									MethodInterface m = node_object.getMethod();
+
+										JPopupMenu popup = new JPopupMenu();
+										
+										JMenuItem item = new JMenuItem("graph "+m);
+										item.addActionListener(menuListener);
+										popup.add(item);
+
+										
+
+										popup.show(tree, x, y);
+									}
+								
+
+				
+								ActionListener menuListener = new ActionListener() {
+									public void actionPerformed(ActionEvent event) {
+								
+								if (event.getActionCommand().startsWith("graph ")) {
+
+									DefaultMutableTreeNode node = (DefaultMutableTreeNode) outlineTree.getSelectionPath()
+											.getLastPathComponent();
+									Object nodeInfo = node.getUserObject();
+									MethodNode node_object = (MethodNode) nodeInfo;
+									
+									new MethodViewer(node_object.getMethod());
+								}
+									}
+								};
+								
+								
+							});
 							outlineTree.addTreeSelectionListener(new TreeSelectionListener() {
 								
 								public void valueChanged(TreeSelectionEvent e) {
@@ -345,8 +414,8 @@ public class FileTree extends JPanel {
 			}
 		};
 		
-		
 		lines = new JTextArea("1");
+		
 		editor.setFont(lines.getFont());
 
 		lines.setBackground(Color.LIGHT_GRAY);
@@ -485,7 +554,7 @@ public class FileTree extends JPanel {
 			//length of line
 			numCharsOnFirstPage = numCharsOnFirstPage + content[i].length();
 			//for the new line
-			numCharsOnFirstPage = numCharsOnFirstPage + 1;
+			numCharsOnFirstPage = numCharsOnFirstPage + 1;//change to lineseperator size
 
 		}
 		numCharsOnFirstPage++;
@@ -634,6 +703,7 @@ public class FileTree extends JPanel {
 				item = new JMenuItem(smali.getName());
 				item.addActionListener(menuListener);
 				popup.add(item);
+				
 				// Java File (need decompilation first)
 				String javaFileName = smali.getName().substring(0,
 						smali.getName().length() - 6)
@@ -690,6 +760,8 @@ public class FileTree extends JPanel {
 						logger.error(e);
 					}
 				}
+				
+
 
 				else { // load the file and display it (normally .smali)
 					try {
@@ -759,7 +831,6 @@ public class FileTree extends JPanel {
 			ClassInterface smali = app.getSmaliClass(file.getAbsoluteFile());
 			StringBuilder builder = new StringBuilder();
 			String separator = System.getProperty("line.separator");
-			
 			for(CodeLineInterface cl : smali.getAllCodeLines()){
 				builder.append(new String(cl.getLine()));
 				builder.append(separator);

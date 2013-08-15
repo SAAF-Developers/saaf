@@ -16,17 +16,22 @@
  */
 package de.rub.syssec.saaf.analysis.steps.cfg;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 import de.rub.syssec.saaf.analysis.steps.AbstractStep;
-import de.rub.syssec.saaf.analysis.steps.hash.Hash;
+import de.rub.syssec.saaf.gui.actions.ExportAction;
+import de.rub.syssec.saaf.misc.CFGGraph;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.analysis.AnalysisException;
 import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
 import de.rub.syssec.saaf.model.application.ClassInterface;
+import de.rub.syssec.saaf.model.application.Digest;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 
 /**
@@ -81,6 +86,19 @@ public class GenerateCFGStep extends AbstractStep {
 		int totalClasses = classes.size();
 		int processedClasses=0;
 		int scalefactor = calculateScaleFactor(totalClasses);
+		
+		File outDir = new File(Config.getInstance().getValue(ConfigKeys.DIRECTORY_CFGS)+File.separator+app.getApplicationName()+"_"+app.getMessageDigest(Digest.MD5));
+
+		BufferedWriter outputFile= null;	
+		try {
+			if(!outDir.exists()){
+				outDir.mkdirs();
+			}
+			outputFile = new BufferedWriter(new FileWriter(outDir+File.separator+"names.txt"));
+
+		} catch (IOException e3) {
+			e3.printStackTrace();
+		}
 			
 		logger.info("Generating all control flow graphs for "+totalClasses+" classes...");
 		for (ClassInterface file : classes) {// ignore
@@ -90,15 +108,40 @@ public class GenerateCFGStep extends AbstractStep {
 			// advertisement
 			// packages
 			for (MethodInterface method : file.getMethods()) {
-				CfgBuilder.generateDotAndCfg(
-						file,
-						method,
-						false,
-						Config.getInstance().getConfigValue(
-								ConfigKeys.DIRECTORY_CFGS),
-						app.getApplicationName() + "_"
-								+ app.getMessageDigest(Hash.DEFAULT_DIGEST));
-			}
+				//TODO: wrap all this in its own method
+				CFGGraph c = new CFGGraph(method);
+				ExportAction ex = new ExportAction(c.getGraph(), outDir.toString());
+				String parameters = "("+method.getParameterString().replaceAll("/", "_")+")";//TODO: maybe do this in method.getParameterString, or at least the "(" and ")"
+				
+				StringBuilder realFileName = new StringBuilder();
+				realFileName.append(method.getSmaliClass().getClassName());
+				realFileName.append("_");
+				realFileName.append(method.getName());
+				realFileName.append(parameters);
+				realFileName.append(method.getReturnValueString());
+				realFileName.append(".png");
+										
+				String newFileName = ex.export(method.getSmaliClass().getClassName(), "_",method.getName(),parameters,method.getReturnValueString(),".png",method.getSmaliClass().getPackageName(false));
+				
+				if(!realFileName.toString().equals(newFileName)){
+					try {
+						outputFile.write("Generated Filename:");
+						outputFile.newLine();
+						outputFile.write(newFileName);
+						outputFile.newLine();
+						outputFile.write("Real Filename");
+						outputFile.newLine();
+						outputFile.write(realFileName.toString());
+						outputFile.newLine();
+						outputFile.newLine();
+						
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					
+				}
+
+		}
 			processedClasses++;
 			if(processedClasses%scalefactor==0)
 			{
@@ -106,6 +149,11 @@ public class GenerateCFGStep extends AbstractStep {
 				logger.info(String.format("Processed %d/%d classes", processedClasses,totalClasses));
 			}
 		}
+		try {
+			outputFile.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} 
 		logger.info("Finished generating flow graphs");
 		return true;
 	}

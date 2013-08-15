@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="lib/smali-1.4.2.jar"/>
 	<classpathentry kind="lib" path="lib/ST-4.0.7.jar"/>
 	<classpathentry kind="lib" path="lib/test/junit.jar"/>
+	<classpathentry kind="lib" path="lib/jgraphx.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

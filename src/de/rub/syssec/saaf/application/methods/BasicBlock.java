@@ -358,5 +358,13 @@ public class BasicBlock implements BasicBlockInterface {
 	}
 
 
+	public String toString(){
+		StringBuilder bb = new StringBuilder();
+		for (CodeLineInterface cl: this.getCodeLines()){
+			bb.append(cl.getNrAndLine());
+			bb.append("\n");
+		}
+		return bb.toString();
+	}
 	
 }
