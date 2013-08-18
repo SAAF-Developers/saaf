@@ -43,9 +43,6 @@ import de.rub.syssec.saaf.model.application.MethodInterface;
  */
 public class GenerateCFGsAction extends AbstractAction {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6922817709698827424L;
 	private MainWindow mainWindow;
 
