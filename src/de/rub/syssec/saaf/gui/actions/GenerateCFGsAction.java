@@ -120,7 +120,7 @@ public class GenerateCFGsAction extends AbstractAction {
 								CFGGraph c = new CFGGraph(method);
 								ExportAction ex = new ExportAction(c.getGraph(), outDir.toString());
 								String parameters = "("+method.getParameterString().replaceAll("/", "_")+")";//TODO: maybe do this in method.getParameterString, or at least the "(" and ")"
-								
+								String methodName = method.getName().replace("<", "_").replace(">", "_");//This is due to windows not supporting < and > in file names
 								StringBuilder realFileName = new StringBuilder();
 								realFileName.append(method.getSmaliClass().getClassName());
 								realFileName.append("_");
@@ -129,7 +129,7 @@ public class GenerateCFGsAction extends AbstractAction {
 								realFileName.append(method.getReturnValueString());
 								realFileName.append(".png");
 														
-								String newFileName = ex.export(method.getSmaliClass().getClassName(), "_",method.getName(),parameters,method.getReturnValueString(),".png",method.getSmaliClass().getPackageName(false));
+								String newFileName = ex.export(method.getSmaliClass().getClassName(), "_",methodName,parameters,method.getReturnValueString(),".png",method.getSmaliClass().getPackageName(false));
 								
 								if(!realFileName.toString().equals(newFileName)){
 									try {
