@@ -16,6 +16,7 @@
  */
 package de.rub.syssec.saaf.misc.adchecker;
 
+import java.io.File;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -52,7 +53,7 @@ public class XMLAdnetworkDataSource extends AbstractXMLDataSource<AdNetwork> {
 				Attr name = adNode.getAttributeNode(XML_ATTRIBUTE_PATH);
 				if (name != null && !name.getValue().isEmpty()) {
 
-					adNetworks.add(new AdNetwork(name.getValue()));
+					adNetworks.add(new AdNetwork(name.getValue().replace("/", File.separator)));
 				}
 			}
 		}
