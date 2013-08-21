@@ -189,9 +189,6 @@ public class Config implements ConfigInterface {
 	private boolean hasMissingExecutable() {
 		boolean foundErrors = false;
 		// check if the external executables are required and available
-		if (getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_CFG)) {
-			foundErrors |= !isValidExecutable(ConfigKeys.EXECUTABLE_DOT);
-		}
 		if (getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_JAVA)) {
 			foundErrors |= !isValidExecutable(ConfigKeys.EXECUTABLE_JAD);
 		}

@@ -20,7 +20,6 @@ package de.rub.syssec.saaf.misc;
 import java.io.File;
 import java.util.Vector;
 
-import de.rub.syssec.saaf.db.datasources.DataSourceException;
 import de.rub.syssec.saaf.misc.config.Config;
 
 /**

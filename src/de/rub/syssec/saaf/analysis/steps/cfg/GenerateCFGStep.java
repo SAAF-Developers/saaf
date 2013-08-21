@@ -52,22 +52,7 @@ public class GenerateCFGStep extends AbstractStep {
 	@Override
 	protected boolean doBefore(AnalysisInterface analysis)
 			throws AnalysisException {
-		// check if we actually have the executable to perform dot file
-		// generation
-		boolean fine = true;
-		File dotExecutable = new File(
-				config.getConfigValue(ConfigKeys.EXECUTABLE_DOT));
-		if (!dotExecutable.exists()) {
-			throw new AnalysisException("Could not find the dot program to generate flow graphs. Please check your settings for "
-					+ ConfigKeys.EXECUTABLE_DOT+" in the configuration file");
-		} else {
-			if (!dotExecutable.canExecute()) {
-				throw new AnalysisException("The permissions ofor the dot program to generate flow graphs do not allow execution. Please check permissions of "
-						+ dotExecutable.getAbsolutePath());
-			}
-		}
-
-		return fine;
+		return true;
 	}
 
 	/*
@@ -108,39 +93,10 @@ public class GenerateCFGStep extends AbstractStep {
 			// advertisement
 			// packages
 			for (MethodInterface method : file.getMethods()) {
-				//TODO: wrap all this in its own method
+
 				CFGGraph c = new CFGGraph(method);
 				ExportAction ex = new ExportAction(c.getGraph(), outDir.toString());
-				String parameters = "("+method.getParameterString().replaceAll("/", "_")+")";//TODO: maybe do this in method.getParameterString, or at least the "(" and ")"
-				String methodName = method.getName().replace("<", "_").replace(">", "_");//This is due to windows not supporting < and > in file names
-				StringBuilder realFileName = new StringBuilder();
-				realFileName.append(method.getSmaliClass().getClassName());
-				realFileName.append("_");
-				realFileName.append(methodName);
-				realFileName.append(parameters);
-				realFileName.append(method.getReturnValueString());
-				realFileName.append(".png");
-										
-				String newFileName = ex.export(method.getSmaliClass().getClassName(), "_",methodName,parameters,method.getReturnValueString(),".png",method.getSmaliClass().getPackageName(false));
-				
-				if(!realFileName.toString().equals(newFileName)){
-					try {
-						outputFile.write("Generated Filename:");
-						outputFile.newLine();
-						outputFile.write(newFileName);
-						outputFile.newLine();
-						outputFile.write("Real Filename");
-						outputFile.newLine();
-						outputFile.write(realFileName.toString());
-						outputFile.newLine();
-						outputFile.newLine();
-						
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-					
-				}
-
+				ex.export(method);
 		}
 			processedClasses++;
 			if(processedClasses%scalefactor==0)

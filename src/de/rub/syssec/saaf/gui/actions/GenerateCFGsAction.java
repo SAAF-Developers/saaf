@@ -49,15 +49,7 @@ public class GenerateCFGsAction extends AbstractAction {
 	public GenerateCFGsAction(String title, MainWindow mainWindow) {
 		super(title);
 		this.mainWindow = mainWindow;
-		this.enabled = Config.getInstance().isValidExecutable(
-				ConfigKeys.EXECUTABLE_DOT);
-		if (this.enabled) {
-			this.putValue(SHORT_DESCRIPTION,
-					"Generates control flow grapsh for all methods.");
-		} else {
-			this.putValue(SHORT_DESCRIPTION,
-					"The dot executable is not available.");
-		}
+		this.putValue(SHORT_DESCRIPTION, "Generates control flow grapsh for all methods.");		
 	}
 
 	/*
@@ -116,38 +108,10 @@ public class GenerateCFGsAction extends AbstractAction {
 																// in the
 																// file
 		
-								//TODO: wrap all this in its own method
+
 								CFGGraph c = new CFGGraph(method);
 								ExportAction ex = new ExportAction(c.getGraph(), outDir.toString());
-								String parameters = "("+method.getParameterString().replaceAll("/", "_")+")";//TODO: maybe do this in method.getParameterString, or at least the "(" and ")"
-								String methodName = method.getName().replace("<", "_").replace(">", "_");//This is due to windows not supporting < and > in file names
-								StringBuilder realFileName = new StringBuilder();
-								realFileName.append(method.getSmaliClass().getClassName());
-								realFileName.append("_");
-								realFileName.append(method.getName());
-								realFileName.append(parameters);
-								realFileName.append(method.getReturnValueString());
-								realFileName.append(".png");
-														
-								String newFileName = ex.export(method.getSmaliClass().getClassName(), "_",methodName,parameters,method.getReturnValueString(),".png",method.getSmaliClass().getPackageName(false));
-								
-								if(!realFileName.toString().equals(newFileName)){
-									try {
-										outputFile.write("Generated Filename:");
-										outputFile.newLine();
-										outputFile.write(newFileName);
-										outputFile.newLine();
-										outputFile.write("Real Filename");
-										outputFile.newLine();
-										outputFile.write(realFileName.toString());
-										outputFile.newLine();
-										outputFile.newLine();
-										
-									} catch (IOException e1) {
-										e1.printStackTrace();
-									}
-									
-								}
+								ex.export(method);
 
 						}
 							 

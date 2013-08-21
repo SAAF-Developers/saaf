@@ -21,17 +21,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.TreeSet;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
 import de.rub.syssec.saaf.application.Field;
 import de.rub.syssec.saaf.misc.ByteUtils;
-import de.rub.syssec.saaf.misc.Highlight;
 import de.rub.syssec.saaf.misc.KMP;
 import de.rub.syssec.saaf.model.application.BasicBlockInterface;
 import de.rub.syssec.saaf.model.application.ClassInterface;
@@ -1051,119 +1046,6 @@ public class Method implements MethodInterface {
 		return sb.toString();
 	}
 
-
-	private final static String DOT_BR = "<BR ALIGN=\"LEFT\"/>";
-	private String dotInstructions = null;
-
-	/**
-	 * FIXME das ist langsam weil es aus byte[] nen string macht und dann viel
-	 * replace
-	 * 
-	 * @return
-	 */
-	public String getInstructionsForDot() {
-		Pattern p = Pattern.compile("[vp][0-9]+");// pattern to match everything
-													// begin with v or p and
-													// havin at least one digit
-													// after that
-		if (dotInstructions == null) { // create it
-			StringBuilder sb = new StringBuilder();
-			String name = this.getName().replace(">", "").replace("<", "")
-					.replace("&", "").replace("$", "");
-			// int count = 0;
-			for (BasicBlockInterface bb : bbList) {
-				sb.append(name);// TODO: Add better replacement (real escaping)
-				sb.append("_");
-				sb.append(bb.getCodeLines().getFirst().getLineNr());
-				sb.append("[shape=box, label=<");
-				// dot.append(method.getInstructionsForDot());
-				sb.append(bb.getUniqueId());
-				sb.append(DOT_BR);
-				sb.append(System.getProperty("line.separator"));
-				for (CodeLineInterface cl : bb.getCodeLines()) {
-					if (cl.isEmpty())
-						continue; // skip empty lines
-					String inst = cl.getNrAndLine().replace("&", "&amp;")
-							.replace(">", "&gt;").replace("<", "&lt;");// TODO:
-																		// need
-																		// to
-																		// replace
-																		// $
-																		// here
-																		// aswell?
-					inst = syntaxhighlighting(inst, p);
-					sb.append(inst);
-					sb.append(DOT_BR);
-					sb.append(System.getProperty("line.separator"));
-				}
-				sb.append(">];\n");
-
-				for (BasicBlockInterface next : bb.getNextBB()) {
-					sb.append(name + "_"
-							+ bb.getCodeLines().getFirst().getLineNr() + " -> "
-							+ name + "_"
-							+ next.getCodeLines().getFirst().getLineNr()
-							+ ";\n");
-				}
-			}
-
-			dotInstructions = sb.toString();
-		}
-		return dotInstructions;
-	}
-
-	private String syntaxhighlighting(String zeile, Pattern p) {
-
-		// commands
-		Vector<String> commands = Highlight.OP_CODES;
-
-		for (String cmd : commands) {
-			zeile = zeile.replace(cmd, "<FONT COLOR=\"red\">" + cmd
-					+ "</FONT> ");
-		}
-
-
-		StringTokenizer st = new StringTokenizer(zeile, " ,}{", true);
-		String reg = new String();
-		while (st.hasMoreTokens()) {
-			String temp = st.nextToken();
-			Matcher m = p.matcher(temp);
-			if (m.matches())
-				reg += "<FONT COLOR=\"blue\">" + temp + "</FONT>";
-			else
-				reg += temp;
-		}
-		zeile = reg;
-
-		// replace
-		zeile = zeile.trim().replace("-&gt;",
-				"<FONT COLOR=\"blue\">-&gt;</FONT>");
-
-		// jumps
-		Vector<String> jumps = new Vector<String>();
-
-		jumps.add(":cond_");
-		jumps.add(":goto_");
-		jumps.add(":catch_");
-		jumps.add(":catchall_");
-
-		for (int i = 0; i < jumps.size(); i++) {
-			for (int z = 100; z >= 0; z--) {
-				zeile = zeile.trim().replace(
-						jumps.get(i) + z + "",
-						"<FONT COLOR=\"#009900\">" + jumps.get(i) + z
-								+ "</FONT>");
-			}
-		}
-
-		// Annotations
-		if (zeile.trim().startsWith(".") || zeile.trim().startsWith("#")
-				|| zeile.trim().startsWith(":")) {
-			zeile = "<FONT COLOR=\"#5F5F5F\">" + zeile + "</FONT>";
-		}
-
-		return zeile;
-	}
 
 	private Float arithOpsAmount = null;
 	private boolean changed;

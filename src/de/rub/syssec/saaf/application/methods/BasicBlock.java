@@ -18,7 +18,6 @@ package de.rub.syssec.saaf.application.methods;
 
 import java.util.LinkedList;
 
-import de.rub.syssec.saaf.application.methods.BasicBlock.FoundCodeLine;
 import de.rub.syssec.saaf.model.application.BasicBlockInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.SyntaxException;

@@ -20,9 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -72,7 +70,7 @@ public class CfgSelectorFrame extends JInternalFrame {
 	private final ViewerStarter viewer = new ViewerStarter(ConfigKeys.VIEWER_IMAGES);
 	
 	/**
-	 * A frame to generate and open Control Flow Graphs. CFGs are created from generated DOT files
+	 * A frame to generate and open Control Flow Graphs. CFGs are created using mxGraph
 	 * and are saved as PNGs.
 	 * 
 	 * @param smaliClass the smali class to select methods from
@@ -177,48 +175,10 @@ public class CfgSelectorFrame extends JInternalFrame {
 	private File generateAndShowCfg(MethodInterface method, boolean showCfg) {
 		String targetDir = smaliClass.getApplication().getBytecodeDirectory()
 				.getAbsolutePath();
-		BufferedWriter outputFile= null;				
-		try {
-			if(!new File(targetDir).exists()){
-				new File(targetDir).mkdirs();
-			}
-			outputFile = new BufferedWriter(new FileWriter(targetDir+File.separator+"names.txt"));
-		} catch (IOException e3) {
-			e3.printStackTrace();
-		}
-
+		
 		CFGGraph c = new CFGGraph(method);
 		ExportAction ex = new ExportAction(c.getGraph(), targetDir);
-		String parameters = "("+method.getParameterString().replaceAll("/", "_")+")";
-		String methodName = method.getName().replace("<", "_").replace(">", "_");//This is due to windows not supporting < and > in file names
-		StringBuilder realFileName = new StringBuilder();
-		realFileName.append(method.getSmaliClass().getClassName());
-		realFileName.append("_");
-		realFileName.append(method.getName());
-		realFileName.append(parameters);
-		realFileName.append(method.getReturnValueString());
-		realFileName.append(".png");
-								
-		String newFileName = ex.export(method.getSmaliClass().getClassName(), "_",methodName,parameters,method.getReturnValueString(),".png",method.getSmaliClass().getPackageName(false));
-		
-		if(!realFileName.toString().equals(newFileName)){
-			try {
-				outputFile.write("Generated Filename:");
-				outputFile.newLine();
-				outputFile.write(newFileName);
-				outputFile.newLine();
-				outputFile.write("Real Filename");
-				outputFile.newLine();
-				outputFile.write(realFileName.toString());
-				outputFile.newLine();
-				outputFile.newLine();
-				outputFile.close();
-				
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			
-		}
+		ex.export(method);
 		File cfg = new File(ex.getLastExportedFile());
 		if (showCfg) {
 			try {

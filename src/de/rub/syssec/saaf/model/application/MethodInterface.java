@@ -87,13 +87,6 @@ public interface MethodInterface extends Entity, Obfuscatable {
 	 */
 	public abstract boolean contains(byte[] instruction);
 
-	/**
-	 * FIXME das ist langsam weil es aus byte[] nen string macht und dann viel
-	 * replace
-	 * 
-	 * @return
-	 */
-	public abstract String getInstructionsForDot();
 
 	/**
 	 * Calculate the percentage of artithmetic operations in this function.

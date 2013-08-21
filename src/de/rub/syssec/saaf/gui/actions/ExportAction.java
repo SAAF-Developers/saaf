@@ -20,28 +20,25 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.mxgraph.canvas.mxICanvas;
-import com.mxgraph.canvas.mxSvgCanvas;
 import com.mxgraph.util.mxCellRenderer;
-import com.mxgraph.util.mxCellRenderer.CanvasFactory;
-import com.mxgraph.util.mxDomUtils;
-import com.mxgraph.util.mxUtils;
-import com.mxgraph.util.mxXmlUtils;
 import com.mxgraph.util.png.mxPngEncodeParam;
 import com.mxgraph.util.png.mxPngImageEncoder;
 import com.mxgraph.view.mxGraph;
 
 import de.rub.syssec.saaf.analysis.steps.hash.Hash;
 import de.rub.syssec.saaf.model.application.Digest;
+import de.rub.syssec.saaf.model.application.MethodInterface;
 
 public class ExportAction implements ActionListener {
 private static final int MAX_FILE_LENGTH = 250;
@@ -118,9 +115,9 @@ private String lastExportedFile;
 				dir.mkdirs();
 			}
 			generatePNG(file);
-		} else if (fileExtension.equals(".svg")){
+		}/* else if (fileExtension.equals(".svg")){
 			genSVG(file);
-		}else{
+		}*/else{
 			generatePNG(file+".png");
 		}
 		lastExportedFile = file;
@@ -129,7 +126,7 @@ private String lastExportedFile;
 
 	public void actionPerformed(ActionEvent event) {
 	if(event.getActionCommand().startsWith("Export")){
-	    FileNameExtensionFilter filter = new FileNameExtensionFilter("All Files","svg", "png");
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter("All Files",/*"svg",*/ "png");
 		JFileChooser exportDir = new JFileChooser();
 		exportDir.setFileFilter(filter);
 		exportDir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -143,9 +140,9 @@ private String lastExportedFile;
 		    if (extension != null) {
 		        if (extension.equals("png") ) {
 					generatePNG(file); 
-		        } else if (extension.equals("svg")){
+		        } /*else if (extension.equals("svg")){
 					genSVG(file);
-		        }else{//if not type chosen, use png
+		        }*/else{//if not type chosen, use png
 					generatePNG(file+".png");
 		        }
 		    }else{
@@ -155,7 +152,7 @@ private String lastExportedFile;
 			}
 		}
 	}
-
+/*
 	private void genSVG(String file) {
 		mxSvgCanvas canvas = (mxSvgCanvas) mxCellRenderer
 				.drawCells(graph, null, 1, null,
@@ -177,7 +174,7 @@ private String lastExportedFile;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	
 	private void generatePNG(String file){
@@ -213,5 +210,55 @@ private String lastExportedFile;
 			e.printStackTrace();
 		}  
 		
+	}
+	
+	public void export(MethodInterface method){
+		export(folder, method);
+	}
+	
+	public void export(String targetDir, MethodInterface method){
+		BufferedWriter outputFile= null;				
+		try {
+			if(!new File(targetDir).exists()){
+				new File(targetDir).mkdirs();
+			}
+			outputFile = new BufferedWriter(new FileWriter(targetDir+File.separator+"names.txt", true));
+		} catch (IOException e3) {
+			e3.printStackTrace();
+		}
+
+		String parameters = "("+method.getParameterString().replaceAll("/", "_")+")";//TODO: maybe do this in method.getParameterString, or at least the "(" and ")"
+		String methodName = method.getName().replace("<", "_").replace(">", "_");//This is due to windows not supporting < and > in file names
+		StringBuilder realFileName = new StringBuilder();
+		realFileName.append(method.getSmaliClass().getClassName());
+		realFileName.append("_");
+		realFileName.append(methodName);
+		realFileName.append(parameters);
+		realFileName.append(method.getReturnValueString());
+		realFileName.append(".png");
+								
+		String newFileName = export(method.getSmaliClass().getClassName(), "_",methodName,parameters,method.getReturnValueString(),".png",method.getSmaliClass().getPackageName(false));
+		
+		if(!realFileName.toString().equals(newFileName)){
+			try {
+				outputFile.write("Generated Filename:");
+				outputFile.newLine();
+				outputFile.write(newFileName);
+				outputFile.newLine();
+				outputFile.write("Real Filename:");
+				outputFile.newLine();
+				outputFile.write(realFileName.toString());
+				outputFile.newLine();
+				outputFile.newLine();
+				outputFile.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
+		}
+	}
+	
+	public void setGraph (mxGraph graph){
+		this.graph = graph;
 	}
 }

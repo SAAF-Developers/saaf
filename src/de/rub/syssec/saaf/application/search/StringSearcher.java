@@ -16,7 +16,6 @@
  */
 package de.rub.syssec.saaf.application.search;
 
-import java.io.File;
 import java.util.Vector;
 
 import de.rub.syssec.saaf.misc.ByteUtils;
@@ -40,8 +39,8 @@ public class StringSearcher {
 		
 		Vector<FoundString> foundStringsVec = new Vector<FoundString>();
 		
-		for (File f : app.getAllRawSmaliFiles(false)) {
-			ClassInterface smaliClass = app.getSmaliClass(f);
+		for (ClassInterface smaliClass : app.getAllSmaliClasss(false)) {
+			//ClassInterface smaliClass = app.getSmaliClass(f);
 			for (CodeLineInterface cl : smaliClass.getAllCodeLines()) {
 				if (cl.isEmpty()) continue;
 				byte[] codeline = cl.getLine();

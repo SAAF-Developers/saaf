@@ -327,10 +327,7 @@ public enum ConfigKeys {
 	 * The string used to launch the report viewer e.g. "firefox %f"
 	 */
 	VIEWER_REPORTS("viewer.reports"),
-	/**
-	 * The path of the dot program that is used to generate control-flow graphs
-	 */
-	EXECUTABLE_DOT("external.dot","/usr/bin/dot"),
+
 	/**
 	 * The path of the jad program that is used to decompile the application into .java source code.
 	 */

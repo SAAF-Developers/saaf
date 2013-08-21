@@ -627,7 +627,7 @@ public class FileTree extends JPanel {
 		}
 		
 		// ignore some files
-		IOFileFilter fileFilter = new NotFileFilter(new SuffixFileFilter(new String[] { ".class", ".dot", ".java", ".DS_Store" }));
+		IOFileFilter fileFilter = new NotFileFilter(new SuffixFileFilter(new String[] { ".class", ".java", ".DS_Store" }));
 		
 		LinkedList<File> files = new LinkedList<File>(FileUtils.listFiles(dir, fileFilter, null));
 		// FIXME: How the hell can directories be listed?!

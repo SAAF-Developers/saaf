@@ -110,12 +110,6 @@ public class MockMethod implements MethodInterface {
 	}
 
 	@Override
-	public String getInstructionsForDot() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public float arithOps() {
 		return 0.01f;
 	}
