@@ -73,17 +73,6 @@ public class GenerateCFGStep extends AbstractStep {
 		int scalefactor = calculateScaleFactor(totalClasses);
 		
 		File outDir = new File(Config.getInstance().getValue(ConfigKeys.DIRECTORY_CFGS)+File.separator+app.getApplicationName()+"_"+app.getMessageDigest(Digest.MD5));
-
-		BufferedWriter outputFile= null;	
-		try {
-			if(!outDir.exists()){
-				outDir.mkdirs();
-			}
-			outputFile = new BufferedWriter(new FileWriter(outDir+File.separator+"names.txt"));
-
-		} catch (IOException e3) {
-			e3.printStackTrace();
-		}
 			
 		logger.info("Generating all control flow graphs for "+totalClasses+" classes...");
 		for (ClassInterface file : classes) {// ignore
@@ -105,11 +94,7 @@ public class GenerateCFGStep extends AbstractStep {
 				logger.info(String.format("Processed %d/%d classes", processedClasses,totalClasses));
 			}
 		}
-		try {
-			outputFile.close();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		} 
+
 		logger.info("Finished generating flow graphs");
 		return true;
 	}

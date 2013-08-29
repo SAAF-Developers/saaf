@@ -87,18 +87,6 @@ public class GenerateCFGsAction extends AbstractAction {
 					ProgressMonitor monitor = new ProgressMonitor(mainWindow, "Generating Graphs..", "Generating graphs for all methods in all classes", processed, files.size());
 					
 					File outDir = new File(Config.getInstance().getValue(ConfigKeys.DIRECTORY_CFGS)+File.separator+selectedAnalysis.getApp().getApplicationName()+"_"+selectedAnalysis.getApp().getMessageDigest(Digest.MD5));
-
-					BufferedWriter outputFile= null;	
-					try {
-						if(!outDir.exists()){
-							outDir.mkdirs();
-						}
-						outputFile = new BufferedWriter(new FileWriter(outDir+File.separator+"names.txt"));
-
-					} catch (IOException e3) {
-						e3.printStackTrace();
-					}
-					
 					
 					for (ClassInterface file : files) {// every file of the
 														// current apk		
@@ -121,11 +109,6 @@ public class GenerateCFGsAction extends AbstractAction {
 					}
 					
 					mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-					try {
-						outputFile.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} 
 					
 				}
 			};

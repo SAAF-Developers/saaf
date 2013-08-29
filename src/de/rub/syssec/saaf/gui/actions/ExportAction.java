@@ -222,7 +222,7 @@ private String lastExportedFile;
 			if(!new File(targetDir).exists()){
 				new File(targetDir).mkdirs();
 			}
-			outputFile = new BufferedWriter(new FileWriter(targetDir+File.separator+"names.txt", true));
+			outputFile = new BufferedWriter(new FileWriter(targetDir+File.separator+"changed method names.txt", true));
 		} catch (IOException e3) {
 			e3.printStackTrace();
 		}
@@ -241,12 +241,20 @@ private String lastExportedFile;
 		
 		if(!realFileName.toString().equals(newFileName)){
 			try {
+				if(new File(targetDir+File.separator+"changed method names.txt").length() == 0){
+						outputFile.write("This file contains all the method names, that have been changed, due to the classname plus methodname plus its parameters being longer than 255 characters. For those files the end of it is replaced by the md5 hash of the string.");
+						outputFile.newLine();
+						outputFile.newLine();
+						outputFile.newLine();
+				}
 				outputFile.write("Generated Filename:");
 				outputFile.newLine();
 				outputFile.write(newFileName);
 				outputFile.newLine();
 				outputFile.write("Real Filename:");
 				outputFile.newLine();
+				//prepend the package where this class + method resides
+				realFileName.insert(0, method.getSmaliClass().getFullClassName(false));
 				outputFile.write(realFileName.toString());
 				outputFile.newLine();
 				outputFile.newLine();
