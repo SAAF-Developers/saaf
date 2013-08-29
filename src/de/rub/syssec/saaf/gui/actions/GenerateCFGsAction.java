@@ -18,18 +18,16 @@ package de.rub.syssec.saaf.gui.actions;
 
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.LinkedList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.ProgressMonitor;
 
+import de.rub.syssec.saaf.analysis.steps.cfg.CFGGraph;
+import de.rub.syssec.saaf.analysis.steps.cfg.ExportCFG;
 import de.rub.syssec.saaf.gui.MainWindow;
-import de.rub.syssec.saaf.misc.CFGGraph;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
@@ -98,7 +96,7 @@ public class GenerateCFGsAction extends AbstractAction {
 		
 
 								CFGGraph c = new CFGGraph(method);
-								ExportAction ex = new ExportAction(c.getGraph(), outDir.toString());
+								ExportCFG ex = new ExportCFG(c.getGraph(), outDir.toString());
 								ex.export(method);
 
 						}

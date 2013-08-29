@@ -16,15 +16,10 @@
  */
 package de.rub.syssec.saaf.analysis.steps.cfg;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 
 import de.rub.syssec.saaf.analysis.steps.AbstractStep;
-import de.rub.syssec.saaf.gui.actions.ExportAction;
-import de.rub.syssec.saaf.misc.CFGGraph;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.analysis.AnalysisException;
@@ -84,7 +79,7 @@ public class GenerateCFGStep extends AbstractStep {
 			for (MethodInterface method : file.getMethods()) {
 
 				CFGGraph c = new CFGGraph(method);
-				ExportAction ex = new ExportAction(c.getGraph(), outDir.toString());
+				ExportCFG ex = new ExportCFG(c.getGraph(), outDir.toString());
 				ex.export(method);
 		}
 			processedClasses++;

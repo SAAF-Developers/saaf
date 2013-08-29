@@ -39,11 +39,11 @@ import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.io.FileUtils;
 
+import de.rub.syssec.saaf.analysis.steps.cfg.CFGGraph;
+import de.rub.syssec.saaf.analysis.steps.cfg.ExportCFG;
 import de.rub.syssec.saaf.application.methods.Method;
 import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.gui.ViewerStarter;
-import de.rub.syssec.saaf.gui.actions.ExportAction;
-import de.rub.syssec.saaf.misc.CFGGraph;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.application.ClassInterface;
@@ -177,7 +177,7 @@ public class CfgSelectorFrame extends JInternalFrame {
 				.getAbsolutePath();
 		
 		CFGGraph c = new CFGGraph(method);
-		ExportAction ex = new ExportAction(c.getGraph(), targetDir);
+		ExportCFG ex = new ExportCFG(c.getGraph(), targetDir);
 		ex.export(method);
 		File cfg = new File(ex.getLastExportedFile());
 		if (showCfg) {

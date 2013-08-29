@@ -25,8 +25,8 @@ import javax.swing.JMenuItem;
 
 import com.mxgraph.view.mxGraph;
 
+import de.rub.syssec.saaf.analysis.steps.cfg.CFGGraph;
 import de.rub.syssec.saaf.gui.actions.ExportAction;
-import de.rub.syssec.saaf.misc.CFGGraph;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 
 public class MethodViewer extends JFrame{

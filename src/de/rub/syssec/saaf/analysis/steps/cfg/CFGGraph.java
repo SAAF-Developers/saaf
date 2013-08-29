@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.rub.syssec.saaf.misc;
+package de.rub.syssec.saaf.analysis.steps.cfg;
 
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -27,6 +27,7 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 
+import de.rub.syssec.saaf.misc.Highlight;
 import de.rub.syssec.saaf.model.application.BasicBlockInterface;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 
