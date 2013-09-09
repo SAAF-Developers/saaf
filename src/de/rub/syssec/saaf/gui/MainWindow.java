@@ -52,7 +52,7 @@ import de.rub.syssec.saaf.gui.actions.SearchBytecodeAction;
 import de.rub.syssec.saaf.gui.actions.SearchStringsAction;
 import de.rub.syssec.saaf.gui.actions.ShowLogAction;
 import de.rub.syssec.saaf.gui.actions.ShowReportAction;
-import de.rub.syssec.saaf.gui.frame.LogFrame;
+import de.rub.syssec.saaf.gui.frame.logs.LogFrame;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
@@ -108,11 +108,9 @@ public class MainWindow extends JFrame implements ActionListener {
 		// Make dragging a little faster but perhaps uglier: will only move the
 		// borders of the frame
 		// desktopPane.setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
+		
+		setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 
-		// register with the Logger so we are notified about events and can
-		// display them in a dialogue
-		// FIXME Explicit usage of implementation class. Bad.
-		// ((SAAFLogger)LOGGER).addObserver(this);
 
 	}
 

@@ -25,7 +25,7 @@ import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
  * @author Tilman Bender <tilman.bender@rub.de>
  *
  */
-public interface Step {
+public interface Step extends ProgressObservable {
 
 	public abstract void setName(String name);
 
@@ -40,7 +40,5 @@ public interface Step {
 	public abstract boolean isEnabled();
 	
 	public abstract boolean process(AnalysisInterface analysis) throws AnalysisException;
-	
-	public void addProgressListener(ProgressListener p);
 
 }

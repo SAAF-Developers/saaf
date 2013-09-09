@@ -29,7 +29,7 @@ import javax.swing.table.TableColumn;
 
 import de.rub.syssec.saaf.application.search.StringSearcher;
 import de.rub.syssec.saaf.application.search.StringSearcher.FoundString;
-import de.rub.syssec.saaf.gui.FileTree;
+import de.rub.syssec.saaf.gui.editor.FileTree;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
 
 public class FoundStringsFrame extends JInternalFrame {

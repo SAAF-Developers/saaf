@@ -25,6 +25,7 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
+import de.rub.syssec.saaf.analysis.steps.obfuscation.Entropy;
 import de.rub.syssec.saaf.application.Field;
 import de.rub.syssec.saaf.misc.ByteUtils;
 import de.rub.syssec.saaf.misc.KMP;
@@ -1050,7 +1051,7 @@ public class Method implements MethodInterface {
 	private Float arithOpsAmount = null;
 	private boolean changed;
 	private boolean obfuscated;
-	private double entropy;
+	private Entropy entropy;
 
 	/**
 	 * Calculate the percentage of artithmetic operations in this function.
@@ -1303,12 +1304,12 @@ public class Method implements MethodInterface {
 	}
 
 	@Override
-	public void setEntropy(double entropy) {
+	public void setEntropy(Entropy entropy) {
 		this.entropy=entropy;
 	}
 
 	@Override
-	public double getEntropy() {
+	public Entropy getEntropy() {
 		return this.entropy;
 	}
 }

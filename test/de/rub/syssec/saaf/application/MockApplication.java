@@ -14,6 +14,7 @@ import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.ClassOrMethodNotFoundException;
 import de.rub.syssec.saaf.model.application.Digest;
 import de.rub.syssec.saaf.model.application.MethodInterface;
+import de.rub.syssec.saaf.model.application.manifest.ComponentInterface;
 import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
 
 /**
@@ -265,5 +266,12 @@ public class MockApplication implements ApplicationInterface {
 	@Override
 	public String getMessageDigest(Digest digestAlgorithm) {
 		return digestMap.get(digestAlgorithm);
+	}
+
+
+	@Override
+	public ClassInterface getSmaliClass(ComponentInterface component) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

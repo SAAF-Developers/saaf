@@ -23,7 +23,6 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ProgressMonitor;
 
-import de.rub.syssec.saaf.analysis.steps.ProgressListener;
 import de.rub.syssec.saaf.analysis.steps.decompile.DecompileToJavaStep;
 import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.gui.OpenAppsMgr;
@@ -92,38 +91,7 @@ public class DecompileToJavaAction extends AbstractAction {
 									+ analysis.getApp().getApplicationName(),
 							0, numberOfClasses);
 					
-					decompile.addProgressListener(new ProgressListener() {
-						
-						@Override
-						public void started() {
-							// TODO Auto-generated method stub
-							
-						}
-						
-						@Override
-						public void setProgress(String note) {
-							monitor.setNote(note);
-							
-						}
-						
-						@Override
-						public void setProgress(int progress) {
-							monitor.setProgress(progress);
-							
-						}
-						
-						@Override
-						public void finished() {
-							monitor.setProgress(numberOfClasses);
-							
-						}
-						
-						@Override
-						public void canceled() {
-							// TODO Auto-generated method stub
-							
-						}
-					});
+					decompile.addProgressListener(new MonitorBackedProgressListener(monitor));
 					try {
 						decompile.process(analysis);
 					} catch (AnalysisException e) {

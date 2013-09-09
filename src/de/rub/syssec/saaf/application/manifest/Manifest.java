@@ -17,14 +17,18 @@
 package de.rub.syssec.saaf.application.manifest;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import de.rub.syssec.saaf.application.manifest.components.Component;
 import de.rub.syssec.saaf.application.manifest.permissions.Permission;
 import de.rub.syssec.saaf.application.manifest.permissions.PermissionRequest;
 import de.rub.syssec.saaf.model.application.manifest.ActivityInterface;
+import de.rub.syssec.saaf.model.application.manifest.ComponentInterface;
 import de.rub.syssec.saaf.model.application.manifest.DuplicateEntryPointException;
 import de.rub.syssec.saaf.model.application.manifest.IntentFilterInterface;
 import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
@@ -412,5 +416,14 @@ public class Manifest implements ManifestInterface {
 			throw new DuplicateEntryPointException("Entrypoint already defined: "+this.defaultActivity.getName());
 		}
 
+	}
+
+	@Override
+	public List<ComponentInterface> getComponents() {
+		ArrayList<ComponentInterface> components =  new ArrayList<ComponentInterface>();
+		components.addAll(this.activities.values());
+		components.addAll(this.services.values());
+		components.addAll(this.receivers.values());		
+		return components;
 	}
 }

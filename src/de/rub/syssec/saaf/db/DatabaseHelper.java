@@ -265,7 +265,9 @@ public class DatabaseHelper {
 						+ "source VARCHAR(127),"
 						+ "extends VARCHAR(127),"
 						+ "implements text,"
-						+ "entropy DOUBLE,"
+						+ "cm_entropy DOUBLE,"
+						+ "cmf_entropy DOUBLE,"
+						+ "avg_entropy DOUBLE,"
 						+ "FOREIGN KEY(id_packages) REFERENCES packages(id) ON UPDATE CASCADE ON DELETE CASCADE,"
 						+ "UNIQUE KEY packge_sha1_fuzzy_name (id_packages,hash_fuzzy,name)"
 						+ ") ENGINE = INNODB;");

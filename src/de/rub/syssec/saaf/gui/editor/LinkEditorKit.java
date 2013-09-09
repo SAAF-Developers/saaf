@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.rub.syssec.saaf.gui;
+package de.rub.syssec.saaf.gui.editor;
 
 
 import java.awt.event.MouseAdapter;
@@ -34,7 +34,8 @@ import javax.swing.text.StyledEditorKit;
 import org.apache.log4j.Logger;
 
 
-class LinkEditorKit extends StyledEditorKit {
+
+public class LinkEditorKit extends StyledEditorKit {
 	private static final long serialVersionUID = -3788854220848840779L;
 
 	// attribute on inline elements; if value is URL, will be used for the

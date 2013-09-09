@@ -27,8 +27,9 @@ import java.util.NoSuchElementException;
 import org.apache.log4j.Logger;
 
 import de.rub.syssec.saaf.analysis.steps.CheckSimilartiyStep;
-import de.rub.syssec.saaf.analysis.steps.DetectObfuscationStep;
 import de.rub.syssec.saaf.analysis.steps.ParseSmaliStep;
+import de.rub.syssec.saaf.analysis.steps.ProgressHandler;
+import de.rub.syssec.saaf.analysis.steps.ProgressListener;
 import de.rub.syssec.saaf.analysis.steps.SetupFileSystemStep;
 import de.rub.syssec.saaf.analysis.steps.SetupLoggingStep;
 import de.rub.syssec.saaf.analysis.steps.SkipKnownAppStep;
@@ -46,6 +47,7 @@ import de.rub.syssec.saaf.analysis.steps.hash.Hash;
 import de.rub.syssec.saaf.analysis.steps.heuristic.HeuristicSearchStep;
 import de.rub.syssec.saaf.analysis.steps.metadata.CategorizePermissionsStep;
 import de.rub.syssec.saaf.analysis.steps.metadata.ParseMetaDataStep;
+import de.rub.syssec.saaf.analysis.steps.obfuscation.DetectObfuscationStep;
 import de.rub.syssec.saaf.analysis.steps.reporting.GenerateReportStep;
 import de.rub.syssec.saaf.analysis.steps.slicing.SlicingStep;
 import de.rub.syssec.saaf.db.persistence.exceptions.InvalidEntityException;
@@ -87,6 +89,7 @@ public class Analysis implements AnalysisInterface {
 	private static final List<Step> CLEANUP_STEPS = new LinkedList<Step>();
 	private boolean changed;
 	private File reportFile = null;
+	private ProgressHandler progressHandler;
 
 	private static final Logger LOGGER = Logger.getLogger(Analysis.class);
 
@@ -120,6 +123,7 @@ public class Analysis implements AnalysisInterface {
 		if (!INIT_OK)
 			throw new AnalysisException(
 					"Analysis initialization failed, see log!");
+		this.progressHandler = new ProgressHandler();
 		creationTime = Calendar.getInstance().getTime();
 		this.app = app;
 		status = Status.NOT_STARTED;
@@ -146,6 +150,7 @@ public class Analysis implements AnalysisInterface {
 		try {
 			// do what needs to be done so we can start analyzing
 			doPreprocessing();
+			//check if preprocessing didn't result in skipping the apk
 			if (status == Status.SKIPPED) {
 				LOGGER.info("Further analysis steps for "
 						+ app.getApplicationName() + " are skipped.");
@@ -223,10 +228,17 @@ public class Analysis implements AnalysisInterface {
 	 */
 	@Override
 	public void doAnalysis() throws AnalysisException {
+		int done = 0;
+		this.progressHandler.notifyMax(PROCESSING_STEPS.size());
 		for (Step step : ANALYSIS_STEPS) {
+			this.progressHandler.notifyProgress(step.getName());
 			if (!step.process(this))
-				break;
+			{	
+				return;
+			}
+			this.progressHandler.notifyProgress(++done);
 		}
+		this.progressHandler.notifyFinsihed();
 	}
 
 	/**
@@ -234,11 +246,15 @@ public class Analysis implements AnalysisInterface {
 	 */
 	@Override
 	public void doPreprocessing() throws AnalysisException {
+		int done = 0;
+		this.progressHandler.notifyMax(PROCESSING_STEPS.size());
 		for (Step step : PROCESSING_STEPS) {
+			this.progressHandler.notifyProgress(step.getName());
 			if (!step.process(this)) {
 				status = Status.SKIPPED;
-				break;
+				return;
 			}
+			this.progressHandler.notifyProgress(++done);
 		}
 	}
 
@@ -525,4 +541,10 @@ public class Analysis implements AnalysisInterface {
 	public void addCriticalException(Exception e) {
 		criticalExceptions.add(new SAAFException(e.getMessage(), e, this));		
 	}
+
+	@Override
+	public void addProgressListener(ProgressListener listener) {
+		this.progressHandler.addProgressListener(listener);
+	}
+
 }

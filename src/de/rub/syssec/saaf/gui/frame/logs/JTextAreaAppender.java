@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.rub.syssec.saaf.gui;
+package de.rub.syssec.saaf.gui.frame.logs;
 
 import javax.swing.JTextArea;
 import javax.swing.text.DefaultCaret;

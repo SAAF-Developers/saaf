@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.rub.syssec.saaf.gui.frame;
+package de.rub.syssec.saaf.gui.frame.logs;
 
 import java.beans.PropertyVetoException;
 
@@ -25,7 +25,6 @@ import javax.swing.JTextArea;
 
 import org.apache.log4j.Logger;
 
-import de.rub.syssec.saaf.gui.JTextAreaAppender;
 
 public class LogFrame extends JInternalFrame {
 

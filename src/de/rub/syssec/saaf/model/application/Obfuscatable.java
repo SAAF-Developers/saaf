@@ -1,5 +1,7 @@
 package de.rub.syssec.saaf.model.application;
 
+import de.rub.syssec.saaf.analysis.steps.obfuscation.Entropy;
+
 /**
  * Defines methods to set and query if an object was obfuscated.
  * 
@@ -30,15 +32,15 @@ public interface Obfuscatable {
 	/**
 	 * Set the entropy of the obfuscated object.
 	 * 
-	 * @param entropy
+	 * @param e
 	 */
-	public abstract void setEntropy(double entropy);
+	public abstract void setEntropy(Entropy e);
 	/**
 	 * get the entropy of the obfuscated object.
 	 * 
 	 * @return
 	 */
-	public abstract double getEntropy();
+	public abstract Entropy getEntropy();
 	
 
 }

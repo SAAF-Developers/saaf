@@ -13,7 +13,14 @@ package de.rub.syssec.saaf.analysis.steps;
 public interface ProgressListener {
 	
 	/**
-	 * Informs that the current progress it at a specific value.
+	 * Sets the maximum amount of work. 
+	 * i.e if setProgress() is called with maximum, the work is considered done.
+	 * @param maximum
+	 */
+	public void setMaximum(int maximum);
+	
+	/**
+	 * Informs that the current progress is at a specific value.
 	 * 
 	 * Note that this is an absolute value and not meant to be a delta.
 	 * 

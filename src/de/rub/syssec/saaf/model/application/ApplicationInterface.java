@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import de.rub.syssec.saaf.analysis.steps.hash.GenerateHashesStep;
 import de.rub.syssec.saaf.model.Entity;
+import de.rub.syssec.saaf.model.application.manifest.ComponentInterface;
 import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
 
 public interface ApplicationInterface extends Entity {
@@ -76,6 +77,7 @@ public interface ApplicationInterface extends Entity {
 	public abstract Vector<File> getAllClassFiles(
 			boolean includeFilesFromAdPackages);
 
+	
 	/**
 	 * Get a already parsed SmaliClass.
 	 * @param file the filename
@@ -83,6 +85,14 @@ public interface ApplicationInterface extends Entity {
 	 */
 	public abstract ClassInterface getSmaliClass(File file);
 
+	/**
+	 * Get the smaliclass for a component defined in the manifest.
+	 * 
+	 * @param component the component (Activity, Service, Receiver) that a class should be found for.
+	 * @return the SmaliCalss implementing that component. null if none was found.
+	 */
+	public abstract ClassInterface getSmaliClass(ComponentInterface component);
+	
 	/**
 	 * Get all parsed Smali Files, access will be cached.
 	 * 

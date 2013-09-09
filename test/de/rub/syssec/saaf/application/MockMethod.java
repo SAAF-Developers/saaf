@@ -2,6 +2,7 @@ package de.rub.syssec.saaf.application;
 
 import java.util.LinkedList;
 
+import de.rub.syssec.saaf.analysis.steps.obfuscation.Entropy;
 import de.rub.syssec.saaf.model.application.BasicBlockInterface;
 import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
@@ -272,16 +273,16 @@ public class MockMethod implements MethodInterface {
 
 
 	@Override
-	public void setEntropy(double entropy) {
+	public void setEntropy(Entropy entropy) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
 	@Override
-	public double getEntropy() {
+	public Entropy getEntropy() {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 }

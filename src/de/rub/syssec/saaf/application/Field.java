@@ -21,6 +21,7 @@ import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 
+import de.rub.syssec.saaf.analysis.steps.obfuscation.Entropy;
 import de.rub.syssec.saaf.misc.ByteUtils;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.FieldInterface;
@@ -45,7 +46,7 @@ public class Field implements FieldInterface {
 
 	private boolean obfuscated;
 
-	private double entropy;
+	private Entropy entropy;
 	
 	private static final Logger LOGGER = Logger.getLogger(Field.class);
 	
@@ -181,13 +182,13 @@ public class Field implements FieldInterface {
 
 
 	@Override
-	public void setEntropy(double entropy) {
+	public void setEntropy(Entropy entropy) {
 		this.entropy=entropy;
 	}
 
 
 	@Override
-	public double getEntropy() {
+	public Entropy getEntropy() {
 		return this.entropy;
 	}
 }

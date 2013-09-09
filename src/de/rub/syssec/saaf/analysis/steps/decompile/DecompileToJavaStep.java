@@ -56,6 +56,7 @@ public class DecompileToJavaStep extends AbstractStep {
 	@Override
 	public boolean doProcessing(AnalysisInterface analysis)
 			throws AnalysisException {
+		progressHandler.notifyStarted();
 		ApplicationInterface app = analysis.getApp();
 		File apkFile = app.getApkFile();
 		File bytecodedir = app.getBytecodeDirectory();
@@ -93,6 +94,7 @@ public class DecompileToJavaStep extends AbstractStep {
 			String jadPath = config.getConfigValue(ConfigKeys.EXECUTABLE_JAD);
 			File toDecompile = null;
 			int decompiled =0;
+			progressHandler.notifyMax(files.size());
 			for (int i = 0; i < files.size(); i++) {
 				try {
 
@@ -110,8 +112,8 @@ public class DecompileToJavaStep extends AbstractStep {
 					toDecompile.delete();
 					decompiled++;
 					
-					notifyProgress("Decompiled "+toDecompile.getName());
-					notifyProgress(decompiled);
+					progressHandler.notifyProgress("Decompiled "+toDecompile.getName());
+					progressHandler.notifyProgress(decompiled);
 					// System.out.println(System.getProperty("user.dir") +
 					// File.separator + "jad -sjava -ff -o -lnc " +
 					// files.get(i));

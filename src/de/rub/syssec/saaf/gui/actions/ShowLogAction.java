@@ -9,7 +9,7 @@ import java.beans.PropertyVetoException;
 import javax.swing.AbstractAction;
 
 import de.rub.syssec.saaf.gui.MainWindow;
-import de.rub.syssec.saaf.gui.frame.LogFrame;
+import de.rub.syssec.saaf.gui.frame.logs.LogFrame;
 
 /**
  * Displays the logging window.

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import de.rub.syssec.saaf.analysis.steps.obfuscation.DetectObfuscationStep;
+
 public class DetectObfuscationStepTest {
 
 	@Test
@@ -23,6 +25,11 @@ public class DetectObfuscationStepTest {
 		assertTrue(0.0==DetectObfuscationStep.entropy("AA"));
 	}
 
+	@Test
+	public void testEntropyStringTwoChar() {
+		assertTrue(1.0==DetectObfuscationStep.entropy("AB"));
+	}
+	
 	@Test
 	public void testMedian() {
 		Double test = 23.0;

@@ -24,6 +24,7 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
 import de.rub.syssec.saaf.analysis.Analysis;
+import de.rub.syssec.saaf.gui.editor.FileTree;
 import de.rub.syssec.saaf.gui.frame.CfgSelectorFrame;
 import de.rub.syssec.saaf.gui.frame.FoundBytecodeFrame;
 import de.rub.syssec.saaf.gui.frame.FoundStringsFrame;

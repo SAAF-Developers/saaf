@@ -18,6 +18,9 @@ package de.rub.syssec.saaf.model.application.manifest;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
+
+import de.rub.syssec.saaf.application.manifest.components.Component;
 
 /**
  * 
@@ -244,4 +247,11 @@ public interface ManifestInterface {
 	 */
 	public void setDefaultActivity(ActivityInterface activity)
 			throws DuplicateEntryPointException;
+
+	/**
+	 * Convenience method to obtain all components (activites, services, receivers).
+	 * 
+	 * @return
+	 */
+	public abstract List<ComponentInterface> getComponents();
 }

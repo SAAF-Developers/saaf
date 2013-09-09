@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
+import de.rub.syssec.saaf.analysis.steps.ProgressListener;
 import de.rub.syssec.saaf.model.Entity;
 import de.rub.syssec.saaf.model.SAAFException;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
@@ -120,4 +121,6 @@ public interface AnalysisInterface extends Entity {
 	 * @param e
 	 */
 	public void addCriticalException(Exception e);
+
+	public void addProgressListener(ProgressListener listener);
 }

@@ -33,7 +33,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import de.rub.syssec.saaf.application.search.BytecodeSearcher;
-import de.rub.syssec.saaf.gui.FileTree;
+import de.rub.syssec.saaf.gui.editor.FileTree;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
 

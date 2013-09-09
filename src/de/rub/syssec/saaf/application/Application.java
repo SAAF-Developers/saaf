@@ -37,6 +37,7 @@ import de.rub.syssec.saaf.model.application.DetectionLogicError;
 import de.rub.syssec.saaf.model.application.Digest;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 import de.rub.syssec.saaf.model.application.SmaliClassError;
+import de.rub.syssec.saaf.model.application.manifest.ComponentInterface;
 import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
 
 /**
@@ -448,5 +449,12 @@ public class Application implements ApplicationInterface {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public ClassInterface getSmaliClass(ComponentInterface component) {
+		String path = component.getName().replace('.', '/');
+		path = this.getDecompiledContentDir() + File.separator + "smali" + File.separator + path + ".smali";
+		return this.getSmaliClass(new File(path));
 	}
 }

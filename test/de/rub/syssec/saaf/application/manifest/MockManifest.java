@@ -6,8 +6,10 @@ package de.rub.syssec.saaf.application.manifest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import de.rub.syssec.saaf.model.application.manifest.ActivityInterface;
+import de.rub.syssec.saaf.model.application.manifest.ComponentInterface;
 import de.rub.syssec.saaf.model.application.manifest.DuplicateEntryPointException;
 import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
 import de.rub.syssec.saaf.model.application.manifest.PermissionRequestInterface;
@@ -319,6 +321,12 @@ public class MockManifest implements ManifestInterface {
 			throws DuplicateEntryPointException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public List<ComponentInterface> getComponents() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

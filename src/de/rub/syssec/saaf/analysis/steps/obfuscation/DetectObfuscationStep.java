@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.rub.syssec.saaf.analysis.steps;
+package de.rub.syssec.saaf.analysis.steps.obfuscation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import de.rub.syssec.saaf.analysis.steps.AbstractStep;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.model.analysis.AnalysisException;
 import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
@@ -19,7 +20,9 @@ import de.rub.syssec.saaf.model.application.FieldInterface;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 
 /**
- * @author tbender
+ * Detects obfuscated classes by calculating the entropy.
+ * 
+ * @author Tilman Bender <tilman.bender@rub.de>
  *
  */
 public class DetectObfuscationStep extends AbstractStep {
@@ -27,6 +30,13 @@ public class DetectObfuscationStep extends AbstractStep {
 	
 	private static final double ENTROPY_CONSTANT = 2.25;
 
+	/**
+	 * Calculates the entropy of a character string.
+	 * 
+	 * @see <a href="http://en.wikipedia.org/wiki/Entropy_%28information_theory%29#Definition"> Definition</a>
+	 * @param name
+	 * @return
+	 */
 	public static double entropy(String name) {
 		 
         final Map<Character, Long> numberOfOccurences = new HashMap<Character, Long>();
@@ -58,6 +68,7 @@ public class DetectObfuscationStep extends AbstractStep {
 	    }
 	}
 	
+
 	public DetectObfuscationStep(Config cfg,boolean enabled)
 	{
 		this.logger = Logger.getLogger(getClass());
@@ -77,11 +88,10 @@ public class DetectObfuscationStep extends AbstractStep {
 
 		for(ClassInterface smaliClass : analysis.getApp().getAllSmaliClasss(true))
 		{
-			double entropy = entropy(smaliClass);
-			smaliClass.setEntropy(entropy);
-			logger.info("Entropy for class "+smaliClass.getClassName()+": "+entropy);
+			entropy(smaliClass);
+			logger.info("Entropy for class "+smaliClass.getClassName()+": "+smaliClass.getEntropy().CMFEntropy);
 
-			if(entropy<ENTROPY_CONSTANT)
+			if(smaliClass.getEntropy().CMFEntropy<ENTROPY_CONSTANT)
 			{
 				smaliClass.setObfuscated(true);
 				logger.info("Class "+smaliClass.getClassName()+ " is potentially obfuscated");
@@ -90,47 +100,68 @@ public class DetectObfuscationStep extends AbstractStep {
 		return true;
 	}
 	
-	public double entropy(ClassInterface smaliClass)
+	/**
+	 * Calculates the entropy of a class.
+	 * 
+	 * This method actually calculates several versions of the entropy.
+	 * 
+	 * <ul>
+	 * 	<li>entropy1: calculated from concatenating the classname and all method names </li>
+	 *  <li>entropy2: calculated from concatenating class-,method- and fieldnames </li>
+	 *  <li>entropy3: calculated as the average over the entropies of class-, method- and fieldnames</li>
+	 * </ul>
+	 * 
+	 * @param smaliClass
+	 * @return
+	 */
+	public void entropy(ClassInterface smaliClass)
 	{
 		logger.info("Checking class "+smaliClass.getClassName()+" fo obfuscation");
 		List<Double> entropies = new ArrayList<Double>();
-		double classNameEntropy = entropy(smaliClass.getClassName());
-		entropies.add(classNameEntropy);
+		//this is used to produce one large string from names of the class,methods and fields
+		StringBuilder allNames = new StringBuilder(smaliClass.getClassName());
+		entropies.add(entropy(smaliClass.getClassName()));
+		double entropy=0.0;
 		for(MethodInterface method : smaliClass.getMethods())
 		{
-			double entropy = entropy(method);
-			method.setEntropy(entropy);
+			allNames.append(method.getName());
+			entropy = entropy(method.getName());
+			method.setEntropy(new Entropy(entropy));
 			if(entropy<ENTROPY_CONSTANT)
 			{
 				smaliClass.setObfuscated(true);
-				logger.info("Method "+smaliClass.getClassName()+ " is potentially obfuscated");
+				logger.info("Method "+method.getReadableJavaName()+ " is potentially obfuscated");
 			}
 			entropies.add(entropy);
 		}
-		double entropy = median(entropies);
-		logger.info("Entropy for class "+smaliClass.getClassName()+" "+entropy);
-		return  entropy;
-
-	}
-	
-	public double entropy(FieldInterface field)
-	{
-		return entropy(field.getFieldName());
-	}
-	
-	public double entropy(MethodInterface method)
-	{
-		double methodNameEntropy=entropy(method.getName());
-		double fieldEntropy=0.0;
-		List<Double> entropies = new ArrayList<Double>();
-		entropies.add(methodNameEntropy);
-		for(FieldInterface field : method.getLocalFields())
+		Entropy e = new Entropy();
+		//calculate entropy of concatenation of class-name and all method names
+		e.CMEntropy= entropy(allNames.toString());
+		for(FieldInterface field : smaliClass.getAllFields())
 		{
-			fieldEntropy = entropy(field);
-			entropies.add(fieldEntropy);
-			field.setEntropy(fieldEntropy);
+			allNames.append(field.getFieldName());
+			entropies.add(entropy(field.getFieldName()));
 		}
-		return median(entropies);
+		//calculate entropy of concatenation of class-, method- and fieldnames
+		e.CMFEntropy = entropy(allNames.toString());
+		//calculate the average of all separate entropies
+		e.AverageEntropy = mean(entropies);		
+		smaliClass.setEntropy(e);
 	}
 
+	public double mean(List<Double> entropies) {
+		double sum = 0.0;
+		for( Double entropy : entropies)
+		{
+			sum += entropy.doubleValue();
+		}
+		if(entropies.size()!=0)
+		{
+			return sum/entropies.size();
+		}else
+		{
+			return entropies.size();
+		}
+		
+	}
 }

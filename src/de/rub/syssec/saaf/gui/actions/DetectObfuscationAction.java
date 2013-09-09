@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 
-import de.rub.syssec.saaf.analysis.steps.DetectObfuscationStep;
+import de.rub.syssec.saaf.analysis.steps.obfuscation.DetectObfuscationStep;
 import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.gui.OpenAppsMgr;
 import de.rub.syssec.saaf.misc.config.Config;

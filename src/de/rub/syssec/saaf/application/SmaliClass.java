@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import de.rub.syssec.saaf.analysis.steps.obfuscation.Entropy;
 import de.rub.syssec.saaf.application.instructions.Instruction;
 import de.rub.syssec.saaf.application.methods.Method;
 import de.rub.syssec.saaf.misc.ByteUtils;
@@ -83,7 +84,7 @@ public class SmaliClass implements ClassInterface {
 	private boolean inAdFramework=false;
 	private boolean changed;
 	private boolean obfuscated;
-	private double entropy;
+	private Entropy entropy;
 	
 	/**
 	 * The parsed SMALI file.
@@ -544,13 +545,13 @@ public class SmaliClass implements ClassInterface {
 	}
 	
 	@Override
-	public void setEntropy(double entropy) {
+	public void setEntropy(Entropy entropy) {
 		this.entropy=entropy;
 	}
 
 
 	@Override
-	public double getEntropy() {
+	public Entropy getEntropy() {
 		return this.entropy;
 	}
 }

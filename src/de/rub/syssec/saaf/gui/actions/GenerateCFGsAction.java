@@ -47,7 +47,13 @@ public class GenerateCFGsAction extends AbstractAction {
 	public GenerateCFGsAction(String title, MainWindow mainWindow) {
 		super(title);
 		this.mainWindow = mainWindow;
-		this.putValue(SHORT_DESCRIPTION, "Generates control flow grapsh for all methods.");		
+		if (this.enabled) {
+			this.putValue(SHORT_DESCRIPTION,
+					"Generates control flow graphs for all methods.");
+		} else {
+			this.putValue(SHORT_DESCRIPTION,
+					"The dot executable is not available.");
+		}
 	}
 
 	/*

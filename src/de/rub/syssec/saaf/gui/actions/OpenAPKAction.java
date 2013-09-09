@@ -21,9 +21,11 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 
 import javax.swing.AbstractAction;
+import javax.swing.ProgressMonitor;
 
 import de.rub.syssec.saaf.Main;
 import de.rub.syssec.saaf.analysis.Analysis;
+import de.rub.syssec.saaf.analysis.steps.ProgressListener;
 import de.rub.syssec.saaf.analysis.steps.SetupFileSystemStep;
 import de.rub.syssec.saaf.analysis.steps.SetupLoggingStep;
 import de.rub.syssec.saaf.analysis.steps.Step;
@@ -81,18 +83,26 @@ public class OpenAPKAction extends AbstractAction {
 		}
 
 		if (apk != null) {
+			final ProgressMonitor mon =  new ProgressMonitor(mainWindow, "Opening ...", "Opening "+apk.getName(), 0, 10);
+			mon.setMillisToDecideToPopup(0);
+			mon.setMillisToPopup(0);
+			final ProgressListener listener = new MonitorBackedProgressListener(mon);
+			
 			Thread doit = new Thread() {
 
 				@Override
 				public void run() {
 					mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 					mainWindow.setTitle(Main.title + ": " + apk.getName());
+
 					new ShowLogAction("foo", mainWindow).actionPerformed(event);
 					try {
 						Application app = new Application(apk, true);
 						Config config = Config.getInstance();
 						AnalysisInterface analysis = new Analysis(app);
+						analysis.addProgressListener(listener);
 						analysis.doPreprocessing();
+						
 						openAppsMgr.addAnalysis(analysis);
 						// abort an app w/ the same hash is already opened
 						if (!openAppsMgr.addNewAnalysis(analysis)) {

@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
+import javax.swing.ProgressMonitor;
 
 import org.apache.log4j.Logger;
 
@@ -56,9 +57,14 @@ public class DoAnalysisAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		final Analysis selectedAnalysis = mainWindow
 				.getUserselectedAnalysisIfMultipleAreOpened();
+		
+		//create a ProgressMonitor that will show a dialog with progressbar
+		//maximum is set by the application itself.
+		final ProgressMonitor mon = new ProgressMonitor(mainWindow, "Analysing", "Analysis started", 0, 0);
 		Thread doit = new Thread() {
 
 			public void run() {
+				selectedAnalysis.addProgressListener(new MonitorBackedProgressListener(mon));
 				if (selectedAnalysis == null) {
 					JOptionPane.showMessageDialog(mainWindow,
 							"Please open an application first.", "Error",

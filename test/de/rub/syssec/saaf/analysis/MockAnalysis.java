@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.rub.syssec.saaf.analysis.steps.ProgressListener;
 import de.rub.syssec.saaf.model.SAAFException;
 import de.rub.syssec.saaf.model.analysis.AnalysisException;
 import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
@@ -216,6 +217,12 @@ public class MockAnalysis implements AnalysisInterface {
 
 	@Override
 	public void addCriticalException(Exception e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addProgressListener(ProgressListener listener) {
 		// TODO Auto-generated method stub
 		
 	}

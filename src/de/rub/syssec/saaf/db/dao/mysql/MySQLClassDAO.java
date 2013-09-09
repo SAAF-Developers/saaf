@@ -44,7 +44,9 @@ public class MySQLClassDAO implements NuClassDAO {
 	private static final String DB_COLUMN_EXTENDS = "extends";
 	private static final String DB_COLUMN_IMPLEMENTS = "implements";
 	private static final String DB_COLUMN_PACKAGES = "id_packages";
-	private static final String DB_COLUMN_ENTROPY = "entropy";
+	private static final String DB_COLUMN_CM_ENTROPY = "cm_entropy";
+	private static final String DB_COLUMN_CMF_ENTROPY = "cmf_entropy";
+	private static final String DB_COLUMN_AVG_ENTROPY = "avg_entropy";
 	
 	private static final String DB_QUERY_INSERT = "INSERT INTO classes " +
 			"("+
@@ -55,8 +57,10 @@ public class MySQLClassDAO implements NuClassDAO {
 			DB_COLUMN_SOURCE+", "+
 			DB_COLUMN_EXTENDS+", "+
 			DB_COLUMN_IMPLEMENTS+", "+
-			DB_COLUMN_ENTROPY+
-			")VALUES(?,?,?,?,?,?,?,?)";
+			DB_COLUMN_CM_ENTROPY+","+
+			DB_COLUMN_CMF_ENTROPY+","+
+			DB_COLUMN_AVG_ENTROPY+
+			")VALUES(?,?,?,?,?,?,?,?,?,?)";
 	
 	
 	private static final String DB_QUERY_UPDATE = "UPDATE classes SET "+
@@ -67,7 +71,9 @@ public class MySQLClassDAO implements NuClassDAO {
 			DB_COLUMN_SOURCE+"=?, "+
 			DB_COLUMN_EXTENDS+"=?, "+
 			DB_COLUMN_IMPLEMENTS+"=?, "+
-			DB_COLUMN_ENTROPY+"=? WHERE "+
+			DB_COLUMN_CM_ENTROPY+"=?,"+
+			DB_COLUMN_CMF_ENTROPY+"=?,"+
+			DB_COLUMN_AVG_ENTROPY+"=? WHERE "+
 			DB_COLUMN_ID+"=?";
 	
 	private static final String DB_QUERY_DELETE = "DELETE FROM classes WHERE "+DB_COLUMN_ID+"=?";
@@ -130,8 +136,18 @@ public class MySQLClassDAO implements NuClassDAO {
 				statement.setNull(++index, Types.VARCHAR);
 			}
 			
-			statement.setDouble(++index, entity.getEntropy());
-
+			if(entity.getEntropy()!=null)
+				{
+				statement.setDouble(++index, entity.getEntropy().CMEntropy);
+				statement.setDouble(++index, entity.getEntropy().CMFEntropy);
+				statement.setDouble(++index, entity.getEntropy().AverageEntropy);
+			}else
+			{
+				statement.setNull(++index, Types.DOUBLE);
+				statement.setNull(++index, Types.DOUBLE);
+				statement.setNull(++index, Types.DOUBLE);
+			}
+			
 			statement.executeUpdate();
 			ResultSet rs = statement.getGeneratedKeys();
 			if (rs.next()) {
@@ -200,7 +216,17 @@ public class MySQLClassDAO implements NuClassDAO {
 				update.setNull(++index, Types.VARCHAR);
 			}
 			
-			update.setDouble(++index, entity.getEntropy());
+			if(entity.getEntropy()!=null)
+			{
+				update.setDouble(++index, entity.getEntropy().CMEntropy);
+				update.setDouble(++index, entity.getEntropy().CMFEntropy);
+				update.setDouble(++index, entity.getEntropy().AverageEntropy);
+			}else
+			{
+				update.setNull(++index, Types.DOUBLE);
+				update.setNull(++index, Types.DOUBLE);
+				update.setNull(++index, Types.DOUBLE);
+			}
 			update.setInt(++index, entity.getId());
 			recordsUpdated = update.executeUpdate();
 			// this should affect at most one record
