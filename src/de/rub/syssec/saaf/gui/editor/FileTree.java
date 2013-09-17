@@ -37,16 +37,15 @@
  */
 package de.rub.syssec.saaf.gui.editor;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -56,12 +55,10 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Vector;
 
-import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -78,10 +75,8 @@ import org.apache.log4j.Logger;
 
 import de.rub.syssec.saaf.gui.OpenAnalysis;
 import de.rub.syssec.saaf.gui.ViewerStarter;
-import de.rub.syssec.saaf.gui.OpenAnalysis.AppFrame;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
-import de.rub.syssec.saaf.model.application.ClassInterface;
 
 /**
  * Display a file system in a JTree view (extended with lots of SAAF stuff).
@@ -102,7 +97,7 @@ import de.rub.syssec.saaf.model.application.ClassInterface;
  * @see OpenApp
  * 
  */
-public class FileTree extends JPanel {
+public class FileTree extends JPanel implements PropertyChangeListener {
 
 	private static final String MENU_ACTION_CFG = "Generate CFGs";
 	private final Vector<Vector<String>> history;
@@ -116,32 +111,36 @@ public class FileTree extends JPanel {
 	private JTree fileTree;
 
 	private final EditorView editor;
-	private final ApplicationInterface app;
 	private OpenAnalysis openAna;
 	private final Logger logger = Logger.getLogger(FileTree.class);
 
 	private final ViewerStarter viewer = new ViewerStarter(
 			ConfigKeys.VIEWER_IMAGES);
+	private EditorModel model;
+	private OutlineView outlineTree;
+
+	public EditorModel getModel() {
+		return model;
+	}
+
+	public void setModel(EditorModel model) {
+		this.model = model;
+	}
 
 	private final class SelectionListener implements TreeSelectionListener {
-		private final ApplicationInterface app;
-
-		private SelectionListener(ApplicationInterface app) {
-			this.app = app;
-		}
 
 		public void valueChanged(TreeSelectionEvent e) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath()
 					.getLastPathComponent();
 
-			if (node == null) { // at startup this will show the manifest
-				try {
-					editor.open(app.getManifestFile());
-				} catch (Exception e1) {
-					logger.warn("Problem during tree construction", e1);
-				}
-				return;
-			}
+//			if (node == null) { // at startup this will show the manifest
+//				try {
+//					editor.open(app.getManifestFile());
+//				} catch (Exception e1) {
+//					logger.warn("Problem during tree construction", e1);
+//				}
+//				return;
+//			}
 
 			Object nodeInfo = node.getUserObject();
 			if (node.isLeaf()) {
@@ -157,22 +156,7 @@ public class FileTree extends JPanel {
 
 				try {
 					// Load text from file
-					editor.open(nodeObject.getFile());
-
-					// TODO: improve updating of the MethodTree and just
-					// remove it, if a non smali file is selected (now
-					// updating is done via removing and adding of the tree)
-					// if(outlineTree!=null){outerSplitPane.remove(outlineTree);}
-
-//					if (nodeObject.getFile().getName().endsWith("smali")) {
-//						smali = nodeObject.getFile();
-//						// root element
-//						ClassInterface smaliFile = app.getSmaliClass(smali);
-//						outlineTree = new OutlineView(smaliFile, editor);
-//						outerSplitPane.setRightComponent(outlineTree);
-//						outerSplitPane.setDividerLocation(750);
-//
-//					}
+					model.setCurrentFile(nodeObject.getFile());
 				} catch (Exception e1) {
 					logger.warn("Problem during tree construction: "
 							+ e1.getMessage());
@@ -209,14 +193,18 @@ public class FileTree extends JPanel {
 				this);
 
 		directory = dir;
-		this.app = app;
-		//setBackground(Color.MAGENTA);
+		setBackground(Color.MAGENTA);
 		setLayout(new GridBagLayout());
 		
+		this.model = new EditorModel(app);
+		
+		//we want to be notified if the file changes so we can reflect that in the tree
+		model.addPropertyChangeListener(this);
+				
 		//the tree that lists the files (top left)
 		JTree tree = new JTree(addNodes(null, dir));
 		tree.addMouseListener(ma);
-		tree.addTreeSelectionListener(new SelectionListener(app));
+		tree.addTreeSelectionListener(new SelectionListener());
 		fileTree = tree;
 		
 
@@ -232,7 +220,9 @@ public class FileTree extends JPanel {
 				this.add(new JScrollPane(tree),treeConstraints);
 
 		//the list of components (bottom left)
-		JPanel entrypoints = new EntryPointsView(app,this);
+		EntryPointsView entrypoints = new EntryPointsView(model);
+		model.addPropertyChangeListener(entrypoints);
+		
 		JScrollPane entryPointsScroller = new JScrollPane(entrypoints);
 		GridBagConstraints entrypointConstraints = new GridBagConstraints();
 		entrypointConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -241,13 +231,15 @@ public class FileTree extends JPanel {
 		entrypointConstraints.gridwidth=1;
 		entrypointConstraints.gridx = 0;
 		entrypointConstraints.gridy = 1;
-		entrypointConstraints.weightx = 0.20;
+		entrypointConstraints.weightx = 0.15;
 		entrypointConstraints.weighty = 1.0;
 
 		this.add(entryPointsScroller,entrypointConstraints);
 		
-		//the editor (contains the textview and the list of methods)
-		this.editor = new EditorView(app, this);
+		//the editor (contains the textview and the list of methods)	
+		this.editor = new EditorView(model, this);
+		this.model.addPropertyChangeListener(this.editor);
+		
 		GridBagConstraints editorConstraints = new GridBagConstraints();
 		editorConstraints.anchor = GridBagConstraints.NORTHWEST;
 		editorConstraints.fill = GridBagConstraints.BOTH;
@@ -255,17 +247,23 @@ public class FileTree extends JPanel {
 		editorConstraints.gridwidth=1;
 		editorConstraints.gridx = 1;
 		editorConstraints.gridy = 0;
-		editorConstraints.weightx = 0.75;
+		editorConstraints.weightx = 0.70;
 		editorConstraints.weighty = 1.0;
 		this.add(editor,editorConstraints);
-
-		try {
-			editor.open(new File(directory.getAbsolutePath() + File.separator
-					+ "AndroidManifest.xml"));
-		} catch (Exception e1) {
-			logger.warn("Problem building file tree", e1);
-		}
-
+		
+		this.outlineTree = new OutlineView(this.model);
+		model.addPropertyChangeListener("currentClass", outlineTree);
+		
+		GridBagConstraints outlineConstraints = new GridBagConstraints();
+		outlineConstraints.anchor = GridBagConstraints.NORTHWEST;
+		outlineConstraints.fill = GridBagConstraints.BOTH;
+		outlineConstraints.gridwidth=1;
+		outlineConstraints.gridheight=2;
+		outlineConstraints.gridx = 2;
+		outlineConstraints.gridy = 0;
+		outlineConstraints.weightx = 0.15;
+		outlineConstraints.weighty = 1.0;
+		this.add(outlineTree, outlineConstraints);
 	}
 
 	public DefaultMutableTreeNode searchNode(String nodeStr, String lineNr) {
@@ -468,7 +466,7 @@ public class FileTree extends JPanel {
 					try {
 						File f = new File(lastClick.getFile().getParent()
 								+ File.separator + event.getActionCommand());
-						editor.open(f);
+						model.setCurrentFile(f);
 					} catch (Exception e) {
 						logger.error(e);
 					}
@@ -487,9 +485,7 @@ public class FileTree extends JPanel {
 		}
 	};
 
-	public ClassInterface getSelectedSmaliClass() {
-		return app.getSmaliClass(smali);
-	}
+
 
 	public Vector<Vector<String>> getHistory() {
 		return this.history;
@@ -498,5 +494,15 @@ public class FileTree extends JPanel {
 	public LinkEditorKit getLinkEditorKit() {
 		return this.linkEditorKit;
 	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent arg0) {
+		//if the selected file changed update the tree selection
+		if("currentFile".equals(arg0.getPropertyName()))
+		{
+			File f = (File) arg0.getNewValue();
+		}
+	}
+	
 
 }

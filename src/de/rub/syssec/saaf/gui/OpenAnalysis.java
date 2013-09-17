@@ -74,9 +74,7 @@ public class OpenAnalysis {
 				// Bytecode von apk anzeigen
 				iFrame = new InternalFrameStub("FileTree - Bytecode - "+ analysis.getApp().getApplicationName());
 				MainWindow.getDesktopPane().add(iFrame);
-				int height = MainWindow.getDesktopPane().getHeight() - iFrame.getPreferredSize().height;
-				int width = MainWindow.getDesktopPane().getWidth();
-				iFrame.setBounds(0, 0, width ,height );
+				iFrame.setBounds(0, 0, iFrame.getWidth(), iFrame.getHeight());
 				iFrame.addInternalFrameListener(new InternalFrameListener(){
 					public void internalFrameClosing(InternalFrameEvent e){
 						apps.closeAnalysis(getAnalysis());
@@ -122,6 +120,7 @@ public class OpenAnalysis {
 				// Add content to the window.
 				iFrame.add(tree);
 				iFrame.pack();
+				iFrame.setMaximum(true);
 				break;
 				
 			case SMALI_SEARCH:
@@ -233,7 +232,7 @@ public class OpenAnalysis {
 				
 				if(!cfgsOpen){
 					try {
-						iFrame = new CfgSelectorFrame(tree.getSelectedSmaliClass());
+						iFrame = new CfgSelectorFrame(tree.getModel().getCurrentClass());
 					}
 					catch (Exception e) {
 						e.printStackTrace();

@@ -2,6 +2,11 @@ package de.rub.syssec.saaf.gui.editor;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -14,6 +19,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
 import de.rub.syssec.saaf.model.application.Obfuscatable;
 import de.rub.syssec.saaf.model.application.manifest.ActivityInterface;
@@ -26,7 +32,7 @@ import de.rub.syssec.saaf.model.application.manifest.ServiceInterface;
  * @author Tilman Bender <tilman.bender@rub.de>
  * 
  */
-public class EntryPointsView extends JPanel {
+public class EntryPointsView extends JPanel implements PropertyChangeListener{
 
 	/**
 	 * 
@@ -84,11 +90,15 @@ public class EntryPointsView extends JPanel {
 	}
 
 	private final class AdjustEditorContent implements ListSelectionListener {
-		private final FileTree tree;
-
-		private AdjustEditorContent(FileTree tree) {
-			this.tree = tree;
+		
+		private ApplicationInterface app;
+		
+		
+		public AdjustEditorContent(ApplicationInterface app) {
+			super();
+			this.app = app;
 		}
+
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
@@ -96,13 +106,15 @@ public class EntryPointsView extends JPanel {
 			ComponentInterface component = (ComponentInterface) list.getModel()
 					.getElementAt(lsm.getMinSelectionIndex());
 			String path = component.getName().replace('.', '/');
-			path = "/bytecode/smali/" + path + ".smali";
-			tree.searchNode(path, null);
+			path = app.getDecompiledContentDir()+"/smali/" + path + ".smali";
+			model.setCurrentFile(new File(path));
 
 		}
 	}
 
 	private final class ComponentListModel extends AbstractListModel {
+
+		private static final long serialVersionUID = 5220412137135665100L;
 		private final ApplicationInterface app;
 		List<ComponentInterface> components;
 
@@ -121,30 +133,50 @@ public class EntryPointsView extends JPanel {
 	}
 
 	private ComponentListModel listModel;
-	private ApplicationInterface app;
 	private JList list;
 
-	public void setApp(ApplicationInterface app) {
-		this.listModel = new ComponentListModel(app);
-	}
+	private EditorModel model;
 
 	/**
 	 * Create the panel.
 	 */
-	public EntryPointsView(final ApplicationInterface app, final FileTree tree) {
-		this.app = app;
+	public EntryPointsView(EditorModel model) {
+		this.model = model;
+		setLayout(new GridBagLayout());
+		ApplicationInterface app = model.getCurrentApplication();
 		if (app.getManifest() != null
 				&& app.getManifest().getComponents() != null) {
 			this.list = new JList();
 			this.listModel = new ComponentListModel(app);
 			this.list.setModel(listModel);
 			this.list.getSelectionModel().addListSelectionListener(
-					new AdjustEditorContent(tree));
+					new AdjustEditorContent(app));
 			this.list.setCellRenderer(new ComponentCellRenderer(app));
-			add(list);
-		}else{
-			this.add(new JLabel("Could not retrieve components from applications manifest."));
+			GridBagConstraints constraints = new GridBagConstraints();
+			constraints.anchor = GridBagConstraints.FIRST_LINE_START;
+			constraints.fill = GridBagConstraints.BOTH;
+			constraints.gridx = 0;
+			constraints.gridy = 0;
+			constraints.gridwidth = 1;
+			constraints.gridheight = 1;
+			constraints.weightx = 1.0;
+			constraints.weighty = 1.0;
+			add(list,constraints);
+		} else {
+			this.add(new JLabel(
+					"Could not retrieve components from applications manifest."));
+			MainWindow
+					.showErrorDialog(
+							"There was a problem retrieving the applicaiton entrypoints.\n" +
+							"Maybe the manifest is malfomed.\n" +
+							"Entrypoints will not be listed.",
+							"Cannot display components");
 		}
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		//if the current class is in our list adjust the selection
 	}
 
 }

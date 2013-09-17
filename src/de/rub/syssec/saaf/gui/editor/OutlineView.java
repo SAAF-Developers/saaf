@@ -5,20 +5,26 @@ package de.rub.syssec.saaf.gui.editor;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import de.rub.syssec.saaf.gui.MainWindow;
@@ -32,7 +38,7 @@ import de.rub.syssec.saaf.model.application.MethodInterface;
  * @author Tilman Bender <tilman.bender@rub.de>
  * 
  */
-public class OutlineView extends JPanel {
+public class OutlineView extends JPanel implements PropertyChangeListener {
 
 	private static final long serialVersionUID = -1744983593887093007L;
 
@@ -127,9 +133,9 @@ public class OutlineView extends JPanel {
 	}
 
 	private final class SelectionListener implements TreeSelectionListener {
-		private final EditorView editor;
+		private final EditorModel editor;
 
-		private SelectionListener(EditorView editor2) {
+		private SelectionListener(EditorModel editor2) {
 			this.editor = editor2;
 		}
 
@@ -149,7 +155,7 @@ public class OutlineView extends JPanel {
 				}
 
 				try {
-					editor.goToLine(nodeObject.getLine());
+					editor.setCurrentLine(nodeObject.getLine());
 				} catch (Exception e1) {
 					// logger.warn(
 					// "Problem during tree construction",
@@ -160,33 +166,85 @@ public class OutlineView extends JPanel {
 	}
 
 	JTree outline;
-	private EditorView editor;
 
-	public OutlineView(ClassInterface smaliFile, final EditorView editor) {
+	public OutlineView(final EditorModel model) {
 		super();
-		//setBackground(Color.GREEN);
-		this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		setBackground(Color.GREEN);
+		this.setLayout(new GridBagLayout());
+			
+		this.outline = new JTree();
+		
+		ClassInterface smaliClass = model.getCurrentClass();
+		if(smaliClass!=null)
+		{
+			this.outline.setModel(new DefaultTreeModel(buildTree(smaliClass)));
+		}else{
+			this.setVisible(false);
+		}
+		
+		this.outline.addMouseListener(new InternalMouseAdapter());
+		this.outline.addTreeSelectionListener(new SelectionListener(model));
+		JScrollPane pane = new JScrollPane(outline);
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.anchor = GridBagConstraints.FIRST_LINE_START;
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.gridwidth = 1;
+		constraints.gridheight = 1;
+		constraints.weightx = 1.0;
+		constraints.weighty = 1.0;
+		this.add(pane,constraints);
+	}
+
+	/**
+	 * @param smaliClass
+	 * @return
+	 */
+	private DefaultMutableTreeNode buildTree(ClassInterface smaliClass) {
 		// children
 		DefaultMutableTreeNode file = new DefaultMutableTreeNode(
-				new MethodNode(null, smaliFile.getClassName(), smaliFile
+				new MethodNode(null, smaliClass.getClassName(), smaliClass
 						.getAllCodeLines().getFirst()));
-		for (MethodInterface m : smaliFile.getMethods()) {
+
+		for (MethodInterface m : smaliClass.getMethods()) {
 			file.add(new DefaultMutableTreeNode(new MethodNode(m, m.getName()
 					+ " (" + m.getParameterString() + ")"
 					+ m.getReturnValueString(), m.getCodeLines().getFirst())));
 		}
-		this.outline = new JTree(file);
-		this.outline.addMouseListener(new InternalMouseAdapter());
-		this.outline.addTreeSelectionListener(new SelectionListener(editor));
-		JScrollPane pane = new JScrollPane(outline);
-		this.add(pane);
-	}
-	
-	public OutlineView(final EditorView editor){
-		super();
-		this.editor = editor;
-		setBackground(Color.GREEN);
-		this.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		return file;
 	}
 
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		// if we are looking at a new class the method tree must be updated
+		if ("currentClass".equals(evt.getPropertyName())) {
+			if (evt.getNewValue() != null) {
+				ClassInterface c = (ClassInterface) evt.getNewValue();
+				TreeNode t = this.buildTree(c);
+				this.outline.setModel(new DefaultTreeModel(t));
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						setVisible(true);
+						getParent().repaint();
+					}
+				});
+			}else
+			{
+				//we are not editing a class but something else (manifest,resource etc.)
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						//hide the panel and repaint the parent.
+						setVisible(false);
+						getParent().repaint();					
+					}
+				});
+
+			}
+		}
+	}
 }
