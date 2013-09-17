@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 
-import de.rub.syssec.saaf.analysis.steps.obfuscation.DetectObfuscationStep;
+import de.rub.syssec.saaf.analysis.steps.obfuscation.EntropyBasedDetectObfuscationStep;
 import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.gui.OpenAppsMgr;
 import de.rub.syssec.saaf.misc.config.Config;
@@ -31,7 +31,7 @@ public class DetectObfuscationAction extends AbstractAction {
 
 			public void run() {
 				mainwindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				DetectObfuscationStep detector = new DetectObfuscationStep(Config.getInstance(), true);
+				EntropyBasedDetectObfuscationStep detector = new EntropyBasedDetectObfuscationStep(Config.getInstance(), true);
 				List<AnalysisInterface> analyses = appsManager.getAllAnalyses();
 				for (AnalysisInterface analysis : analyses) {
 					try {

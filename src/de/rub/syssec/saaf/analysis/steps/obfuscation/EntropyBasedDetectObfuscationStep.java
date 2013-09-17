@@ -25,7 +25,7 @@ import de.rub.syssec.saaf.model.application.MethodInterface;
  * @author Tilman Bender <tilman.bender@rub.de>
  *
  */
-public class DetectObfuscationStep extends AbstractStep {
+public class EntropyBasedDetectObfuscationStep extends AbstractStep {
 
 	
 	private static final double ENTROPY_CONSTANT = 2.25;
@@ -69,7 +69,7 @@ public class DetectObfuscationStep extends AbstractStep {
 	}
 	
 
-	public DetectObfuscationStep(Config cfg,boolean enabled)
+	public EntropyBasedDetectObfuscationStep(Config cfg,boolean enabled)
 	{
 		this.logger = Logger.getLogger(getClass());
 		this.config = cfg;
@@ -132,6 +132,9 @@ public class DetectObfuscationStep extends AbstractStep {
 				smaliClass.setObfuscated(true);
 				method.setObfuscated(true);
 				logger.info("Method "+method.getReadableJavaName()+ " is potentially obfuscated");
+			}else{
+				method.setObfuscated(false);
+				smaliClass.setObfuscated(false);
 			}
 			entropies.add(entropy);
 		}

@@ -47,7 +47,8 @@ import de.rub.syssec.saaf.analysis.steps.hash.Hash;
 import de.rub.syssec.saaf.analysis.steps.heuristic.HeuristicSearchStep;
 import de.rub.syssec.saaf.analysis.steps.metadata.CategorizePermissionsStep;
 import de.rub.syssec.saaf.analysis.steps.metadata.ParseMetaDataStep;
-import de.rub.syssec.saaf.analysis.steps.obfuscation.DetectObfuscationStep;
+import de.rub.syssec.saaf.analysis.steps.obfuscation.LengthBasedDetectObfuscationStep;
+import de.rub.syssec.saaf.analysis.steps.obfuscation.EntropyBasedDetectObfuscationStep;
 import de.rub.syssec.saaf.analysis.steps.reporting.GenerateReportStep;
 import de.rub.syssec.saaf.analysis.steps.slicing.SlicingStep;
 import de.rub.syssec.saaf.db.persistence.exceptions.InvalidEntityException;
@@ -293,7 +294,7 @@ public class Analysis implements AnalysisInterface {
 		List<Step> analysisSteps = new LinkedList<Step>();
 		analysisSteps.add(new TrashOldAnalysisStep(config, manager
 				.getAnalysisManager(), config.getBooleanConfigValue(ConfigKeys.ANALYSIS_KEEP_ONLY_ONE)));
-		analysisSteps.add(new DetectObfuscationStep(config, true));
+		analysisSteps.add(new EntropyBasedDetectObfuscationStep(config, true));
 		analysisSteps.add(new CategorizePermissionsStep(config, true));
 		analysisSteps.add(new HeuristicSearchStep(config, manager
 				.gethPatternManager().readAll(), config.getBooleanConfigValue(ConfigKeys.ANALYSIS_DO_HEURISTIC)));
@@ -329,7 +330,9 @@ public class Analysis implements AnalysisInterface {
 		processingSteps.add(new ExtractApkStep(config, true));
 		processingSteps.add(new ParseMetaDataStep(config, true));
 		processingSteps.add(new ParseSmaliStep(config, true));
-		processingSteps.add(new DetectObfuscationStep(config, true));
+		processingSteps.add(new LengthBasedDetectObfuscationStep(config, true));
+		processingSteps.add(new EntropyBasedDetectObfuscationStep(config, true));
+
 		processingSteps.add(new DecompileToJavaStep(config,
 				config.getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_JAVA)));
 		processingSteps.add(new GenerateFuzzyStep(config,
