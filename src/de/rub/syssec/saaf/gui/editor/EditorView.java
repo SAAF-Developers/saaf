@@ -108,7 +108,6 @@ public class EditorView extends JPanel implements PropertyChangeListener {
 	private JTextArea lines;
 	private LinkEditorKit linkEditorKit;
 	private final FileTree fileTree;
-	private OutlineView outlineTree;
 	private EditorModel model;
 
 	public EditorView(EditorModel model, FileTree fileTree) {

@@ -130,6 +130,7 @@ public class DetectObfuscationStep extends AbstractStep {
 			if(entropy<ENTROPY_CONSTANT)
 			{
 				smaliClass.setObfuscated(true);
+				method.setObfuscated(true);
 				logger.info("Method "+method.getReadableJavaName()+ " is potentially obfuscated");
 			}
 			entropies.add(entropy);

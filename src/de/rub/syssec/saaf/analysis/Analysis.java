@@ -329,6 +329,7 @@ public class Analysis implements AnalysisInterface {
 		processingSteps.add(new ExtractApkStep(config, true));
 		processingSteps.add(new ParseMetaDataStep(config, true));
 		processingSteps.add(new ParseSmaliStep(config, true));
+		processingSteps.add(new DetectObfuscationStep(config, true));
 		processingSteps.add(new DecompileToJavaStep(config,
 				config.getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_JAVA)));
 		processingSteps.add(new GenerateFuzzyStep(config,

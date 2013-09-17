@@ -38,6 +38,7 @@
 package de.rub.syssec.saaf.gui.editor;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -63,6 +64,7 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -77,6 +79,7 @@ import de.rub.syssec.saaf.gui.OpenAnalysis;
 import de.rub.syssec.saaf.gui.ViewerStarter;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
+import de.rub.syssec.saaf.model.application.ClassInterface;
 
 /**
  * Display a file system in a JTree view (extended with lots of SAAF stuff).
@@ -98,6 +101,36 @@ import de.rub.syssec.saaf.model.application.ApplicationInterface;
  * 
  */
 public class FileTree extends JPanel implements PropertyChangeListener {
+
+	private class FileCellRenderer extends DefaultTreeCellRenderer {
+
+		private static final long serialVersionUID = 462485888657862971L;
+
+		@Override
+		public Component getTreeCellRendererComponent(JTree arg0, Object arg1,
+				boolean selected, boolean expanded, boolean leaf, int arg5,
+				boolean arg6) {
+			Component c = super.getTreeCellRendererComponent(arg0, arg1,
+					selected, expanded, leaf, arg5, arg6);
+			if (leaf) {
+				// TODO
+				// obtain the class for the file
+				FileNode f = (FileNode) ((DefaultMutableTreeNode)arg1).getUserObject();
+				ClassInterface smaliClass = model.getCurrentApplication()
+						.getSmaliClass(f.getFile());
+				// check if its obfuscated
+				if (smaliClass != null && smaliClass.isObfuscated()) {
+					// set foreground to red if it is
+					c.setForeground(Color.RED);
+				} else {
+					// otherwise set foreground to black
+					c.setForeground(Color.BLACK);
+				}
+			}
+			return c;
+		}
+
+	}
 
 	private static final String MENU_ACTION_CFG = "Generate CFGs";
 	private final Vector<Vector<String>> history;
@@ -133,14 +166,14 @@ public class FileTree extends JPanel implements PropertyChangeListener {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath()
 					.getLastPathComponent();
 
-//			if (node == null) { // at startup this will show the manifest
-//				try {
-//					editor.open(app.getManifestFile());
-//				} catch (Exception e1) {
-//					logger.warn("Problem during tree construction", e1);
-//				}
-//				return;
-//			}
+			// if (node == null) { // at startup this will show the manifest
+			// try {
+			// editor.open(app.getManifestFile());
+			// } catch (Exception e1) {
+			// logger.warn("Problem during tree construction", e1);
+			// }
+			// return;
+			// }
 
 			Object nodeInfo = node.getUserObject();
 			if (node.isLeaf()) {
@@ -184,8 +217,7 @@ public class FileTree extends JPanel implements PropertyChangeListener {
 		}
 	}
 
-	public FileTree(final ApplicationInterface app, File dir,
-			OpenAnalysis open) {
+	public FileTree(final ApplicationInterface app, File dir, OpenAnalysis open) {
 		super();
 		this.openAna = open;
 		history = new Vector<Vector<String>>();
@@ -195,70 +227,71 @@ public class FileTree extends JPanel implements PropertyChangeListener {
 		directory = dir;
 		setBackground(Color.MAGENTA);
 		setLayout(new GridBagLayout());
-		
+
 		this.model = new EditorModel(app);
-		
-		//we want to be notified if the file changes so we can reflect that in the tree
+
+		// we want to be notified if the file changes so we can reflect that in
+		// the tree
 		model.addPropertyChangeListener(this);
-				
-		//the tree that lists the files (top left)
+
+		// the tree that lists the files (top left)
 		JTree tree = new JTree(addNodes(null, dir));
 		tree.addMouseListener(ma);
 		tree.addTreeSelectionListener(new SelectionListener());
+		tree.setCellRenderer(new FileCellRenderer());
 		fileTree = tree;
-		
 
 		GridBagConstraints treeConstraints = new GridBagConstraints();
 		treeConstraints.fill = GridBagConstraints.BOTH;
-		treeConstraints.gridheight=1;
-		treeConstraints.gridwidth=1;
+		treeConstraints.gridheight = 1;
+		treeConstraints.gridwidth = 1;
 		treeConstraints.gridx = 0;
 		treeConstraints.gridy = 0;
 		treeConstraints.weightx = 0.20;
 		treeConstraints.weighty = 1.0;
 		treeConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
-				this.add(new JScrollPane(tree),treeConstraints);
+		this.add(new JScrollPane(tree), treeConstraints);
 
-		//the list of components (bottom left)
+		// the list of components (bottom left)
 		EntryPointsView entrypoints = new EntryPointsView(model);
 		model.addPropertyChangeListener(entrypoints);
-		
+
 		JScrollPane entryPointsScroller = new JScrollPane(entrypoints);
 		GridBagConstraints entrypointConstraints = new GridBagConstraints();
 		entrypointConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
 		entrypointConstraints.fill = GridBagConstraints.BOTH;
-		entrypointConstraints.gridheight=1;
-		entrypointConstraints.gridwidth=1;
+		entrypointConstraints.gridheight = 1;
+		entrypointConstraints.gridwidth = 1;
 		entrypointConstraints.gridx = 0;
 		entrypointConstraints.gridy = 1;
 		entrypointConstraints.weightx = 0.15;
 		entrypointConstraints.weighty = 1.0;
 
-		this.add(entryPointsScroller,entrypointConstraints);
-		
-		//the editor (contains the textview and the list of methods)	
+		this.add(entryPointsScroller, entrypointConstraints);
+
+		// the editor (contains the textview and the list of methods)
 		this.editor = new EditorView(model, this);
 		this.model.addPropertyChangeListener(this.editor);
-		
+
 		GridBagConstraints editorConstraints = new GridBagConstraints();
 		editorConstraints.anchor = GridBagConstraints.NORTHWEST;
 		editorConstraints.fill = GridBagConstraints.BOTH;
-		editorConstraints.gridheight=2;
-		editorConstraints.gridwidth=1;
+		editorConstraints.gridheight = 2;
+		editorConstraints.gridwidth = 1;
 		editorConstraints.gridx = 1;
 		editorConstraints.gridy = 0;
 		editorConstraints.weightx = 0.70;
 		editorConstraints.weighty = 1.0;
-		this.add(editor,editorConstraints);
-		
+		this.add(editor, editorConstraints);
+
 		this.outlineTree = new OutlineView(this.model);
 		model.addPropertyChangeListener("currentClass", outlineTree);
-		
+
 		GridBagConstraints outlineConstraints = new GridBagConstraints();
 		outlineConstraints.anchor = GridBagConstraints.NORTHWEST;
 		outlineConstraints.fill = GridBagConstraints.BOTH;
-		outlineConstraints.gridwidth=1;
-		outlineConstraints.gridheight=2;
+		outlineConstraints.gridwidth = 1;
+		outlineConstraints.gridheight = 2;
 		outlineConstraints.gridx = 2;
 		outlineConstraints.gridy = 0;
 		outlineConstraints.weightx = 0.15;
@@ -314,8 +347,9 @@ public class FileTree extends JPanel implements PropertyChangeListener {
 		}
 
 		// ignore some files
-		IOFileFilter fileFilter = new NotFileFilter(new SuffixFileFilter(
-				new String[] { ".class", ".dot", ".java", ".DS_Store",".yml" }));
+		IOFileFilter fileFilter = new NotFileFilter(
+				new SuffixFileFilter(new String[] { ".class", ".dot", ".java",
+						".DS_Store", ".yml" }));
 
 		LinkedList<File> files = new LinkedList<File>(FileUtils.listFiles(dir,
 				fileFilter, null));
@@ -351,13 +385,13 @@ public class FileTree extends JPanel implements PropertyChangeListener {
 		return curDir;
 	}
 
-//	public Dimension getMinimumSize() {
-//		return new Dimension(1000, 400);
-//	}
-//
-//	public Dimension getPreferredSize() {
-//		return new Dimension(1000, 600);
-//	}
+	// public Dimension getMinimumSize() {
+	// return new Dimension(1000, 400);
+	// }
+	//
+	// public Dimension getPreferredSize() {
+	// return new Dimension(1000, 600);
+	// }
 
 	MouseAdapter ma = new MouseAdapter() {
 		private void myPopupEvent(MouseEvent e) {
@@ -485,8 +519,6 @@ public class FileTree extends JPanel implements PropertyChangeListener {
 		}
 	};
 
-
-
 	public Vector<Vector<String>> getHistory() {
 		return this.history;
 	}
@@ -497,12 +529,10 @@ public class FileTree extends JPanel implements PropertyChangeListener {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent arg0) {
-		//if the selected file changed update the tree selection
-		if("currentFile".equals(arg0.getPropertyName()))
-		{
+		// if the selected file changed update the tree selection
+		if ("currentFile".equals(arg0.getPropertyName())) {
 			File f = (File) arg0.getNewValue();
 		}
 	}
-	
 
 }

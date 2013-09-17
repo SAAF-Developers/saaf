@@ -17,6 +17,7 @@
 package de.rub.syssec.saaf.gui.frame.logs;
 
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultCaret;
 
 import org.apache.log4j.AppenderSkeleton;
@@ -32,9 +33,15 @@ public class JTextAreaAppender extends AppenderSkeleton  {
 		c.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 	}
 
-	protected void append(LoggingEvent arg0) {
-		textArea.append(arg0.getMessage().toString()+"\n");
-		//textArea.setCaretPosition(textArea.getText().length() - 1);
+	protected void append(final LoggingEvent arg0) {
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				textArea.append(arg0.getMessage().toString()+"\n");
+				//textArea.setCaretPosition(textArea.getText().length() - 1);				
+			}
+		});		
 	}
 
 

@@ -4,7 +4,7 @@
 package de.rub.syssec.saaf.gui.editor;
 
 import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -23,6 +23,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -165,15 +166,45 @@ public class OutlineView extends JPanel implements PropertyChangeListener {
 		}
 	}
 
+	private class MethodNameCellRenderer extends DefaultTreeCellRenderer {
+	
+		private static final long serialVersionUID = 462485888657862971L;
+	
+		@Override
+		public Component getTreeCellRendererComponent(JTree arg0, Object arg1,
+				boolean selected, boolean expanded, boolean leaf, int arg5,
+				boolean arg6) {
+			Component c = super.getTreeCellRendererComponent(arg0, arg1,
+					selected, expanded, leaf, arg5, arg6);
+			if (leaf) {
+				// TODO
+				// obtain the class for the file
+				MethodNode m = (MethodNode) ((DefaultMutableTreeNode)arg1).getUserObject();
+				MethodInterface method = m.getMethod();
+				// check if its obfuscated
+				if (method != null && method.isObfuscated()) {
+					// set foreground to red if it is
+					c.setForeground(Color.RED);
+				} else {
+					// otherwise set foreground to black
+					c.setForeground(Color.BLACK);
+				}
+			}
+			return c;
+		}
+	
+	}
+
 	JTree outline;
 
 	public OutlineView(final EditorModel model) {
 		super();
 		setBackground(Color.GREEN);
 		this.setLayout(new GridBagLayout());
+		
 			
 		this.outline = new JTree();
-		
+		this.outline.setCellRenderer(new MethodNameCellRenderer());
 		ClassInterface smaliClass = model.getCurrentClass();
 		if(smaliClass!=null)
 		{

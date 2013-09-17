@@ -76,6 +76,9 @@ public class EntryPointsView extends JPanel implements PropertyChangeListener{
 			Obfuscatable o = app.getSmaliClass(c);
 			if (o != null && o.isObfuscated()) {
 				setForeground(Color.RED);
+			}else
+			{
+				setForeground(Color.BLACK);
 			}
 			if (value instanceof ActivityInterface) {
 				setIcon(activityIcon);
