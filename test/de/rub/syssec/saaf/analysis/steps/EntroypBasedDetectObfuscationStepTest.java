@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import de.rub.syssec.saaf.analysis.steps.obfuscation.EntropyBasedDetectObfuscationStep;
 
-public class DetectObfuscationStepTest {
+public class EntroypBasedDetectObfuscationStepTest {
 
 	@Test
 	public void testEntropyStringEmpty() {

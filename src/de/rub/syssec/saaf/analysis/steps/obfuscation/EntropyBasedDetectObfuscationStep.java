@@ -30,7 +30,7 @@ public class EntropyBasedDetectObfuscationStep extends AbstractStep {
 
 	
 	private static final double ENTROPY_CONSTANT = 2.25;
-	private static List<String> ignored = Arrays.asList("<init>",
+	private static List<String> ignored = Arrays.asList("<clinit>","<init>",
 	"onActivityResult",
 	"onBind",
 	"onChange",

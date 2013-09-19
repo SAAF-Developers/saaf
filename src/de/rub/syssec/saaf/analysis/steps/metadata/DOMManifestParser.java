@@ -42,7 +42,6 @@ import de.rub.syssec.saaf.application.manifest.permissions.PermissionRequest;
 import de.rub.syssec.saaf.model.application.manifest.DuplicateEntryPointException;
 import de.rub.syssec.saaf.model.application.manifest.IntentFilterInterface;
 import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
-import de.rub.syssec.saaf.model.application.manifest.PermissionRequestInterface;
 
 /**
  * This class reads the AndroidManifest.xml using DOM and XPath
@@ -65,26 +64,12 @@ public class DOMManifestParser implements ManifestParser {
 	 * @see de.rub.syssec.saaf.nongui.ManifestParser#parse(java.io.File)
 	 */
 	@Override
-	public ManifestInterface parse(File manifest)
+	public ManifestInterface parse(File manifestFile)
 			throws ManifestParserException {
-		LOGGER.info("Analyzing Manifest: " + manifest.getAbsolutePath());
-		ManifestInterface parsedManifest = new Manifest(manifest);
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory
-				.newInstance();
-		domFactory.setNamespaceAware(true);
-		DocumentBuilder builder;
-		Document doc;
-		try {
-			builder = domFactory.newDocumentBuilder();
-			doc = builder.parse(manifest);
-		} catch (ParserConfigurationException e) {
-			throw new ManifestParserException(e);
-		} catch (SAXException e) {
-			throw new ManifestParserException(e);
-		} catch (IOException e) {
-			throw new ManifestParserException(e);
-		}
-
+		LOGGER.info("Analyzing Manifest: " + manifestFile.getAbsolutePath());
+		ManifestInterface parsedManifest = new Manifest(manifestFile);
+		Document doc = buildDom(manifestFile);
+		
 		parseManifest(doc, parsedManifest);
 		parseActivities(doc, parsedManifest);
 		parseServices(doc, parsedManifest);
@@ -96,8 +81,57 @@ public class DOMManifestParser implements ManifestParser {
 				+ parsedManifest.getNumberOfServices() + " Services" + " and "
 				+ parsedManifest.getNumberOfPermissions() + " Permissions");
 		LOGGER.info("Finished analyzing Manifest: "
-				+ manifest.getAbsolutePath());
+				+ manifestFile.getAbsolutePath());
 		return parsedManifest;
+	}
+
+	/**
+	 * @param manifestFile
+	 * @return
+	 * @throws ManifestParserException
+	 */
+	private Document buildDom(File manifestFile) throws ManifestParserException {
+		DocumentBuilderFactory domFactory = DocumentBuilderFactory
+				.newInstance();
+		domFactory.setNamespaceAware(true);
+		DocumentBuilder builder;
+		Document doc=null;
+		try {
+			builder = domFactory.newDocumentBuilder();
+			doc = builder.parse(manifestFile);
+		} catch (ParserConfigurationException e) {
+			throw new ManifestParserException(e);
+
+		} catch (SAXException e) {
+			//TODO Fix to handle (deliberately) malformed manifest
+			//May cause all kinds of errors down the line (i.e. classes having no name)
+			//Right now sanitizing the XML is not an option
+			//			// apparently something is wrong with the XML
+//			// we did not try sanitizing the document, so lets see if that helps
+//			LOGGER.warn("An exception occured during the parsing of "+manifestFile.getName()+" trying to tidy the XML.");
+//			Tidy tidy = new Tidy();
+//			tidy.setXmlTags(true);
+//			try {
+//				File tidyManifest = new File(manifestFile.getParent() + File.separator + "Cleaned-AndroidManifest.xml");
+//				FileOutputStream tidyOutputStream = new FileOutputStream(tidyManifest);
+//				tidy.parse(new FileInputStream(manifestFile), tidyOutputStream);
+//				builder = domFactory.newDocumentBuilder();
+//				doc = builder.parse(new FileInputStream(tidyManifest));
+//				LOGGER.info("Cleaned manifest was wirtten to: "+tidyManifest.getAbsolutePath());
+//		} catch (FileNotFoundException e1) {
+//				//ignore. If we got this far, this should not happen.
+//			} catch (SAXException e1) {
+//				throw  new ManifestParserException(e1);
+//			} catch (IOException e1) {
+//				throw new ManifestParserException(e1);
+//			} catch (ParserConfigurationException e1) {
+//				throw new ManifestParserException(e1);
+//			}
+			throw new ManifestParserException(e);
+		} catch (IOException e) {
+			throw new ManifestParserException(e);
+		}
+		return doc;
 	}
 
 	/**
@@ -233,10 +267,9 @@ public class DOMManifestParser implements ManifestParser {
 			}
 			attr = filterNode.getAttributeNodeNS(ANDROID_ATTR_NS, "priority");
 			if (attr != null) {
-				try{
-				filter.setPriority(Integer.parseInt(attr.getValue()));
-				}catch(NumberFormatException nfe)
-				{
+				try {
+					filter.setPriority(Integer.parseInt(attr.getValue()));
+				} catch (NumberFormatException nfe) {
 					LOGGER.warn("could not parse priority for intent");
 				}
 			}
@@ -318,12 +351,10 @@ public class DOMManifestParser implements ManifestParser {
 				.getLength(); permissionNr++) {
 			permission = (Element) requestedPermissions.item(permissionNr);
 			name = permission.getAttributeNodeNS(ANDROID_ATTR_NS, "name");
-			PermissionRequestInterface request = new PermissionRequest(
-					new Permission(name.getValue()));
-
+			//default permission is created in case further parsing fails
+			PermissionRequest request = new PermissionRequest(new Permission(name.getValue()));
 			manifest.addPermissionRequest(request);
-			LOGGER.debug("Requested permission: "
-					+ request.getRequestedPermission());
+			LOGGER.debug("Requested permission: "+ request.getRequestedPermission());
 		}
 		LOGGER.debug("Finished analyzing requested permissions. "
 				+ manifest.getNumberOfPermissions() + " permissions requested.");

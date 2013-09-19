@@ -329,4 +329,16 @@ public class MockManifest implements ManifestInterface {
 		return null;
 	}
 
+	@Override
+	public File getTidiedPath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTidiedPath(File file) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

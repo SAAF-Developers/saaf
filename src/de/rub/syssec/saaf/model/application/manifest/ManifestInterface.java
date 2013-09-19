@@ -138,6 +138,25 @@ public interface ManifestInterface {
 	public abstract void setPath(File path);
 
 	/**
+	 * Return the absolute path of the tidy file for this Manifest.
+	 * 
+	 *  This will only, be set if the original XML file for the manifest
+	 *   was found to be non well-formed.
+	 *   
+	 * @return the path to the cleaned XML file or null if original XML was wel-formed.
+	 */
+	public abstract File getTidiedPath();
+	/**
+	 * Set the absolute path to the tidy version of the AndroidManifest.xml.
+	 * 
+	 * This should only, be set if the original XML file for the manifest
+	 *   was found to be non well-formed.
+	 * 
+	 * @param file
+	 */
+	public abstract void setTidiedPath(File file);
+	
+	/**
 	 * Query if the Manifest requests a certain permission.
 	 * 
 	 * @param p

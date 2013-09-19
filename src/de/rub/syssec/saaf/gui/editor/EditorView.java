@@ -30,6 +30,7 @@ import javax.swing.text.StyleContext;
 
 import org.apache.commons.io.FileUtils;
 
+import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.MethodInterface;
@@ -311,8 +312,17 @@ public class EditorView extends JPanel implements PropertyChangeListener {
 					
 					@Override
 					public void run() {
-						DefaultStyledDocument doc = loadDocument((File) evt
-								.getNewValue());
+						File theFile = (File) evt.getNewValue();
+						if(theFile.getName().endsWith("Manifest.xml"))
+						{
+							if(model.getCurrentApplication().getManifest().getTidiedPath()!=null)
+							{
+								MainWindow.showInfoDialog("You may notice that this manifest is not wellformed\n" +
+										"You can find a wellformed version under\n"+
+										model.getCurrentApplication().getManifest().getTidiedPath(), "Malformed Manifest");
+							}
+						}
+						DefaultStyledDocument doc = loadDocument(theFile);
 						editor.setDocument(doc);
 						lines.setText(getNumberedLine());
 						editor.setCaretPosition(0);	

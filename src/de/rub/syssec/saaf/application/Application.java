@@ -453,7 +453,12 @@ public class Application implements ApplicationInterface {
 
 	@Override
 	public ClassInterface getSmaliClass(ComponentInterface component) {
-		String path = component.getName().replace('.', '/');
+		String path = component.getName();
+		if(component.getName().startsWith("."))
+		{
+			path = this.getManifest().getPackageName()+path;
+		}
+		path = path.replace('.', '/');
 		path = this.getDecompiledContentDir() + File.separator + "smali" + File.separator + path + ".smali";
 		return this.getSmaliClass(new File(path));
 	}

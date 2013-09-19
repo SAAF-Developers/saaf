@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -19,8 +20,11 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.jf.smali.smaliParser.super_spec_return;
+
 import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
+import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.Obfuscatable;
 import de.rub.syssec.saaf.model.application.manifest.ActivityInterface;
 import de.rub.syssec.saaf.model.application.manifest.ComponentInterface;
@@ -32,7 +36,7 @@ import de.rub.syssec.saaf.model.application.manifest.ServiceInterface;
  * @author Tilman Bender <tilman.bender@rub.de>
  * 
  */
-public class EntryPointsView extends JPanel implements PropertyChangeListener{
+public class EntryPointsView extends JPanel implements PropertyChangeListener {
 
 	/**
 	 * 
@@ -45,8 +49,8 @@ public class EntryPointsView extends JPanel implements PropertyChangeListener{
 
 	// renders the components (activity, receiver, service) with a different
 	// icon
-	private final class ComponentCellRenderer extends JLabel implements
-			ListCellRenderer {
+	private final class ComponentCellRenderer extends DefaultListCellRenderer
+			implements ListCellRenderer {
 		/**
 		 * 
 		 */
@@ -61,56 +65,49 @@ public class EntryPointsView extends JPanel implements PropertyChangeListener{
 		@Override
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
+			JLabel guiComponent = (JLabel) super.getListCellRendererComponent(
+					list, value, index, isSelected, cellHasFocus);
 
-			// does not have the desired effect of showing the selected cell
-			// with correct background
-			// if (isSelected) {
-			// setBackground(list.getSelectionBackground());
-			// setForeground(list.getSelectionForeground());
-			// } else {
-			// setBackground(list.getBackground());
-			// setForeground(list.getForeground());
-			// }
-
-			de.rub.syssec.saaf.application.manifest.components.Component c = (de.rub.syssec.saaf.application.manifest.components.Component) value;
-			Obfuscatable o = app.getSmaliClass(c);
-			if (o != null && o.isObfuscated()) {
-				setForeground(Color.RED);
-			}else
-			{
-				setForeground(Color.BLACK);
+			de.rub.syssec.saaf.application.manifest.components.Component manifestComponent = (de.rub.syssec.saaf.application.manifest.components.Component) value;
+			try {
+				Obfuscatable o = app.getSmaliClass(manifestComponent);
+				if (o != null && o.isObfuscated()) {
+					guiComponent.setForeground(Color.RED);
+				} else {
+					guiComponent.setForeground(Color.BLACK);
+				}
+				if (value instanceof ActivityInterface) {
+					guiComponent.setIcon(activityIcon);
+				} else if (value instanceof ReceiverInterface) {
+					guiComponent.setIcon(receiverIcon);
+				} else if (value instanceof ServiceInterface) {
+					guiComponent.setIcon(serviceIcon);
+				}
+			} catch (Exception e) {
+				//now this is bad form :P
+				e.printStackTrace();
 			}
-			if (value instanceof ActivityInterface) {
-				setIcon(activityIcon);
-			} else if (value instanceof ReceiverInterface) {
-				setIcon(receiverIcon);
-			} else if (value instanceof ServiceInterface) {
-				setIcon(serviceIcon);
-			}
-			setText(c.getName());
-			return this;
+			guiComponent.setText(manifestComponent.getName());
+			return guiComponent;
 		}
 	}
 
 	private final class AdjustEditorContent implements ListSelectionListener {
-		
+
 		private ApplicationInterface app;
-		
-		
+
 		public AdjustEditorContent(ApplicationInterface app) {
 			super();
 			this.app = app;
 		}
-
 
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
 			ListSelectionModel lsm = (ListSelectionModel) e.getSource();
 			ComponentInterface component = (ComponentInterface) list.getModel()
 					.getElementAt(lsm.getMinSelectionIndex());
-			String path = component.getName().replace('.', '/');
-			path = app.getDecompiledContentDir()+"/smali/" + path + ".smali";
-			model.setCurrentFile(new File(path));
+			ClassInterface c = model.getCurrentApplication().getSmaliClass(component);
+			model.setCurrentFile(c.getFile());
 
 		}
 	}
@@ -164,22 +161,21 @@ public class EntryPointsView extends JPanel implements PropertyChangeListener{
 			constraints.gridheight = 1;
 			constraints.weightx = 1.0;
 			constraints.weighty = 1.0;
-			add(list,constraints);
+			add(list, constraints);
 		} else {
 			this.add(new JLabel(
 					"Could not retrieve components from applications manifest."));
-			MainWindow
-					.showErrorDialog(
-							"There was a problem retrieving the applicaiton entrypoints.\n" +
-							"Maybe the manifest is malfomed.\n" +
-							"Entrypoints will not be listed.",
-							"Cannot display components");
+			MainWindow.showErrorDialog(
+					"There was a problem retrieving the applicaiton entrypoints.\n"
+							+ "Maybe the manifest is malfomed.\n"
+							+ "Entrypoints will not be listed.",
+					"Cannot display components");
 		}
 	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		//if the current class is in our list adjust the selection
+		// if the current class is in our list adjust the selection
 	}
 
 }

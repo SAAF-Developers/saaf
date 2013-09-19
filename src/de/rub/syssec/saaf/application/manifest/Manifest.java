@@ -52,7 +52,7 @@ public class Manifest implements ManifestInterface {
 
 	private HashMap<String, ReceiverInterface> receivers;
 
-	private File path;
+	private File androidManifestXML;
 	private int versionCode;
 	private String versionName;
 	private String packageName;
@@ -63,13 +63,15 @@ public class Manifest implements ManifestInterface {
 
 	private ActivityInterface defaultActivity;
 
+	private File tidyAndoirdManifestXML;
+
 	public Manifest(File analyzedPath) {
 		super();
 		this.permissions = new HashSet<PermissionRequestInterface>();
 		this.activities = new HashMap<String, ActivityInterface>();
 		this.services = new HashMap<String, ServiceInterface>();
 		this.receivers = new HashMap<String, ReceiverInterface>();
-		this.path = analyzedPath;
+		this.androidManifestXML = analyzedPath;
 	}
 
 	/*
@@ -244,7 +246,7 @@ public class Manifest implements ManifestInterface {
 	 */
 	@Override
 	public File getPath() {
-		return path;
+		return androidManifestXML;
 	}
 
 	/*
@@ -256,7 +258,7 @@ public class Manifest implements ManifestInterface {
 	 */
 	@Override
 	public void setPath(File path) {
-		this.path = path;
+		this.androidManifestXML = path;
 	}
 
 	/*
@@ -425,5 +427,15 @@ public class Manifest implements ManifestInterface {
 		components.addAll(this.services.values());
 		components.addAll(this.receivers.values());		
 		return components;
+	}
+
+	@Override
+	public File getTidiedPath() {
+		return this.tidyAndoirdManifestXML;
+	}
+
+	@Override
+	public void setTidiedPath(File file) {
+		this.tidyAndoirdManifestXML = file;
 	}
 }

@@ -127,6 +127,7 @@ public class OpenAPKAction extends AbstractAction {
 										+ apk.getAbsolutePath() + ".\n"
 										+ e1.getMessage(),
 								"Problem Opening Application");
+						e1.printStackTrace();
 					}finally
 					{
 						mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

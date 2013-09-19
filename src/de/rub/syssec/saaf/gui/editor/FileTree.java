@@ -225,7 +225,8 @@ public class FileTree extends JPanel implements PropertyChangeListener {
 				this);
 
 		directory = dir;
-		setBackground(Color.MAGENTA);
+		//userful to debug layout issues
+		//setBackground(Color.MAGENTA);
 		setLayout(new GridBagLayout());
 
 		this.model = new EditorModel(app);
