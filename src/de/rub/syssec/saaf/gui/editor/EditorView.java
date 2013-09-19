@@ -125,7 +125,7 @@ public class EditorView extends JPanel implements PropertyChangeListener {
 		this.lines.setEditable(false);
 
 		this.editor = new JTextPane();
-
+		this.lines.setMargin(editor.getMargin());
 		File f = model.getCurrentFile();
 		if (f != null) {
 			DefaultStyledDocument doc = loadDocument(f);

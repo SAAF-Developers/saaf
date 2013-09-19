@@ -4,6 +4,7 @@
 package de.rub.syssec.saaf.analysis.steps.obfuscation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,23 @@ public class EntropyBasedDetectObfuscationStep extends AbstractStep {
 
 	
 	private static final double ENTROPY_CONSTANT = 2.25;
+	private static List<String> ignored = Arrays.asList("<init>",
+	"onActivityResult",
+	"onBind",
+	"onChange",
+	"onClick",
+	"onCreate",
+	"onDestroy",
+	"onDisabled",
+	"onEnabled",
+	"onNewIntent",
+	"onOpen",
+	"onReceive",
+	"onStartCommand",
+	"onTerminate",
+	"onTransact",
+	"onUnbind",
+	"onUpgrade");
 
 	/**
 	 * Calculates the entropy of a character string.
@@ -124,6 +142,11 @@ public class EntropyBasedDetectObfuscationStep extends AbstractStep {
 		double entropy=0.0;
 		for(MethodInterface method : smaliClass.getMethods())
 		{
+			//ignore methods that are never obfuscated and only distort the stats
+			if(isIgnored(method))
+			{
+				continue;
+			}
 			allNames.append(method.getName());
 			entropy = entropy(method.getName());
 			method.setEntropy(new Entropy(entropy));
@@ -151,6 +174,15 @@ public class EntropyBasedDetectObfuscationStep extends AbstractStep {
 		//calculate the average of all separate entropies
 		e.AverageEntropy = mean(entropies);		
 		smaliClass.setEntropy(e);
+	}
+
+	private boolean isIgnored(MethodInterface method) {
+		if(ignored.contains(method.getName()))
+		{
+			logger.info("Ignoring method "+method.getName());
+			return true;
+		}
+		return false;
 	}
 
 	public double mean(List<Double> entropies) {

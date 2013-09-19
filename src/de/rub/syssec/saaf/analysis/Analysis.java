@@ -330,7 +330,7 @@ public class Analysis implements AnalysisInterface {
 		processingSteps.add(new ExtractApkStep(config, true));
 		processingSteps.add(new ParseMetaDataStep(config, true));
 		processingSteps.add(new ParseSmaliStep(config, true));
-		processingSteps.add(new LengthBasedDetectObfuscationStep(config, true));
+//		processingSteps.add(new LengthBasedDetectObfuscationStep(config, true));
 		processingSteps.add(new EntropyBasedDetectObfuscationStep(config, true));
 
 		processingSteps.add(new DecompileToJavaStep(config,
