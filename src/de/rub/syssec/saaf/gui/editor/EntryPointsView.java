@@ -49,8 +49,7 @@ public class EntryPointsView extends JPanel implements PropertyChangeListener {
 
 	// renders the components (activity, receiver, service) with a different
 	// icon
-	private final class ComponentCellRenderer extends DefaultListCellRenderer
-			implements ListCellRenderer {
+	private final class ComponentCellRenderer extends DefaultListCellRenderer {
 		/**
 		 * 
 		 */
