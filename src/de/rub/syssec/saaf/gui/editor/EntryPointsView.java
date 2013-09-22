@@ -163,7 +163,7 @@ public class EntryPointsView extends JPanel implements PropertyChangeListener {
 			add(list, constraints);
 		} else {
 			this.add(new JLabel(
-					"Could not retrieve components from applications manifest."));
+					"<html>Could not retrieve components<br/> from applications manifest.</html>"));
 			MainWindow.showErrorDialog(
 					"There was a problem retrieving the applicaiton entrypoints.\n"
 							+ "Maybe the manifest is malfomed.\n"

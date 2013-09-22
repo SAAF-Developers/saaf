@@ -56,8 +56,8 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Vector;
 
+import javax.swing.JInternalFrame;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -100,7 +100,7 @@ import de.rub.syssec.saaf.model.application.ClassInterface;
  * @see OpenApp
  * 
  */
-public class FileTree extends JPanel implements PropertyChangeListener {
+public class FileTree extends JInternalFrame implements PropertyChangeListener {
 
 	private class FileCellRenderer extends DefaultTreeCellRenderer {
 
@@ -298,6 +298,10 @@ public class FileTree extends JPanel implements PropertyChangeListener {
 		outlineConstraints.weightx = 0.15;
 		outlineConstraints.weighty = 1.0;
 		this.add(outlineTree, outlineConstraints);
+		
+		String shortpath = model.getCurrentFile().getAbsolutePath().replace(app.getApplicationDirectory().getAbsolutePath(), "");
+		this.setTitle("Editor - "+shortpath);
+		searchNode(shortpath,null);
 	}
 
 	public DefaultMutableTreeNode searchNode(String nodeStr, String lineNr) {
@@ -530,9 +534,15 @@ public class FileTree extends JPanel implements PropertyChangeListener {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent arg0) {
-		// if the selected file changed update the tree selection
 		if ("currentFile".equals(arg0.getPropertyName())) {
 			File f = (File) arg0.getNewValue();
+			ApplicationInterface app = model.getCurrentApplication();
+			String shortpath = f.getAbsolutePath().replace(app.getApplicationDirectory().getAbsolutePath(), "");
+			
+			// update the tree selection
+			searchNode(shortpath, null);
+			//update the editor so we see what we are editing
+			this.setTitle("Editor - "+shortpath);
 		}
 	}
 

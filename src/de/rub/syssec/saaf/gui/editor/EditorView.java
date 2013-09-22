@@ -301,6 +301,7 @@ public class EditorView extends JPanel implements PropertyChangeListener {
 
 		int oldCursor = editor.getCaretPosition();
 		editor.setCaretPosition(determinePosition(content, oldCursor, lineNr));
+		editorScrollPane.repaint();
 
 	}
 
@@ -315,7 +316,7 @@ public class EditorView extends JPanel implements PropertyChangeListener {
 						File theFile = (File) evt.getNewValue();
 						if(theFile.getName().endsWith("Manifest.xml"))
 						{
-							if(model.getCurrentApplication().getManifest().getTidiedPath()!=null)
+							if(model.getCurrentApplication().getManifest()==null)
 							{
 								MainWindow.showInfoDialog("You may notice that this manifest is not wellformed\n" +
 										"You can find a wellformed version under\n"+
@@ -324,9 +325,12 @@ public class EditorView extends JPanel implements PropertyChangeListener {
 						}
 						DefaultStyledDocument doc = loadDocument(theFile);
 						editor.setDocument(doc);
-						lines.setText(getNumberedLine());
-						editor.setCaretPosition(0);	
-						repaint();
+						editor.setCaretPosition(0);
+						String newnumbers = getNumberedLine();
+						lines.setText(newnumbers);
+						editorScrollPane.getVerticalScrollBar().setValue(0);
+						editorScrollPane.revalidate();
+						editorScrollPane.repaint();
 					}
 				});
 			} else {

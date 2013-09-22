@@ -35,7 +35,7 @@ import de.rub.syssec.saaf.model.application.ApplicationInterface;
 public class OpenAnalysis {
 	
 	private final Analysis analysis;
-	private FileTree tree;
+	private FileTree editorFrame;
 	
 	private boolean stringsOpen=false;
 	private boolean smaliSearch=false;
@@ -71,218 +71,19 @@ public class OpenAnalysis {
 			// create a new frame
 			switch (type) {
 			case FILETREE:
-				// Bytecode von apk anzeigen
-				iFrame = new InternalFrameStub("FileTree - Bytecode - "+ analysis.getApp().getApplicationName());
-				MainWindow.getDesktopPane().add(iFrame);
-				iFrame.setBounds(0, 0, iFrame.getWidth(), iFrame.getHeight());
-				iFrame.addInternalFrameListener(new InternalFrameListener(){
-					public void internalFrameClosing(InternalFrameEvent e){
-						apps.closeAnalysis(getAnalysis());
-					}
-
-					@Override
-					public void internalFrameActivated(InternalFrameEvent e) {
-						
-						
-					}
-
-					@Override
-					public void internalFrameClosed(InternalFrameEvent e) {
-						
-						
-					}
-
-					@Override
-					public void internalFrameDeactivated(InternalFrameEvent e) {
-						
-						
-					}
-
-					@Override
-					public void internalFrameDeiconified(InternalFrameEvent e) {
-						
-						
-					}
-
-					@Override
-					public void internalFrameIconified(InternalFrameEvent e) {
-						
-						
-					}
-
-					@Override
-					public void internalFrameOpened(InternalFrameEvent e) {
-						
-						
-					}
-				});
-				tree = new FileTree(analysis.getApp(), analysis.getApp().getUnpackedDataDir(), this);
-				// Add content to the window.
-				iFrame.add(tree);
-				iFrame.pack();
-				iFrame.setMaximum(true);
+				iFrame = showFileTree();
 				break;
 				
 			case SMALI_SEARCH:
-				if(!smaliSearch){
-					iFrame = new FoundBytecodeFrame(analysis.getApp(), tree);
-					
-					iFrame.addInternalFrameListener(new InternalFrameListener(){
-						public void internalFrameClosing(InternalFrameEvent e){
-							smaliSearch=false;
-						}
-
-						@Override
-						public void internalFrameActivated(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameClosed(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameDeactivated(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameDeiconified(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameIconified(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameOpened(InternalFrameEvent e) {
-							
-							
-						}
-					});
-					
-					
-					MainWindow.getDesktopPane().add(iFrame);
-					smaliSearch = true;
-				}
+				iFrame = showSmaliSearch(iFrame);
 				break;
 				
 			case STRINGS:
-				
-				if(!stringsOpen){
-					iFrame = new FoundStringsFrame(analysis.getApp(), tree);
-					
-					iFrame.addInternalFrameListener(new InternalFrameListener(){
-						public void internalFrameClosing(InternalFrameEvent e){
-							stringsOpen = false;
-						}
-
-						@Override
-						public void internalFrameActivated(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameClosed(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameDeactivated(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameDeiconified(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameIconified(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameOpened(InternalFrameEvent e) {
-							
-							
-						}
-					});
-					
-					
-					MainWindow.getDesktopPane().add(iFrame);
-					stringsOpen = true;
-				}
+				iFrame = showStrings(iFrame);
 				break;
 				
-			case CFGS:
-				
-				if(!cfgsOpen){
-					try {
-						iFrame = new CfgSelectorFrame(tree.getModel().getCurrentClass());
-					}
-					catch (Exception e) {
-						e.printStackTrace();
-					}
-					iFrame.addInternalFrameListener(new InternalFrameListener(){
-						public void internalFrameClosing(InternalFrameEvent e){
-							cfgsOpen = false;
-						}
-
-						@Override
-						public void internalFrameActivated(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameClosed(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameDeactivated(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameDeiconified(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameIconified(InternalFrameEvent e) {
-							
-							
-						}
-
-						@Override
-						public void internalFrameOpened(InternalFrameEvent e) {
-							
-							
-						}
-					});
-					
-					
-					MainWindow.getDesktopPane().add(iFrame);
-					cfgsOpen = true;
-				}
+			case CFGS:	
+				iFrame = showCFG(iFrame);
 				break;		
 				
 			default:
@@ -302,14 +103,249 @@ public class OpenAnalysis {
 			}
 		}
 		// now show it, regardless of its old state
-		iFrame.pack();
 		iFrame.setVisible(true);
 		iFrame.show();
 		iFrame.toFront(); // move to front
 	}
+
+	/**
+	 * @param iFrame
+	 * @return
+	 */
+	private JInternalFrame showCFG(JInternalFrame iFrame) {
+		if(!cfgsOpen){
+			try {
+				iFrame = new CfgSelectorFrame(editorFrame.getModel().getCurrentClass());
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			iFrame.addInternalFrameListener(new InternalFrameListener(){
+				public void internalFrameClosing(InternalFrameEvent e){
+					cfgsOpen = false;
+				}
+
+				@Override
+				public void internalFrameActivated(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameClosed(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameDeactivated(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameDeiconified(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameIconified(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameOpened(InternalFrameEvent e) {
+					
+					
+				}
+			});
+			
+			MainWindow.getDesktopPane().add(iFrame);
+			cfgsOpen = true;
+		}
+		return iFrame;
+	}
+
+	/**
+	 * @param iFrame
+	 * @return
+	 * @throws Exception
+	 */
+	private JInternalFrame showStrings(JInternalFrame iFrame) throws Exception {
+		if(!stringsOpen){
+			iFrame = new FoundStringsFrame(analysis.getApp(), editorFrame);
+			
+			iFrame.addInternalFrameListener(new InternalFrameListener(){
+				public void internalFrameClosing(InternalFrameEvent e){
+					stringsOpen = false;
+				}
+
+				@Override
+				public void internalFrameActivated(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameClosed(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameDeactivated(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameDeiconified(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameIconified(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameOpened(InternalFrameEvent e) {
+					
+					
+				}
+			});
+			
+			iFrame.pack();
+			MainWindow.getDesktopPane().add(iFrame);
+			stringsOpen = true;
+		}
+		return iFrame;
+	}
+
+	/**
+	 * @param iFrame
+	 * @return
+	 */
+	private JInternalFrame showSmaliSearch(JInternalFrame iFrame) {
+		if(!smaliSearch){
+			iFrame = new FoundBytecodeFrame(analysis.getApp(), editorFrame);
+			
+			iFrame.addInternalFrameListener(new InternalFrameListener(){
+				public void internalFrameClosing(InternalFrameEvent e){
+					smaliSearch=false;
+				}
+
+				@Override
+				public void internalFrameActivated(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameClosed(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameDeactivated(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameDeiconified(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameIconified(InternalFrameEvent e) {
+					
+					
+				}
+
+				@Override
+				public void internalFrameOpened(InternalFrameEvent e) {
+					
+					
+				}
+			});
+			
+			iFrame.pack();
+			MainWindow.getDesktopPane().add(iFrame);
+			smaliSearch = true;
+		}
+		return iFrame;
+	}
+
+	/**
+	 * @return
+	 * @throws PropertyVetoException
+	 */
+	private JInternalFrame showFileTree() throws PropertyVetoException {
+		//JInternalFrame iFrame;
+		// Bytecode von apk anzeigen
+		//iFrame = new InternalFrameStub("FileTree - Bytecode - "+ analysis.getApp().getApplicationName());
+		
+//		iFrame.setBounds(0, 0, iFrame.getWidth(), iFrame.getHeight());
+//		iFrame.addInternalFrameListener(new InternalFrameListener(){
+//			public void internalFrameClosing(InternalFrameEvent e){
+//				apps.closeAnalysis(getAnalysis());
+//			}
+//
+//			@Override
+//			public void internalFrameActivated(InternalFrameEvent e) {
+//				
+//				
+//			}
+//
+//			@Override
+//			public void internalFrameClosed(InternalFrameEvent e) {
+//				
+//				
+//			}
+//
+//			@Override
+//			public void internalFrameDeactivated(InternalFrameEvent e) {
+//				
+//				
+//			}
+//
+//			@Override
+//			public void internalFrameDeiconified(InternalFrameEvent e) {
+//				
+//				
+//			}
+//
+//			@Override
+//			public void internalFrameIconified(InternalFrameEvent e) {
+//				
+//				
+//			}
+//
+//			@Override
+//			public void internalFrameOpened(InternalFrameEvent e) {
+//				
+//				
+//			}
+//		});
+		editorFrame = new FileTree(analysis.getApp(), analysis.getApp().getUnpackedDataDir(), this);
+		editorFrame.setBounds(0, 0, editorFrame.getWidth(), editorFrame.getHeight());
+		MainWindow.getDesktopPane().add(editorFrame);
+		// Add content to the window.
+		//iFrame.add(tree);
+		editorFrame.pack();
+		editorFrame.setMaximum(true);
+		return editorFrame;
+	}
 	
 	public FileTree getTree(){
-		return tree;
+		return editorFrame;
 	}
 
 	
