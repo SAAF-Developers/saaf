@@ -5,6 +5,8 @@ package de.rub.syssec.saaf;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,6 +43,25 @@ public class FolderWatcher {
 		if (!folder.exists()) {
 			// Test to see if monitored folder exists
 			throw new RuntimeException("Directory not found: " + path);
+		}else if(!folder.isDirectory())
+		{
+			throw new RuntimeException(path+" must be a direcory");
+		}
+		
+		//first process files that already exist in the folder
+		List<String> leftovers = Arrays.asList(folder.list());
+		if(!leftovers.isEmpty())
+		{
+			LOGGER.info("Found "+leftovers.size()+" files already sitting in watched folder");
+			for(String filename : leftovers)
+			{
+				LOGGER.info("Processing "+filename);
+				File file = new File(folder.getAbsolutePath()+File.separator+filename);
+				if(Application.isAPKFile(file))
+				{
+					fileConsumer.submit(new AnalysisTask(file));
+				}
+			}
 		}
 
 		FileAlterationObserver observer = new FileAlterationObserver(folder);
