@@ -16,6 +16,8 @@
  */
 package de.rub.syssec.saaf.model.application;
 
+import de.rub.syssec.saaf.application.manifest.permissions.Permission;
+
 public interface CodeLineInterface {
 
 	public abstract byte[] getLine();
@@ -73,5 +75,9 @@ public interface CodeLineInterface {
 	 * @param method
 	 */
 	public abstract void setMethod(MethodInterface method);
+	
+	public abstract void setPermission(Permission perm);
+	
+	public abstract Permission getPermission();
 
 }

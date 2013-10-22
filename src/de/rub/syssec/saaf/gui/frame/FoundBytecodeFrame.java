@@ -17,22 +17,18 @@
 package de.rub.syssec.saaf.gui.frame;
 
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
 
 import de.rub.syssec.saaf.application.search.BytecodeSearcher;
+import de.rub.syssec.saaf.gui.FilterTable;
 import de.rub.syssec.saaf.gui.editor.FileTree;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
@@ -45,7 +41,8 @@ public class FoundBytecodeFrame extends JInternalFrame {
 	private static final long serialVersionUID = -6243385366339287049L;
 	private final JButton searchBtn;
 	private final JScrollPane jScrollPane;
-	private final JTable jTable;
+	private FilterTable table;
+	private FileTree fileTree;
 	private final JTextField patternField;
 	private Vector<CodeLineInterface> resultVec = new Vector<CodeLineInterface>();
 	private static final String[] TABLE_COLUMNS = { "File", "Line", "Content", "Is code?" }; 
@@ -58,7 +55,8 @@ public class FoundBytecodeFrame extends JInternalFrame {
         patternField = new javax.swing.JTextField();
         searchBtn = new javax.swing.JButton();
         jScrollPane = new javax.swing.JScrollPane();
-        jTable = new javax.swing.JTable();
+        
+        this.fileTree = fileTree;
         
         searchBtn.setText("Search");
         searchBtn.addActionListener(new ActionListener() {
@@ -68,29 +66,10 @@ public class FoundBytecodeFrame extends JInternalFrame {
         });
 
         jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        jTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
- 
-        jTable.getSelectionModel().addListSelectionListener(
-                new ListSelectionListener() {
-                    public void valueChanged(ListSelectionEvent event) {
-                        int viewRow = jTable.getSelectedRow();
-                      if (viewRow >= 0) {
-                            if (event.getValueIsAdjusting() == false) {
-                            	CodeLineInterface cl = resultVec.get(viewRow);
-								int appDirLength = app.getUnpackedDataDir().getParentFile().getAbsolutePath().length(); // cut the unnecessary part
-								String fileName = cl.getSmaliClass().getFile().getAbsolutePath().substring(appDirLength);
-								fileTree.searchNode(fileName, ""+cl.getLineNr());
-                            }
-                        }
-                    }
-                }
-        );
-        
-   	            
-        jTable.setModel(new SearchTableModel(resultVec, TABLE_COLUMNS));
-        jScrollPane.setViewportView(jTable);
-        jTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 
+        table = new FilterTable(resultVec, TABLE_COLUMNS, fileTree);
+        jScrollPane.setViewportView(table);
+        
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -114,9 +93,10 @@ public class FoundBytecodeFrame extends JInternalFrame {
                 .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE))
         );
 	    
-        JScrollPane scrollPane = new JScrollPane(jTable);
-	    jTable.setFillsViewportHeight(true);
+        JScrollPane scrollPane = new JScrollPane(table);
 	    add(scrollPane);
+	    
+	    this.setPreferredSize(new Dimension(800, 400));
 	 }
 
 	protected void performSearch(ActionEvent evt) {
@@ -124,80 +104,8 @@ public class FoundBytecodeFrame extends JInternalFrame {
 		if (pattern == null || pattern.trim().isEmpty()) return;
 		
 		resultVec = BytecodeSearcher.searchPattern(app, pattern);
-		jTable.setModel(new SearchTableModel(resultVec, TABLE_COLUMNS));
-	       
-        TableColumn column = null;
-        for (int i = 0; i < 3; i++) {
-            column = jTable.getColumnModel().getColumn(i);
-            if (i == 1) {
-                column.setMinWidth(150);
-            } else {
-            	column.setMinWidth(300);
-            }
-        }
+		table = new FilterTable(resultVec, TABLE_COLUMNS, fileTree);
        
-        jScrollPane.setViewportView(jTable);
-	}
-	
-	
-	private class SearchTableModel extends AbstractTableModel {
-		
-		private static final long serialVersionUID = 8834298385480526192L;
-		
-		private final Vector<CodeLineInterface> foundVec;
-		private final String[] columnNames;
-		
-		public SearchTableModel(Vector<CodeLineInterface> foundVec, String[] columnNames) {
-			this.foundVec = foundVec;
-			this.columnNames = columnNames;
-		}
-
-		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return false;
-		}
-		
-		@Override
-		public Object getValueAt(int row, int column) {
-			CodeLineInterface cl = foundVec.get(row);
-			switch (column) {
-			case 0:
-				// FIXME: Not so nice, but no way to tell whats the smali content dir?
-				String s = cl.getSmaliClass().getFile().getAbsolutePath();
-				String separator = File.separator;//this is too fix issues with File.separator under windows being "\", which makes the replaceFirst fail, due to \ being a special char in regex
-				if(separator.equals("\\"))
-					separator = separator + separator;
-				String split[] = s.split(separator+"smali"+separator, 2);
-				return split[1];
-			case 1:
-				return cl.getLineNr();
-			case 2:
-				return new String(cl.getLine());
-			case 3:
-				return cl.isCode();
-			default:
-				return "";
-			}
-		}
-
-		@Override
-		public int getRowCount() {
-			return foundVec.size();
-		}
-
-		@Override
-		public int getColumnCount() {
-			return columnNames.length;
-		}
-
-		@Override
-		public String getColumnName(int columnIndex) {
-			return columnNames[columnIndex];
-		}
-
-		@Override
-		public Class<?> getColumnClass(int columnIndex) {
-			return String.class;
-		}
+        jScrollPane.setViewportView(table);
 	}
 }

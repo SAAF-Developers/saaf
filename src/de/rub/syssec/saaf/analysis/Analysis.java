@@ -46,6 +46,7 @@ import de.rub.syssec.saaf.analysis.steps.hash.GenerateHashesStep;
 import de.rub.syssec.saaf.analysis.steps.hash.Hash;
 import de.rub.syssec.saaf.analysis.steps.heuristic.HeuristicSearchStep;
 import de.rub.syssec.saaf.analysis.steps.metadata.CategorizePermissionsStep;
+import de.rub.syssec.saaf.analysis.steps.metadata.MatchAPICallsStep;
 import de.rub.syssec.saaf.analysis.steps.metadata.ParseMetaDataStep;
 import de.rub.syssec.saaf.analysis.steps.obfuscation.LengthBasedDetectObfuscationStep;
 import de.rub.syssec.saaf.analysis.steps.obfuscation.EntropyBasedDetectObfuscationStep;
@@ -332,6 +333,7 @@ public class Analysis implements AnalysisInterface {
 		processingSteps.add(new ParseSmaliStep(config, true));
 		processingSteps.add(new LengthBasedDetectObfuscationStep(config, true));
 //		processingSteps.add(new EntropyBasedDetectObfuscationStep(config, true));
+		processingSteps.add(new MatchAPICallsStep(config, true));
 
 		processingSteps.add(new DecompileToJavaStep(config,
 				config.getBooleanConfigValue(ConfigKeys.ANALYSIS_GENERATE_JAVA)));

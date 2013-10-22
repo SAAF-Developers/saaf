@@ -44,7 +44,6 @@ public class EditorModel {
 
 	public ApplicationInterface getCurrentApplication() {
 		return currentApplication;
-
 	}
 
 	public void setCurrentApplication(ApplicationInterface currentApplication) {

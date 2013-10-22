@@ -4,14 +4,18 @@
 package de.rub.syssec.saaf.application;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
 
+import de.rub.syssec.saaf.model.APICall;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
 import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.ClassOrMethodNotFoundException;
+import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.Digest;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 import de.rub.syssec.saaf.model.application.manifest.ComponentInterface;
@@ -273,5 +277,21 @@ public class MockApplication implements ApplicationInterface {
 	public ClassInterface getSmaliClass(ComponentInterface component) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public HashMap<CodeLineInterface, APICall> getMatchedCalls(){
+		return new HashMap<CodeLineInterface, APICall>();
+	}
+
+
+	@Override
+	public void matchCalls() {
+		
+	}
+
+
+	@Override
+	public List<CodeLineInterface> getFoundCalls() {
+		return new ArrayList<CodeLineInterface>();
 	}
 }

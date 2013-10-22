@@ -19,6 +19,7 @@ package de.rub.syssec.saaf.application;
 import java.util.Arrays;
 
 import de.rub.syssec.saaf.application.instructions.Instruction;
+import de.rub.syssec.saaf.application.manifest.permissions.Permission;
 import de.rub.syssec.saaf.misc.ByteUtils;
 import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
@@ -37,6 +38,7 @@ public class CodeLine implements CodeLineInterface {
 	private final int lineNr;
 	private final InstructionInterface instruction;	
 	private final ClassInterface sf;
+	private Permission permission = null;
 	/**
 	 * A reference to the method where this cl comes from, may be null!
 	 */
@@ -221,5 +223,13 @@ public class CodeLine implements CodeLineInterface {
 	@Override
 	public void setMethod(MethodInterface method) {
 		this.method = method;
+	}
+	
+	public void setPermission(Permission perm){
+		this.permission = perm;
+	}
+	
+	public Permission getPermission(){
+		return permission;
 	}
 }

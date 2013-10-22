@@ -18,49 +18,42 @@ package de.rub.syssec.saaf.gui.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
+import java.io.IOException;
 
 import de.rub.syssec.saaf.analysis.steps.cfg.CFGGraph;
 import de.rub.syssec.saaf.analysis.steps.cfg.ExportCFG;
+import de.rub.syssec.saaf.gui.MainWindow;
+import de.rub.syssec.saaf.gui.ViewerStarter;
+import de.rub.syssec.saaf.misc.config.ConfigKeys;
+import de.rub.syssec.saaf.model.application.MethodInterface;
 
-public class ExportAction implements ActionListener {
-
+public class ExternalViewerAction implements ActionListener {
 	private CFGGraph graph;
+	private MethodInterface method;
 
+	private final ViewerStarter viewer = new ViewerStarter(ConfigKeys.VIEWER_IMAGES);
 
-	public ExportAction(CFGGraph g) {
+	public ExternalViewerAction(MethodInterface method, CFGGraph g) {
 		graph = g;
+		this.method = method;
 	}
 	
 
 	public void actionPerformed(ActionEvent event) {
-	if(event.getActionCommand().startsWith("Export")){
-	    FileNameExtensionFilter filter = new FileNameExtensionFilter("All Files",/*"svg",*/ "png");
-		JFileChooser exportDir = new JFileChooser();
-		exportDir.setFileFilter(filter);
-		exportDir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		int returnVal = exportDir.showSaveDialog(null);
-		
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String file = exportDir.getSelectedFile().getAbsolutePath();
-			
-			String extension = file.substring(file.lastIndexOf(".") +1 );
-			ExportCFG export = new ExportCFG(graph.getGraph());
-		    if (extension != null) {
-		        if (extension.equals("png") ) {
-					export.generatePNG(file); 
-		        } /*else if (extension.equals("svg")){
-					genSVG(file);
-		        }*/else{//if not type chosen, use png
-					export.generatePNG(file+".png");
-		        }
-		    }else{
-				
-			    }
-			}
+		String targetDir = method.getSmaliClass().getApplication().getBytecodeDirectory()
+				.getAbsolutePath();
+		ExportCFG ex = new ExportCFG(graph.getGraph(), targetDir);
+		ex.export(method);
+		File cfg = new File(ex.getLastExportedFile());
+
+		try {
+			viewer.showFile(cfg);
+		} catch (IOException e) {
+			e.printStackTrace();
+			MainWindow.showErrorDialog("Could not generate CFG.", "Error");
 		}
+		
 	}
 	
 	public void setGraph(CFGGraph graph){

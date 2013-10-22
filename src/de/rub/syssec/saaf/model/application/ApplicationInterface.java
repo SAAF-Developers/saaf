@@ -19,9 +19,11 @@ package de.rub.syssec.saaf.model.application;
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
 
 import de.rub.syssec.saaf.analysis.steps.hash.GenerateHashesStep;
+import de.rub.syssec.saaf.model.APICall;
 import de.rub.syssec.saaf.model.Entity;
 import de.rub.syssec.saaf.model.application.manifest.ComponentInterface;
 import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
@@ -189,4 +191,25 @@ public interface ApplicationInterface extends Entity {
 	 * @return the digest or null
 	 */
 	public abstract String getMessageDigest(Digest digestAlgorithm);
+	
+	/**
+	 * This method tries to match all the codelines in the app onto known 
+	 * permissions based on the android permission map and returns the 
+	 * resulting mappings.
+	 * 
+	 * @return the codelines which could be matched onto known permission
+	 */
+	public HashMap<CodeLineInterface, APICall> getMatchedCalls();
+
+	/**
+	 * Match the apicalls for the APK file.
+	 */
+	public abstract void matchCalls();
+	
+	/**
+	 * @return all apicalls found in this apk
+	 * @return
+	 */
+	public abstract List<CodeLineInterface> getFoundCalls();
+	
 }

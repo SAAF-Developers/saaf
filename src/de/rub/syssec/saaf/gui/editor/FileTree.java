@@ -57,6 +57,7 @@ import java.util.LinkedList;
 import java.util.Vector;
 
 import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -75,11 +76,13 @@ import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.log4j.Logger;
 
+import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.gui.OpenAnalysis;
 import de.rub.syssec.saaf.gui.ViewerStarter;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
 import de.rub.syssec.saaf.model.application.ClassInterface;
+import de.rub.syssec.saaf.model.application.MethodInterface;
 
 /**
  * Display a file system in a JTree view (extended with lots of SAAF stuff).
@@ -353,7 +356,7 @@ public class FileTree extends JInternalFrame implements PropertyChangeListener {
 
 		// ignore some files
 		IOFileFilter fileFilter = new NotFileFilter(
-				new SuffixFileFilter(new String[] { ".class", ".dot", ".java",
+				new SuffixFileFilter(new String[] { ".class", ".java",
 						".DS_Store", ".yml" }));
 
 		LinkedList<File> files = new LinkedList<File>(FileUtils.listFiles(dir,
@@ -399,6 +402,33 @@ public class FileTree extends JInternalFrame implements PropertyChangeListener {
 	// }
 
 	MouseAdapter ma = new MouseAdapter() {
+		private void openExternalFile(MouseEvent e) {
+			int x = e.getX();
+			int y = e.getY();
+			JTree tree = (JTree) e.getSource();
+			TreePath path = tree.getPathForLocation(x, y);
+			if (path == null)
+				return;
+
+			//tree.setSelectionPath(path);
+
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path
+					.getLastPathComponent();
+			Object nodeInfo = node.getUserObject();
+			FileNode node_object = (FileNode) nodeInfo;
+			//lastClick = node_object;
+
+			File png = node_object.getFile();
+
+			if (png.getAbsolutePath().endsWith(".png")) {
+				try {
+					viewer.showFile(png);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+			}
+		}
 		private void myPopupEvent(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
@@ -467,6 +497,23 @@ public class FileTree extends JInternalFrame implements PropertyChangeListener {
 						popup.add(item);
 					}
 				}
+				
+				popup.addSeparator();
+				JMenu cfgs = new JMenu("cfgs");
+				ClassInterface smaliClass = model.getCurrentApplication().getSmaliClass(smali);
+				for(MethodInterface method: smaliClass.getMethods()){
+					String parameters = "("+method.getParameterString()+")";//TODO: maybe do this in method.getParameterString, or at least the "(" and ")"
+					StringBuilder realFileName = new StringBuilder();
+					realFileName.append(method.getName());
+					realFileName.append(parameters);
+					realFileName.append(method.getReturnValueString());
+					JMenuItem methodButton = new JMenuItem(realFileName.toString());
+					cfgs.add(methodButton);
+					methodButton.addActionListener(cfgListener);
+				}
+				
+				
+				popup.add(cfgs);
 
 				popup.show(tree, x, y);
 			}
@@ -516,13 +563,49 @@ public class FileTree extends JInternalFrame implements PropertyChangeListener {
 		public void mousePressed(MouseEvent e) {
 			if (e.isPopupTrigger())
 				myPopupEvent(e);
+			else if (e.getButton() == MouseEvent.BUTTON1) {
+				openExternalFile(e);
+			}
 		}
 
 		public void mouseReleased(MouseEvent e) {
 			if (e.isPopupTrigger())
 				myPopupEvent(e);
 		}
+		
+		
+		
+		
+		ActionListener cfgListener = new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				ClassInterface smaliFile = model.getCurrentApplication().getSmaliClass(lastClick.getFile());
+				
+				for(MethodInterface method: smaliFile.getMethods()){
+					String parameters = "("+method.getParameterString()+")";//TODO: maybe do this in method.getParameterString, or at least the "(" and ")"
+					StringBuilder cfgFile = new StringBuilder();
+					cfgFile.append(method.getName());
+					cfgFile.append(parameters);
+					cfgFile.append(method.getReturnValueString());
+					if(cfgFile.toString().equals(event.getActionCommand())){
+						MethodViewer cfgViewer = new MethodViewer(method);//TODO: maybe rename to CFGViewer
+						MainWindow.getDesktopPane().add(cfgViewer);
+						try {
+							cfgViewer.setSelected(true);
+						} catch (java.beans.PropertyVetoException e) {
+						}
+						break;
+					}
+				}
+			}
+		};
+
+	
+		
+		
+		
+		
 	};
+	
 
 	public Vector<Vector<String>> getHistory() {
 		return this.history;
@@ -545,5 +628,6 @@ public class FileTree extends JInternalFrame implements PropertyChangeListener {
 			this.setTitle("Editor - "+shortpath);
 		}
 	}
+
 
 }

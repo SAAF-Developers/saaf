@@ -45,6 +45,7 @@ import de.rub.syssec.saaf.gui.actions.CloseAnalysisAction;
 import de.rub.syssec.saaf.gui.actions.DecompileToJavaAction;
 import de.rub.syssec.saaf.gui.actions.DetectObfuscationAction;
 import de.rub.syssec.saaf.gui.actions.DoAnalysisAction;
+import de.rub.syssec.saaf.gui.actions.FoundAPICallsAction;
 import de.rub.syssec.saaf.gui.actions.GenerateCFGsAction;
 import de.rub.syssec.saaf.gui.actions.OpenAPKAction;
 import de.rub.syssec.saaf.gui.actions.QuitAction;
@@ -52,7 +53,6 @@ import de.rub.syssec.saaf.gui.actions.SearchBytecodeAction;
 import de.rub.syssec.saaf.gui.actions.SearchStringsAction;
 import de.rub.syssec.saaf.gui.actions.ShowLogAction;
 import de.rub.syssec.saaf.gui.actions.ShowReportAction;
-import de.rub.syssec.saaf.gui.frame.logs.LogFrame;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
@@ -241,6 +241,13 @@ public class MainWindow extends JFrame implements ActionListener {
 				ActionEvent.ALT_MASK));
 		// menuItem.setActionCommand(CMD_FIND_STRINGS);
 		// menuItem.addActionListener(this);
+		miscMenu.add(menuItem);
+		
+		menuItem = new JMenuItem(new FoundAPICallsAction("Show APIcalls...",
+				openAppsMgr, this));
+//		menuItem.setMnemonic(KeyEvent.VK_S);
+//		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+//				ActionEvent.ALT_MASK));
 		miscMenu.add(menuItem);
 		
 		menuItem = new JMenuItem(new DetectObfuscationAction("Check for obfuscation",this,openAppsMgr));

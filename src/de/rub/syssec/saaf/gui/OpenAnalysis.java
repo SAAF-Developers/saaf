@@ -26,9 +26,9 @@ import javax.swing.event.InternalFrameListener;
 import de.rub.syssec.saaf.analysis.Analysis;
 import de.rub.syssec.saaf.gui.editor.FileTree;
 import de.rub.syssec.saaf.gui.frame.CfgSelectorFrame;
+import de.rub.syssec.saaf.gui.frame.FoundAPICallsFrame;
 import de.rub.syssec.saaf.gui.frame.FoundBytecodeFrame;
 import de.rub.syssec.saaf.gui.frame.FoundStringsFrame;
-import de.rub.syssec.saaf.gui.frame.InternalFrameStub;
 import de.rub.syssec.saaf.model.analysis.AnalysisInterface;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
 
@@ -40,12 +40,14 @@ public class OpenAnalysis {
 	private boolean stringsOpen=false;
 	private boolean smaliSearch=false;
 	private boolean cfgsOpen=false;
+	private boolean callsOpen=false;
 	
 	public static enum AppFrame {
 		FILETREE,
 		SMALI_SEARCH,
 		STRINGS,
-		CFGS, LOG
+		CFGS, LOG,
+		CALLS
 	};
 	
 	private final EnumMap<AppFrame, JInternalFrame> frameMap = new EnumMap<AppFrame, JInternalFrame>(AppFrame.class);
@@ -84,7 +86,11 @@ public class OpenAnalysis {
 				
 			case CFGS:	
 				iFrame = showCFG(iFrame);
-				break;		
+				break;	
+				
+			case CALLS:
+				iFrame = showCalls(iFrame);
+				break;	
 				
 			default:
 				break;
@@ -282,6 +288,65 @@ public class OpenAnalysis {
 		}
 		return iFrame;
 	}
+	
+	/**
+	 * @param iFrame
+	 * @return
+	 */
+	private JInternalFrame showCalls(JInternalFrame iFrame) {
+		if(!callsOpen){
+			iFrame = new FoundAPICallsFrame(analysis.getApp(), editorFrame);
+			
+			iFrame.addInternalFrameListener(new InternalFrameListener(){
+				public void internalFrameClosing(InternalFrameEvent e){
+					callsOpen = false;
+				}
+	
+				@Override
+				public void internalFrameActivated(InternalFrameEvent e) {
+					
+					
+				}
+	
+				@Override
+				public void internalFrameClosed(InternalFrameEvent e) {
+					
+					
+				}
+	
+				@Override
+				public void internalFrameDeactivated(InternalFrameEvent e) {
+					
+					
+				}
+	
+				@Override
+				public void internalFrameDeiconified(InternalFrameEvent e) {
+					
+					
+				}
+	
+				@Override
+				public void internalFrameIconified(InternalFrameEvent e) {
+					
+					
+				}
+	
+				@Override
+				public void internalFrameOpened(InternalFrameEvent e) {
+					
+					
+				}
+			});
+			
+			iFrame.pack();
+			MainWindow.getDesktopPane().add(iFrame);
+			stringsOpen = true;
+		}
+		return iFrame;
+	}
+	
+	
 
 	/**
 	 * @return

@@ -45,6 +45,7 @@ import de.rub.syssec.saaf.db.persistence.exceptions.PersistenceException;
 import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
+import de.rub.syssec.saaf.model.APICalls;
 
 public class Main {
 
@@ -141,6 +142,8 @@ public class Main {
 			f = new File(conf.getConfigValue(ConfigKeys.DIRECTORY_BYTECODE));// necessary?
 			f.mkdirs();// necessary?
 		}
+		
+		APICalls.readAPICalls();
 
 		if (!conf.getBooleanConfigValue(ConfigKeys.DATABASE_DISABLED)) {
 			LOGGER.info("Checking DB and creating tables if necessary...");

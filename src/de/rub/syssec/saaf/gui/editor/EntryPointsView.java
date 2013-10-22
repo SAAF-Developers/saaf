@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -43,9 +44,10 @@ public class EntryPointsView extends JPanel implements PropertyChangeListener {
 	 */
 	private static final long serialVersionUID = 1085852368775999038L;
 
-	ImageIcon activityIcon = new ImageIcon("images/activity.png");
-	ImageIcon serviceIcon = new ImageIcon("images/service.png");
-	ImageIcon receiverIcon = new ImageIcon("images/receiver.png");
+
+	ImageIcon activityIcon = new ImageIcon(getClass().getResource("/images/activity.png"));
+	ImageIcon serviceIcon = new ImageIcon(getClass().getResource("/images/service.png"));
+	ImageIcon receiverIcon = new ImageIcon(getClass().getResource("/images/receiver.png"));
 
 	// renders the components (activity, receiver, service) with a different
 	// icon

@@ -43,7 +43,7 @@ import de.rub.syssec.saaf.analysis.steps.cfg.CFGGraph;
 import de.rub.syssec.saaf.analysis.steps.cfg.ExportCFG;
 import de.rub.syssec.saaf.application.methods.Method;
 import de.rub.syssec.saaf.gui.MainWindow;
-import de.rub.syssec.saaf.gui.ViewerStarter;
+import de.rub.syssec.saaf.gui.editor.MethodViewer;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 import de.rub.syssec.saaf.model.application.ClassInterface;
@@ -67,7 +67,6 @@ public class CfgSelectorFrame extends JInternalFrame {
 	private static final String GENERATE_OPERATION = "Generate";
 	private static final String SHOW_OPERATION = "Show";
 	
-	private final ViewerStarter viewer = new ViewerStarter(ConfigKeys.VIEWER_IMAGES);
 	
 	/**
 	 * A frame to generate and open Control Flow Graphs. CFGs are created using mxGraph
@@ -166,8 +165,7 @@ public class CfgSelectorFrame extends JInternalFrame {
 	}
 
 	/**
-	 * Show a CFG in external viewer. CFG will be created on-the-fly if it
-	 * does not exists.
+	 * generates a cfg and may show it
 	 * 
 	 * @param showCfg Generate AND show CFG?
 	 * @return the file representing the CFG as PNG file
@@ -181,12 +179,12 @@ public class CfgSelectorFrame extends JInternalFrame {
 		ex.export(method);
 		File cfg = new File(ex.getLastExportedFile());
 		if (showCfg) {
-			try {
-				viewer.showFile(cfg);
-			} catch (IOException e) {
-				e.printStackTrace();
-				MainWindow.showErrorDialog("Could not generate CFG.", "Error");
-			}
+				MethodViewer cfgViewer = new MethodViewer(method);
+				MainWindow.getDesktopPane().add(cfgViewer);
+				try {
+					cfgViewer.setSelected(true);
+				} catch (java.beans.PropertyVetoException e) {
+				}
 		}
 		return cfg;
 	}

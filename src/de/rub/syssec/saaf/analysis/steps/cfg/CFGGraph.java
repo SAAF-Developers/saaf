@@ -16,19 +16,28 @@
  */
 package de.rub.syssec.saaf.analysis.steps.cfg;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.ImageIcon;
+
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.util.mxCellOverlay;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 
 import de.rub.syssec.saaf.misc.Highlight;
+import de.rub.syssec.saaf.model.APICall;
 import de.rub.syssec.saaf.model.application.BasicBlockInterface;
+import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 
 public class CFGGraph {
@@ -37,54 +46,74 @@ public class CFGGraph {
 	mxGraphComponent graphComponent;
 	
 	HashMap<Integer, Object> vertices;
+	HashMap<mxCell, BasicBlockInterface> cells;
+	HashMap<BasicBlockInterface, String> overlays;
+	
+	ImageIcon permissionIcon;
+	
 	public CFGGraph (MethodInterface m){
+		this(m, false);
+	}
+	
+	public CFGGraph (MethodInterface m, boolean showAPICallasDOTcomment){
 		method = m;
 		vertices = new HashMap<Integer,Object>();
-		graph = new mxGraph();	
-
+		cells = new HashMap<mxCell,BasicBlockInterface>();
+		overlays = new HashMap<BasicBlockInterface, String>();
+		graph = new mxGraph();
+		
 		Object parent = graph.getDefaultParent();
 
 		graph.getModel().beginUpdate();
 		graph.setHtmlLabels(true);
 		graph.setCellsDisconnectable(false);
 		
+    	URL imageURL = getClass().getResource("/images/permission.png");
+   		permissionIcon = new ImageIcon(imageURL);
+		
 
+		HashMap<CodeLineInterface, APICall> matches = method.getSmaliClass().getApplication().getMatchedCalls();
+
+		
 		try	{
 			graph.setAllowDanglingEdges(false);
 			graph.setAutoSizeCells(true);
 			
 			graph.setCellsEditable(false);
-			
+			Collection<mxCell> c = new ArrayList<mxCell>();
 			for(BasicBlockInterface bb: method.getBasicBlocks()){
+				c.clear();
+				
 				Object startVertex = null;
 				int lineNr = bb.getCodeLines().getFirst().getLineNr();
 				if(vertices.containsKey(lineNr)){
 					startVertex = vertices.get(lineNr);
 				} else {
-					String b = highlight(bb.toString());
-					startVertex = graph.insertVertex(parent, null, b, 0, 0, 80, 30);
+					startVertex = graph.insertVertex(parent, null, generateBasicBlockString(
+							showAPICallasDOTcomment, matches, bb), 0, 0, 80, 30);
 					vertices.put(lineNr,startVertex);
 				}
 
 				graph.updateCellSize(startVertex);
-
+				
 				for( BasicBlockInterface target: bb.getNextBB()){
 					Object targetVertex = null;
 					lineNr = target.getCodeLines().getFirst().getLineNr();
 					if(vertices.containsKey(lineNr)){
 						targetVertex = vertices.get(lineNr);
 					} else {
-						String t = highlight(target.toString());
-						targetVertex = graph.insertVertex(parent, null, t, 0, 0, 80, 30);
+						targetVertex = graph.insertVertex(parent, null, generateBasicBlockString(
+								showAPICallasDOTcomment, matches, target), 0, 0, 80, 30);
 						vertices.put(lineNr,targetVertex);
 						graph.updateCellSize(targetVertex);
 					}
 
 				graph.insertEdge(parent, null, "", startVertex, targetVertex);
-				
-				}
+				}	            
 			}
+			
 			graph.setCellStyles(mxConstants.STYLE_ALIGN, mxConstants.ALIGN_LEFT, vertices.values().toArray() );
+
 		}
 		finally	{
 		   graph.getModel().endUpdate();
@@ -92,16 +121,104 @@ public class CFGGraph {
 		
 		graphComponent = new mxGraphComponent(graph);
 
+		for(CodeLineInterface line: matches.keySet()){
+			if(line.getMethod().equals(method)){
+
+				//TODO: maybe add a line.getBB method or a method.getBBforLine
+				for(BasicBlockInterface bb: method.getBasicBlocks()){
+					if(bb.containsLineNr(line.getLineNr())){
+						StringBuilder currentOverlayText = new StringBuilder();
+						currentOverlayText.append("found APICall match in line: ");
+						currentOverlayText.append(line.getNrAndLine());
+						currentOverlayText.append("<br>");
+						currentOverlayText.append(matches.get(line).getPermissionString());
+						currentOverlayText.append("<br>");
+						currentOverlayText.append(matches.get(line).getDescription());
+						
+
+						//if a bb contains multiple apicalls
+						if(overlays.containsKey(bb)){
+							StringBuilder oldOverlayText = new StringBuilder();
+							oldOverlayText.append(overlays.get(bb));
+							oldOverlayText.append("<br><br>");
+							oldOverlayText.append(currentOverlayText);
+							overlays.put(bb, oldOverlayText.toString());
+						}else{
+							overlays.put(bb, currentOverlayText.toString());
+						}
+						
+						StringBuilder overlayText = new StringBuilder();
+						overlayText.append("<html>");
+						overlayText.append(overlays.get(bb));
+						overlayText.append("</html>");
+						//TODO: fix imageicon location
+						mxCellOverlay overlay =  new mxCellOverlay(permissionIcon, overlayText.toString());
+						//if new overlay, add it, if an old one exists replace it
+						graphComponent.addCellOverlay(vertices.get(bb.getCodeLines().getFirst().getLineNr()), overlay);
+//						mxCell cell = (mxCell)(vertices.get(bb.getCodeLines().getFirst().getLineNr()));
+//						cell.setStyle("fillColor=red");
+//						graph.setCellStyle("fillColor=blue", new Object[]{vertices.get(bb.getCodeLines().getFirst().getLineNr())}); 
+						graph.setCellStyles(mxConstants.STYLE_FILLCOLOR, "gray", new Object[]{vertices.get(bb.getCodeLines().getFirst().getLineNr())}); 
+					}
+				}
+				
+			}
+		}
+		
 		graphComponent.scrollCellToVisible(graph.getDefaultParent());
 		
+		
+//		graphComponent.setToolTips(true);
+	
 		mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
         layout.setDisableEdgeStyle(false);
-        
-
 
         layout.execute(graph.getDefaultParent());
-
 	}
+
+	private String generateBasicBlockString(boolean showAPICallasDOTcomment,
+			HashMap<CodeLineInterface, APICall> matches, BasicBlockInterface bb) {
+		String highlighted="";
+		if(showAPICallasDOTcomment){
+			ArrayList<CodeLineInterface> callLines = new ArrayList<CodeLineInterface>();
+			//TODO: Change this, this code is in very similar form used later on to find positions for overlays
+			for(CodeLineInterface line: matches.keySet()){
+				if(line.getMethod().equals(method)){
+						//This BB contains at least one APICall, so we have to build the string ourselfs
+					if(bb.containsLineNr(line.getLineNr())){
+						callLines.add(line);
+					}
+				}
+			}
+			StringBuilder out = new StringBuilder();
+			for(CodeLineInterface currentLine: bb.getCodeLines()){
+				if(callLines.contains(currentLine)){
+//					out.append(".");
+//					out.append("found APICall match in line: ");
+//					out.append(currentLine.getNrAndLine());
+//					out.append("\n");
+					
+					out.append(".");
+					out.append(matches.get(currentLine).getPermissionString());
+					out.append("\n");
+					out.append(".");
+					out.append(matches.get(currentLine).getDescription());
+					out.append("\n");
+					
+				} 
+				out.append(currentLine.getNrAndLine());
+				out.append("\n");
+				
+			}
+			
+			highlighted = highlight(out.toString());
+			
+		} else {
+			highlighted = highlight(bb.toString());
+		}
+		return highlighted;
+	}
+
 	
 	public mxGraph getGraph(){
 		return graph;

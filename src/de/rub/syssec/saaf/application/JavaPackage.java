@@ -16,7 +16,6 @@
  */
 package de.rub.syssec.saaf.application;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -129,7 +128,7 @@ public class JavaPackage implements PackageInterface {
 			if(useDots)
 				name += ll+".";
 			else
-				name += ll+File.separator;
+				name += ll+"/"; //using / instead of File.separator to get identical package names under windows and linux
 		}
 		//name can have a length of 0 if this is the default package
 		if(name.length()>0)

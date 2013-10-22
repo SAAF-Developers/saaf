@@ -352,7 +352,12 @@ public enum ConfigKeys {
 	/**
 	 * The directory that SAAF will watch for new apks
 	 */
-	DAEMON_DIRECTORY("daemon.polling.directory","incoming");
+	DAEMON_DIRECTORY("daemon.polling.directory","incoming"),
+	
+	/**
+	 * The directory that SAAF will watch for new apks
+	 */
+	FILE_APICALLS("file.apicalls");
 	
 	private String name;
 	public String defaultString;

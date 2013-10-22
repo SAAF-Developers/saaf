@@ -27,6 +27,8 @@ import brut.androlib.AndrolibException;
 import brut.androlib.ApkDecoder;
 import brut.androlib.err.CantFindFrameworkResException;
 import brut.androlib.err.OutDirExistsException;
+import brut.androlib.res.AndrolibResources;
+import brut.androlib.res.util.ExtFile;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
 
@@ -84,8 +86,26 @@ public class ApkDecoderInterface {
 				
 				localApkDecoder.setOutDir(destination);
 				localApkDecoder.setApkFile(apk);
+				//disable resource decoding
+				localApkDecoder.setDecodeResources((short) 0x0100);				
+				
+				//apkdecoder constants
+//		        public final static short DECODE_SOURCES_NONE = 0x0000;
+//		        public final static short DECODE_SOURCES_SMALI = 0x0001;
+//		        public final static short DECODE_SOURCES_JAVA = 0x0002;
+//
+//		        public final static short DECODE_RESOURCES_NONE = 0x0100;
+//		        public final static short DECODE_RESOURCES_FULL = 0x0101;
+
+
 				// localApkDecoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_JAVA);  //HL: Not yet implemented by APKTool
 	        	localApkDecoder.decode();
+	        	
+	        	//extract the manifest file, because disabling decoding resource also disables decoding of the manifest file
+				AndrolibResources res = new AndrolibResources();
+				ExtFile apkFile = new ExtFile(apk);
+				res.decodeManifest(res.getResTable(apkFile,true), apkFile, destination);
+      	
 	        	decodeSucseccfull = true;
 	        	
 	        } catch (OutDirExistsException ex) {
@@ -142,6 +162,7 @@ public class ApkDecoderInterface {
 	        			
 	        			//localApkDecoder.setDecodeResources(ApkDecoder.DECODE_RESOURCES_NONE);	//HL: Alternative, if APKTool crashes by Resources
 	        			try {
+	        				//localApkDecoder.setDecodeResources((short)0x0100);	//HL: Alternative, if APKTool crashes by Resources
 							localApkDecoder.decode();
 						} catch (IOException e) {
 							throw new DecoderException(e);

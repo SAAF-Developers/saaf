@@ -1,5 +1,6 @@
 package de.rub.syssec.saaf.application;
 
+import de.rub.syssec.saaf.application.manifest.permissions.Permission;
 import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.InstructionInterface;
@@ -15,6 +16,7 @@ public class MockCodeLine implements CodeLineInterface {
 
 	private MethodInterface method;
 	private ClassInterface classFile;
+	private Permission permission;
 	private byte[] line;
 	private int linNr;
 
@@ -99,6 +101,17 @@ public class MockCodeLine implements CodeLineInterface {
 	public void setMethod(MethodInterface method) {
 		this.method=method;
 		
+	}
+
+	@Override
+	public void setPermission(Permission perm) {
+		this.permission = perm;
+		
+	}
+
+	@Override
+	public Permission getPermission() {
+		return permission;
 	}
 	
 	

@@ -13,13 +13,15 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.Set;
 import java.util.Vector;
 import java.util.WeakHashMap;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -33,7 +35,6 @@ import org.apache.commons.io.FileUtils;
 import de.rub.syssec.saaf.gui.MainWindow;
 import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
-import de.rub.syssec.saaf.model.application.MethodInterface;
 
 /**
  * @author Tilman Bender <tilman.bender@rub.de>
@@ -105,11 +106,12 @@ public class EditorView extends JPanel implements PropertyChangeListener {
 	private final static WeakHashMap<String, DefaultStyledDocument> DOCUMENT_MAP = new WeakHashMap<String, DefaultStyledDocument>();
 
 	private JScrollPane editorScrollPane;
-	private JTextPane editor;
+	private EditorTextPane editor;
 	private JTextArea lines;
 	private LinkEditorKit linkEditorKit;
 	private final FileTree fileTree;
 	private EditorModel model;
+	private ImageIcon permissionIcon;
 
 	public EditorView(EditorModel model, FileTree fileTree) {
 		super();
@@ -118,6 +120,9 @@ public class EditorView extends JPanel implements PropertyChangeListener {
 		this.history = fileTree.getHistory();
 		this.linkEditorKit = fileTree.getLinkEditorKit();
 
+    	URL imageURL = getClass().getResource("/images/permission.png");
+		permissionIcon = new ImageIcon(imageURL);
+
 		// setBackground(Color.CYAN);
 		setLayout(new GridBagLayout());
 
@@ -125,7 +130,8 @@ public class EditorView extends JPanel implements PropertyChangeListener {
 		this.lines.setBackground(Color.LIGHT_GRAY);
 		this.lines.setEditable(false);
 
-		this.editor = new JTextPane();
+		this.editor = new EditorTextPane(model);
+		this.editor.setToolTipText("enable");
 		this.lines.setMargin(editor.getMargin());
 		File f = model.getCurrentFile();
 		if (f != null) {
@@ -208,7 +214,7 @@ public class EditorView extends JPanel implements PropertyChangeListener {
 		if (line >= content.length)
 			line = content.length - 2;
 
-		for (int i = 0; i < (line); i++) {
+		for (int i = 0; i < line; i++) {
 			// line length
 			c1 = c1 + content[i].length();
 			// new line
@@ -323,14 +329,46 @@ public class EditorView extends JPanel implements PropertyChangeListener {
 										model.getCurrentApplication().getManifest().getTidiedPath(), "Malformed Manifest");
 							}
 						}
-						DefaultStyledDocument doc = loadDocument(theFile);
-						editor.setDocument(doc);
-						editor.setCaretPosition(0);
-						String newnumbers = getNumberedLine();
-						lines.setText(newnumbers);
-						editorScrollPane.getVerticalScrollBar().setValue(0);
-						editorScrollPane.revalidate();
-						editorScrollPane.repaint();
+						if(!theFile.getName().endsWith(".png")){
+							DefaultStyledDocument doc = loadDocument(theFile);
+		
+							Set <CodeLineInterface> keys = model.getCurrentApplication().getMatchedCalls().keySet();
+
+							
+							editor.setDocument(doc);
+							
+							//split the document content into lines, and add indicator icon, if the current line contains an apicall
+							String[] content = null;
+							for(CodeLineInterface cl: keys){
+								if(theFile.getAbsolutePath().contains(cl.getSmaliClass().getFullClassName(false))){
+									
+									try {
+										content = doc
+												.getText(0, doc.getLength())
+												.split("\n");
+									} catch (BadLocationException e) {
+										e.printStackTrace();
+									}
+									int offset = byteCount(content, cl.getLineNr()-1)-1;
+									editor.setCaretPosition(offset);
+									editor.insertIcon(permissionIcon);
+				
+								}
+							}
+
+							
+
+//							editor.setCaretPosition(0);
+							String newnumbers = getNumberedLine();
+							lines.setText(newnumbers);
+							editorScrollPane.getVerticalScrollBar().setValue(0);
+							editorScrollPane.revalidate();
+							editorScrollPane.repaint();
+							
+//							lines.setText(getNumberedLine());
+//							editor.setCaretPosition(0);	
+//							repaint();
+						}
 					}
 				});
 			} else {
