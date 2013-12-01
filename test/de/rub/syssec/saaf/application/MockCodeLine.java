@@ -3,8 +3,8 @@ package de.rub.syssec.saaf.application;
 import de.rub.syssec.saaf.application.manifest.permissions.Permission;
 import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
-import de.rub.syssec.saaf.model.application.InstructionInterface;
 import de.rub.syssec.saaf.model.application.MethodInterface;
+import de.rub.syssec.saaf.model.application.instruction.InstructionInterface;
 
 /**
  * MockClass that extends Codeline to call its protected constructor.

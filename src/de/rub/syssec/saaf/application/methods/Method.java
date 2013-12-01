@@ -34,11 +34,11 @@ import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.DetectionLogicError;
 import de.rub.syssec.saaf.model.application.FieldInterface;
-import de.rub.syssec.saaf.model.application.InstructionInterface;
-import de.rub.syssec.saaf.model.application.InstructionType;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 import de.rub.syssec.saaf.model.application.SmaliClassError;
 import de.rub.syssec.saaf.model.application.SyntaxException;
+import de.rub.syssec.saaf.model.application.instruction.InstructionInterface;
+import de.rub.syssec.saaf.model.application.instruction.InstructionType;
 
 public class Method implements MethodInterface {
 	private String name;

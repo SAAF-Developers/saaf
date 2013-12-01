@@ -41,11 +41,11 @@ import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.ConstantInterface;
 import de.rub.syssec.saaf.model.application.DetectionLogicError;
 import de.rub.syssec.saaf.model.application.FieldInterface;
-import de.rub.syssec.saaf.model.application.InstructionInterface;
-import de.rub.syssec.saaf.model.application.InstructionType;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 import de.rub.syssec.saaf.model.application.SyntaxException;
 import de.rub.syssec.saaf.model.application.ConstantInterface.VariableType;
+import de.rub.syssec.saaf.model.application.instruction.InstructionInterface;
+import de.rub.syssec.saaf.model.application.instruction.InstructionType;
 
 /**
  * This class works with SmaliClasss and is able to search for constants in the smali

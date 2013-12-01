@@ -14,6 +14,7 @@
 	<property name="build.test.dir" location="${build.dir}/test" />
 	<property name="src.dir" location="src" />
 	<property name="test.dir" location="test" />
+	<property name="resource.dir" location="resources" />
 	<property name="conf.dir" location="conf" />
 	<property name="script.dir" location="scripts" />
 	<property name="doc.dir" location="doc" />
@@ -143,6 +144,11 @@
 				<include name="**/*.properties" />
 			</fileset>
 		</copy>
+		<copy verbose="true" todir="${build.prod.dir}">
+			<fileset dir="${resource.dir}">
+				<include name="**/*.png" />
+			</fileset>
+		</copy>
 		<fatjar.build output="${jar.name}">
 			<fatjar.manifest mainclass="de.rub.syssec.saaf.Main" />
 			<fatjar.filesource path="${build.prod.dir}" relpath="" />
@@ -162,6 +168,7 @@
 			<fatjar.jarsource file="lib/apktool-1.5.2.jar" relpath="" />
 			<fatjar.jarsource file="lib/smali-1.4.2.jar" relpath="" />
 			<fatjar.jarsource file="lib/ST-4.0.7.jar" relpath="" />
+			<fatjar.jarsource file="lib/jgraphx.jar" relpath="" />
 		</fatjar.build>
 		<move file="${jar.name}" tofile="${jar.path}" />
 	</target>

@@ -193,23 +193,19 @@ public interface ApplicationInterface extends Entity {
 	public abstract String getMessageDigest(Digest digestAlgorithm);
 	
 	/**
-	 * This method tries to match all the codelines in the app onto known 
-	 * permissions based on the android permission map and returns the 
-	 * resulting mappings.
 	 * 
 	 * @return the codelines which could be matched onto known permission
 	 */
 	public HashMap<CodeLineInterface, APICall> getMatchedCalls();
-
-	/**
-	 * Match the apicalls for the APK file.
-	 */
-	public abstract void matchCalls();
 	
 	/**
 	 * @return all apicalls found in this apk
 	 * @return
 	 */
 	public abstract List<CodeLineInterface> getFoundCalls();
+
+	public abstract void setFoundCalls(List<CodeLineInterface> calls);
+
+	public abstract void setMatchedCalls(HashMap<CodeLineInterface, APICall> calls);
 	
 }

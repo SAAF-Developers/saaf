@@ -10,9 +10,9 @@ import de.rub.syssec.saaf.model.application.ApplicationInterface;
 import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.FieldInterface;
-import de.rub.syssec.saaf.model.application.InstructionType;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 import de.rub.syssec.saaf.model.application.PackageInterface;
+import de.rub.syssec.saaf.model.application.instruction.InstructionType;
 
 public class MockClass implements ClassInterface {
 	

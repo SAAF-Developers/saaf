@@ -357,7 +357,7 @@ public enum ConfigKeys {
 	/**
 	 * The directory that SAAF will watch for new apks
 	 */
-	FILE_APICALLS("file.apicalls");
+	FILE_APICALLS("file.apicalls","transformedApicalls.txt");
 	
 	private String name;
 	public String defaultString;

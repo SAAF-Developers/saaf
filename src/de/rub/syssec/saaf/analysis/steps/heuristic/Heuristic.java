@@ -32,9 +32,9 @@ import de.rub.syssec.saaf.model.analysis.HResultInterface;
 import de.rub.syssec.saaf.model.analysis.PatternType;
 import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
-import de.rub.syssec.saaf.model.application.InstructionInterface;
-import de.rub.syssec.saaf.model.application.InstructionType;
 import de.rub.syssec.saaf.model.application.MethodInterface;
+import de.rub.syssec.saaf.model.application.instruction.InstructionInterface;
+import de.rub.syssec.saaf.model.application.instruction.InstructionType;
 import de.rub.syssec.saaf.model.application.manifest.ManifestInterface;
 
 /**

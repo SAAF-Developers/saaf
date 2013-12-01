@@ -29,18 +29,15 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import de.rub.syssec.saaf.application.manifest.permissions.Permission;
 import de.rub.syssec.saaf.misc.FileList;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.model.APICall;
-import de.rub.syssec.saaf.model.APICalls;
 import de.rub.syssec.saaf.model.application.ApplicationInterface;
 import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.ClassOrMethodNotFoundException;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.DetectionLogicError;
 import de.rub.syssec.saaf.model.application.Digest;
-import de.rub.syssec.saaf.model.application.InstructionType;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 import de.rub.syssec.saaf.model.application.SmaliClassError;
 import de.rub.syssec.saaf.model.application.manifest.ComponentInterface;
@@ -90,64 +87,30 @@ public class Application implements ApplicationInterface {
 	/**
 	 * Mapping of this apps codelines to apicalls if they match
 	 */
-	HashMap<CodeLineInterface, APICall> matchedCalls = null;
+	HashMap<CodeLineInterface, APICall> matchedCalls;
 	List<CodeLineInterface> foundCalls = new ArrayList<CodeLineInterface>();//maybe change this to treeset and make it comparable
 	
 	/**
 	 * returns the calls which could be mapped to the permissions based on android permission map
 	 */
 	public HashMap<CodeLineInterface, APICall> getMatchedCalls(){ 
-		if(matchedCalls != null)
-			return matchedCalls;
-		else {
-//			matchedCalls = new HashMap<CodeLineInterface, APICall>();
-			matchCalls();
-			return matchedCalls;
-		}
+		return matchedCalls;
+	}
+	
+	@Override
+	public void setMatchedCalls(HashMap<CodeLineInterface, APICall> calls)
+	{
+		this.matchedCalls = calls;
 	}
 	
 	public List<CodeLineInterface> getFoundCalls(){
 		return foundCalls;
 	}
 	
-	
-	/**
-	 * match the codelines to known apicalls
-	 */
-	public void matchCalls(){
-		if(matchedCalls == null){
-			matchedCalls = new HashMap<CodeLineInterface, APICall>();
-		
-		
-		//better var names
-		for(ClassInterface s : getAllSmaliClasss(false)){
-			for(CodeLineInterface c: s.getAllCodeLines()){
-				if(c.getInstruction().getType().equals(InstructionType.INVOKE)||c.getInstruction().getType().equals(InstructionType.INVOKE_STATIC)){
-					foundCalls.add(c);					
-				}
-			}
-		}
-
-		for(CodeLineInterface c: foundCalls){
-			String className = new String (c.getInstruction().getCalledClassAndMethodWithParameter()[0]).replaceAll("/", ".");
-			for(APICall call: APICalls.getCalls()){
-				if(call.getCall().contains(className+"."+new String (c.getInstruction().getCalledClassAndMethodWithParameter()[1]))){
-	
-					//params need to be converted for matching....
-					//params
-					String params = new String (c.getInstruction().getCalledClassAndMethodWithParameter()[2]);
-
-					if(call.getCall().contains(className+"."+new String (c.getInstruction().getCalledClassAndMethodWithParameter()[1])+"("+params+")")){
-						c.setPermission(new Permission(call.getCall()));//TODO: this needs to also be saved in the smali data itself instead of just in this copy
-						matchedCalls.put(c, call);
-						
-					} 
-
-
-				}
-			}
-		}
-		}		
+	@Override
+	public void setFoundCalls(List<CodeLineInterface> calls)
+	{
+		this.foundCalls=calls;
 	}
 	
 	@Override

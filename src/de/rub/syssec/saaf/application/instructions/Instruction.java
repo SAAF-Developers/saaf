@@ -26,9 +26,9 @@ import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.model.application.BasicBlockInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.ConstantInterface;
-import de.rub.syssec.saaf.model.application.InstructionInterface;
-import de.rub.syssec.saaf.model.application.InstructionType;
 import de.rub.syssec.saaf.model.application.SyntaxException;
+import de.rub.syssec.saaf.model.application.instruction.InstructionInterface;
+import de.rub.syssec.saaf.model.application.instruction.InstructionType;
 
 /**
  * This class holds information about the SMALI opcodes which are parsed from

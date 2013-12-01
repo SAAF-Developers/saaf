@@ -17,6 +17,7 @@
 package de.rub.syssec.saaf.model.application;
 
 import de.rub.syssec.saaf.application.manifest.permissions.Permission;
+import de.rub.syssec.saaf.model.application.instruction.InstructionInterface;
 
 public interface CodeLineInterface {
 

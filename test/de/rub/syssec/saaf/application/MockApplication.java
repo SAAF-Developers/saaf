@@ -284,14 +284,17 @@ public class MockApplication implements ApplicationInterface {
 	}
 
 
-	@Override
-	public void matchCalls() {
-		
-	}
-
 
 	@Override
 	public List<CodeLineInterface> getFoundCalls() {
 		return new ArrayList<CodeLineInterface>();
+	}
+
+
+	public void setFoundCalls(List<CodeLineInterface> calls) {
+	}
+
+
+	public void setMatchedCalls(HashMap<CodeLineInterface, APICall> calls) {
 	}
 }

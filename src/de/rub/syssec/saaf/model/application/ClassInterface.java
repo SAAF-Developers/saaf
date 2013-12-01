@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import de.rub.syssec.saaf.model.Entity;
+import de.rub.syssec.saaf.model.application.instruction.InstructionType;
 
 public interface ClassInterface extends Entity, Obfuscatable {
 

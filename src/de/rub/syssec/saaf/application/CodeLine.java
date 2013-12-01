@@ -23,9 +23,9 @@ import de.rub.syssec.saaf.application.manifest.permissions.Permission;
 import de.rub.syssec.saaf.misc.ByteUtils;
 import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
-import de.rub.syssec.saaf.model.application.InstructionInterface;
-import de.rub.syssec.saaf.model.application.InstructionType;
 import de.rub.syssec.saaf.model.application.MethodInterface;
+import de.rub.syssec.saaf.model.application.instruction.InstructionInterface;
+import de.rub.syssec.saaf.model.application.instruction.InstructionType;
 
 /**
  * This class represents one line of code. The codeline will be stripped of all leading

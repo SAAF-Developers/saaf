@@ -21,7 +21,7 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 import de.rub.syssec.saaf.misc.config.Config;
-import de.rub.syssec.saaf.model.application.InstructionType;
+import de.rub.syssec.saaf.model.application.instruction.InstructionType;
 
 /**
  * A small helper class which assigns a type to a SAMLI opcode.

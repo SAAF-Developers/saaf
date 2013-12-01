@@ -14,9 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.rub.syssec.saaf.model.application;
+package de.rub.syssec.saaf.model.application.instruction;
 
 import java.util.LinkedList;
+
+import de.rub.syssec.saaf.model.application.CodeLineInterface;
+import de.rub.syssec.saaf.model.application.SyntaxException;
 
 
 public interface InstructionInterface {

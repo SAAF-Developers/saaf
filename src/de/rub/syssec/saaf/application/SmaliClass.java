@@ -38,10 +38,10 @@ import de.rub.syssec.saaf.model.application.ClassInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.DetectionLogicError;
 import de.rub.syssec.saaf.model.application.FieldInterface;
-import de.rub.syssec.saaf.model.application.InstructionType;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 import de.rub.syssec.saaf.model.application.PackageInterface;
 import de.rub.syssec.saaf.model.application.SmaliClassError;
+import de.rub.syssec.saaf.model.application.instruction.InstructionType;
 
 /**
  * This class represents a parsed SMALI file on the disk with all methods, fields and so on.

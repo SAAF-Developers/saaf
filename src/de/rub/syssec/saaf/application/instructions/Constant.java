@@ -29,9 +29,9 @@ import de.rub.syssec.saaf.misc.ByteUtils;
 import de.rub.syssec.saaf.model.application.BasicBlockInterface;
 import de.rub.syssec.saaf.model.application.CodeLineInterface;
 import de.rub.syssec.saaf.model.application.ConstantInterface;
-import de.rub.syssec.saaf.model.application.InstructionType;
 import de.rub.syssec.saaf.model.application.MethodInterface;
 import de.rub.syssec.saaf.model.application.SyntaxException;
+import de.rub.syssec.saaf.model.application.instruction.InstructionType;
 
 /**
  * This class describes a constant in SMALI bytecode. It is parsed from the instructions itself. A constant is equal to another constant
