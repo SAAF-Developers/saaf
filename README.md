@@ -63,7 +63,7 @@ it is not useful for processing gigabytes of malware.
 
 So if you want to analyze several apks you should look at the INSTALL file how to setup SAAF with MySQL.
 
-Also check the [CLI-FAQ](doc/FAQ-CLI.txt) and [GUI-FAQ](doc/FAQ-GUI.txt) for more info.
+Also check the [CLI-FAQ](doc-manually/user/FAQ-CLI.txt) and [GUI-FAQ](doc-manually/user/FAQ-GUI.txt) for more info.
 
 
 
