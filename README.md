@@ -1,6 +1,8 @@
-# Static Android Analysis Framework (SAAF) - A static analyzer for Android apk files.
+# Static Android Analysis Framework (SAAF)
 
-SAAF has several features:
+Suprise! It is a static analyzer for Android apk files.
+
+## Features:
 
 It supports Program Slicing on smali code.
 It offers several quick-checks to check if some given app makes uses of certain features (eg, uses classloaders, calls a method of interest, contains likely patched code, ...).
