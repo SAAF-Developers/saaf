@@ -1,4 +1,4 @@
-SAAF is a static analyzer for Android apk files. It stands for Static Android Analysis Framework.
+# Static Android Analysis Framework (SAAF) - A static analyzer for Android apk files.
 
 SAAF has several features:
 
@@ -18,7 +18,7 @@ which could be used as input for that parameter.
 Doing so it is able to find hardcoded telephone numbers which one can see as suspicious as the user should be able to enter the phone number where 
 messaged are being sent to.
 
-== Running == 
+## Running ##
 
 1. To see the commandline help just type from the SAAF folder
 ```
@@ -40,7 +40,7 @@ If <filename> is a folder SAAF will analyze all apks that are directly contained
 
 For each APK SAAF will do the following:
 
-Preprocessing:
+###Preprocessing:
 0. Generate MD5,SHA1 and SHA256 hashes for the file
 1. create a folder for the application in ./bytecode/<nameofapk>_<hashofapk> (from now on called analysis-folder)
 2. extract the content of the apk to ./bytecode/<analysis-folder>/apk_content
@@ -49,19 +49,19 @@ Preprocessing:
 5. parse the SMALI files living at ./bytecode/<analysis-folder>/bytecode/smali
 6. generate rolling hashes for the smali files (optional)
 
-Analysis:
+###Analysis:
 1. Categorize the requested permissions in known/unknown (see conf/permissions.xml)
 2. Match heurisitc patterns (see conf/heuristic-patterns.xml)
 3. Perform program slicing for functions of interest (see conf/backtracking_patterns.xml)
 
-== Getting Results ==
+## Getting Results ##
 In normal mode SAAF will analyze an APK and create an XML report.
 While this may be useful when when you want to analyze just one sample and have quick glance at its contents,
 it is not useful for processing gigabytes of malware.
 
 So if you want to analyze several apks you should look at the INSTALL file how to setup SAAF with MySQL.
 
-Also check the doc/FAQ-CLI.txt and doc/FAQ-GUI.txt for more info.
+Also check the [CLI-FAQ](doc/FAQ-CLI.txt) and [GUI-FAQ](doc/FAQ-GUI.txt) for more info.
 
 
 
