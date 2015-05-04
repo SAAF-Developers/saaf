@@ -1,6 +1,6 @@
 # Static Android Analysis Framework (SAAF)
 
-Suprise! It is a static analyzer for Android apk files.
+Suprise! It is a static analyzer for Android apk files. It was also described in the Paper [Slicing Droids: Program Slicing for Smali Code](http://www.ei.ruhr-uni-bochum.de/media/emma/veroeffentlichungen/2013/11/12/slicing_droids_sac13.pdf)
 
 ## Features:
 
