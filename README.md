@@ -21,20 +21,20 @@ messaged are being sent to.
 == Running == 
 
 1. To see the commandline help just type from the SAAF folder
-
+```
 sh ./scripts/run_saaf.sh --help
-
+```
 SAAF will check for the configuration file and parse it. After that your should be presented with a list of options.
 
 
 2. To run SAAF in GUI-Mode (not recommended) just dont use any arguments
-
+```
 sh ./scripts/run_saaf.sh 
-
+```
 3. To run SAAF without gui on an apk file or a folder of apk files
-
+```
 sh ./scripts/run_saaf.sh -hl <filename>
-
+```
 If <filename> is an apk SAAF will analyze the apk.
 If <filename> is a folder SAAF will analyze all apks that are directly contained in that folder (it will not descend into subdirs)
 
