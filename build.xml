@@ -100,7 +100,7 @@
 		</copy>
 	</target>
 
-	<target name="test" depends="build-test, prepare-test">
+	<target name="test" depends="build-test, prepare-test" description="starts JUnit Tests without DB.">
 		<junit haltonfailure="true" dir="${build.test.dir}" showoutput="true" fork="true" printsummary="on" filtertrace="on">
 			<classpath refid="SAAF.testing.classpath" />
 			<formatter type="brief" usefile="true" />
@@ -117,7 +117,7 @@
 		</junit>
 	</target>
 
-	<target name="test-db" depends="build-test, prepare-test">
+	<target name="test-db" depends="build-test, prepare-test" description="starts JUnit Tests for DB, if you have configurated a Test-DB in test-home/conf/saaf.conf .">
 		<junit haltonfailure="true" dir="${build.test.dir}" showoutput="false" fork="true" printsummary="on" filtertrace="on">
 			<classpath refid="SAAF.testing.classpath" />
 			<formatter type="brief" usefile="false" />
@@ -137,7 +137,7 @@
 	<typedef name="fatjar.exclude" classname="net.sf.fjep.anttask.FJExcludeType" classpath="${fjepPath}" loaderref="${fjepPath}" />
 	<typedef name="fatjar.jarsource" classname="net.sf.fjep.anttask.FJJarSourceType" classpath="${fjepPath}" loaderref="${fjepPath}" />
 	<typedef name="fatjar.filesource" classname="net.sf.fjep.anttask.FJFileSourceType" classpath="${fjepPath}" loaderref="${fjepPath}" />
-	<target name="fat-jar" depends="test, test-db">
+	<target name="fat-jar" depends="test, test-db" description="generates a jar with all dependencies">
 		<mkdir dir="${dist.dir}" />
 		<copy verbose="true" todir="${build.prod.dir}">
 			<fileset dir="${src.dir}">
@@ -173,7 +173,7 @@
 		<move file="${jar.name}" tofile="${jar.path}" />
 	</target>
 
-	<target description="bundle sources in a jar" name="src-jar">
+	<target name="src-jar" description="bundle sources in a jar">
 		<jar basedir="src" destfile="${dist.dir}/${release}-src.jar" />
 	</target>
 
@@ -188,13 +188,15 @@
 		</jar>
 	</target>
 
-	<target name="create-timestamp" description="just a pseudo task to create a snapshot name">
+	<!-- internal-target: just a pseudo task to create a snapshot name -->
+	<target name="create-timestamp">
 		<tstamp />
 		<property name="snapshot.name" value="${release}-${DSTAMP}-${TSTAMP}" />
 		<property name="snapshot.archive.name" value="${snapshot.name}.tar.gz" />
 		<property name="snapshot.archive.path" value="${dist.dir}/${snapshot.archive.name}"/>
 	</target>
-	<target name="prepare-conf" description="prepares the configuration for the release">
+	<!-- internal-target: prepares the configuration for the release -->
+	<target name="prepare-conf">
 		<copy todir="${dist.dir}/conf">
 			<fileset dir="${conf.dir}">
 				<include name="release.log4j.properties"/>
@@ -221,7 +223,7 @@
 				<include name="*.xml" />
 				<include name="**/*.xsd"/>
 			</tarfileset>
-			<!--somewhat ugly hack to get the sample config into the conf directory of a release pacakge -->
+			<!--somewhat ugly hack to get the sample config into the conf directory of a release package -->
 			<tarfileset dir="doc-manually/user" prefix="${snapshot.name}/conf">
 				<include name="saaf.conf" />
 			</tarfileset>
