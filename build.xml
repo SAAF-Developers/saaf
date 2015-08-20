@@ -55,21 +55,26 @@
 		</fileset>
 	</path>
 
-	<target name="clean">
+	<target name="clean" depends="clean-test" description="deletes all generated files and directories.">
 		<delete dir="${build.dir}" />
 		<delete dir="${dist.dir}" />
 		<delete dir="${doc.dir}" />
 	</target>
-	<target depends="clean" name="cleanall" />
+	<target name="cleanall" depends="clean" />
+	<target name="clean-test">
+		<delete dir="${build.test.dir}" />
+		<delete>
+			<fileset dir="." includes="TEST-*.txt" />
+		</delete>
+	</target>
 	<target name="init">
 		<mkdir dir="${build.dir}" />
 		<mkdir dir="${build.prod.dir}" />
 		<mkdir dir="${build.test.dir}" />
 	</target>
 
-	<target name="build" depends="init">
+	<target name="build" depends="init" description="compiles sourcecode. (Default)." >
 		<echo message="${ant.project.name}: ${ant.file}" />
-
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${build.prod.dir}" source="${comiplerlevel.source}" target="${comiplerlevel.target}">
 			<src path="${src.dir}" />
 			<classpath refid="SAAF.classpath" />
