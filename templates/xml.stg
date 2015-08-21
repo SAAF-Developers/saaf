@@ -83,8 +83,8 @@ activity(activity)::=<<
 
 intent_filter(filter) ::=<<
 	<intent-filter priority="$filter.priority;format="xml"$">
-        $filter.actions:intent_action()$
-    </intent-filter>
+		$filter.actions:intent_action()$
+	</intent-filter>
 >>
 
 intent_action(action) ::=<<
