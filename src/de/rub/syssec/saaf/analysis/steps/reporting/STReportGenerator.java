@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -43,7 +44,7 @@ import de.rub.syssec.saaf.model.application.ApplicationInterface;
  */
 public class STReportGenerator implements ReportGenerator, STErrorListener {
 
-	private String reportNamePattern="Report-<analysis.app.apkFile.Name>-<time>.xml";
+	private String reportNamePattern="Report-<analysis.app.apkFile.Name>-<analysisStartTime>.xml";
 	
 	private String template="report";
 	
@@ -196,9 +197,10 @@ public class STReportGenerator implements ReportGenerator, STErrorListener {
 	}
 
 	private File generateUniqueReportFile(File parentDirectory, AnalysisInterface ana) {
+		SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 		ST template = new ST(this.reportNamePattern);
 		template.add("analysis", ana);
-		template.add("time", System.currentTimeMillis());
+		template.add("analysisStartTime", ft.format(ana.getStartTime()));
 		String actualname = template.render();
 		return new File(parentDirectory.getAbsolutePath() + File.separator + actualname);
 	}
