@@ -57,16 +57,17 @@ public class Headless {
 	 *                  dir with several APKs in it,
 	 *                  file with several file paths to APKs}
 	 *                  depending on cmd-parameter.
+	 * @return 1 as exitCode if isAborted or any Error
 	 *
 	 */
-	public static void startAnalysis(File path) {
+	public static int startAnalysis(File path) {
 		if (path == null) {
 			LOGGER.error("Please specify a file or directory to analyze!");
-			return;
+			return 1;
 		} else if (!path.exists()) {
 			LOGGER.error("File or directory does not exist. Inserted path: "
 					+ path);
-			return;
+			return 1;
 		}
 
 		LinkedList<File> apks = new LinkedList<File>();
@@ -82,10 +83,10 @@ public class Headless {
 
 		if (apks.size() <= 0) {
 			LOGGER.error("Found no APK to analyze!");
-			return;
+			return 1;
 		}
 
-		performAnalysis(apks);
+		return performAnalysis(apks);
 	}
 
 	/**
@@ -171,8 +172,9 @@ public class Headless {
 	 * happen single- or multithreaded.
 	 *
 	 * @param apks the apks to analyze
+	 * @return 1 as exitCode if isAborted = true
 	 */
-	private static void performAnalysis(LinkedList<File> apks) {
+	private static int performAnalysis(LinkedList<File> apks) {
 		// Initialize MultiThreading and queue
 		int corePoolSize = Runtime.getRuntime().availableProcessors();
 		if (corePoolSize > 1) corePoolSize--;
@@ -197,5 +199,6 @@ public class Headless {
 			LOGGER.error("Got a timeout while waiting for analyses to finish, this should not happen.");
 		}
 		executor.printStatistic();
+		return executor.hasNoSuccess() ? 1 : 0;
 	}
 }

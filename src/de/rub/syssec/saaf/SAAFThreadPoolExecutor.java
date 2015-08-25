@@ -115,7 +115,7 @@ class SAAFThreadPoolExecutor extends ThreadPoolExecutor {
 		}
 		else if (gotUncaughtException) { // We must exit on unforeseen happenings :) Disk full? OOM?
 			LOGGER.error("Something unexpected occurred, see above. Will now perform an unclean exit (DB connections are not closed etc, but ShutdownHooks are run)!");
-			System.exit(-2);
+			System.exit(2);
 		}
 	}
 	
@@ -170,4 +170,13 @@ class SAAFThreadPoolExecutor extends ThreadPoolExecutor {
 			sb.append("\n");
 			LOGGER.info(sb.toString());
 	}
+
+	/**
+	 * checks if there is any successful analysis
+	 * @return true if each APK has a critical exception or aborted is set.
+	 */
+	public boolean hasNoSuccess() {
+		return (apkCount == criticalExceptionCount || aborted);
+	}
+
 }

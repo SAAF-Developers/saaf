@@ -81,7 +81,7 @@ public class Config implements ConfigInterface {
 							+ "Please make sure you have a valid saaf.conf in the current directory\n"
 							+ "Alternatively set the environment variable SAAF_HOME to tell SAAF where to look for its files.\n"
 							+ "A sample configuration file can be found in folder doc-manually");
-			System.exit(-1);
+			System.exit(1);
 		}
 
 	}
@@ -176,7 +176,7 @@ public class Config implements ConfigInterface {
 			LOGGER.info("Config looks sane, proceeding.");
 		} else {
 			LOGGER.error("Found errors in the configuration, aborting.");
-			System.exit(-5);
+			System.exit(1);
 		}
 	}
 

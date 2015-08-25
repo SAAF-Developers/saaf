@@ -63,6 +63,7 @@ public class Main {
 	private static Properties props;
 
 	private static File apkPath;
+	private static int exitcode = 0;
 
 	public static void main(String[] args) throws Exception {
 		// make sure log4j configuration is read before doing anything else
@@ -90,7 +91,7 @@ public class Main {
 			else if (conf.getBooleanConfigValue(
 					ConfigKeys.ANALYSIS_IS_HEADLESS)) {
 				// no GUI
-				Headless.startAnalysis(apkPath);
+				exitcode = Headless.startAnalysis(apkPath);
 			} else {
 				// yes, I want a GUI
 				// Schedule a job for the event-dispatching thread:
@@ -105,9 +106,9 @@ public class Main {
 			}
 		} catch (Exception e) {
 			LOGGER.error("An error occured", e);
-			System.exit(0);
+			System.exit(1);
 		}
-
+		exit();
 	}
 
 	/**
@@ -236,7 +237,7 @@ public class Main {
 	}
 
 	private static void exit() {
-		System.exit(0);
+		System.exit(exitcode);
 	}
 
 	/**
