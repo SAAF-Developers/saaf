@@ -170,7 +170,7 @@
 			<fatjar.jarsource file="lib/mysql-connector-java-5.1.21-bin.jar" relpath="" />
 			<fatjar.jarsource file="lib/slf4j-api-1.5.6.jar" relpath="" />
 			<fatjar.jarsource file="lib/slf4j-simple-1.5.6.jar" relpath="" />
-			<fatjar.jarsource file="lib/apktool-1.5.2.jar" relpath="" />
+			<fatjar.jarsource file="lib/apktool-2.0.1.jar" relpath="" />
 			<fatjar.jarsource file="lib/smali-1.4.2.jar" relpath="" />
 			<fatjar.jarsource file="lib/ST-4.0.7.jar" relpath="" />
 			<fatjar.jarsource file="lib/jgraphx.jar" relpath="" />

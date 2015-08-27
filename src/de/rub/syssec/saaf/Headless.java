@@ -85,7 +85,6 @@ public class Headless {
 			LOGGER.error("Found no APK to analyze!");
 			return 1;
 		}
-
 		return performAnalysis(apks);
 	}
 

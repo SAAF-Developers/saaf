@@ -8,7 +8,7 @@
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-runtime-3.4.jar"/>
-	<classpathentry kind="lib" path="lib/apktool-1.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/apktool-2.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/asm-debug-all-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/dex-ir-1.11.jar"/>
 	<classpathentry kind="lib" path="lib/dex-reader-1.14.jar"/>

@@ -23,15 +23,15 @@ import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 
+
+
 import brut.androlib.AndrolibException;
 import brut.androlib.ApkDecoder;
 import brut.androlib.err.CantFindFrameworkResException;
 import brut.androlib.err.OutDirExistsException;
-import brut.androlib.res.AndrolibResources;
-import brut.androlib.res.util.ExtFile;
+import brut.directory.DirectoryException;
 import de.rub.syssec.saaf.misc.config.Config;
 import de.rub.syssec.saaf.misc.config.ConfigKeys;
-
 
 /**
  * Interface to the Android-APKtool
@@ -87,7 +87,7 @@ public class ApkDecoderInterface {
 				localApkDecoder.setOutDir(destination);
 				localApkDecoder.setApkFile(apk);
 				//disable resource decoding
-				localApkDecoder.setDecodeResources((short) 0x0100);				
+				//localApkDecoder.setDecodeResources((short) 0x0100);				
 				
 				//apkdecoder constants
 //		        public final static short DECODE_SOURCES_NONE = 0x0000;
@@ -98,14 +98,11 @@ public class ApkDecoderInterface {
 //		        public final static short DECODE_RESOURCES_FULL = 0x0101;
 
 
-				// localApkDecoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_JAVA);  //HL: Not yet implemented by APKTool
-	        	localApkDecoder.decode();
+				//localApkDecoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_JAVA);  //HL: Not yet implemented by APKTool
+	        	//TODO: In version before fc8dd8c: only the manifest was extracted. With apktool 2.0.1 however we get some errors
+				//Therefore we extract everything, in future we should change this again
+				localApkDecoder.decode();
 	        	
-	        	//extract the manifest file, because disabling decoding resource also disables decoding of the manifest file
-				AndrolibResources res = new AndrolibResources();
-				ExtFile apkFile = new ExtFile(apk);
-				res.decodeManifest(res.getResTable(apkFile,true), apkFile, destination);
-      	
 	        	decodeSucseccfull = true;
 	        	
 	        } catch (OutDirExistsException ex) {
@@ -149,6 +146,8 @@ public class ApkDecoderInterface {
 							throw new DecoderException(e);
 						} catch (AndrolibException e) {
 							throw new DecoderException(e);
+						} catch (DirectoryException e) {
+							throw new DecoderException(e);
 						}
 	        			decodeSucseccfull = true;
 	        			
@@ -163,10 +162,12 @@ public class ApkDecoderInterface {
 	        			//localApkDecoder.setDecodeResources(ApkDecoder.DECODE_RESOURCES_NONE);	//HL: Alternative, if APKTool crashes by Resources
 	        			try {
 	        				//localApkDecoder.setDecodeResources((short)0x0100);	//HL: Alternative, if APKTool crashes by Resources
-							localApkDecoder.decode();
+	        				localApkDecoder.decode();
 						} catch (IOException e) {
 							throw new DecoderException(e);
 						} catch (AndrolibException e) {
+							throw new DecoderException(e);
+						} catch (DirectoryException e) {
 							throw new DecoderException(e);
 						}
 	        			
