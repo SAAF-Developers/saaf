@@ -8,7 +8,7 @@
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-runtime-3.4.jar"/>
-	<classpathentry kind="lib" path="lib/apktool-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/apktool-2.0.1.jar" />
 	<classpathentry kind="lib" path="lib/asm-debug-all-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/dex-ir-1.11.jar"/>
 	<classpathentry kind="lib" path="lib/dex-reader-1.14.jar"/>
@@ -18,7 +18,7 @@
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.21-bin.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.5.6.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-simple-1.5.6.jar"/>
-	<classpathentry kind="lib" path="lib/smali-1.4.2.jar"/>
+	<classpathentry kind="lib" path="lib/smali-2.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/ST-4.0.7.jar"/>
 	<classpathentry kind="lib" path="lib/test/junit.jar"/>
 	<classpathentry kind="lib" path="lib/jgraphx.jar"/>
